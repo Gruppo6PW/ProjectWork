@@ -1,0 +1,12 @@
+h1 {
+    text-align: center;
+}
+
+.container {
+    text-align: center;
+}
+
+.loginForm {
+    padding: 1%;
+    border: 1px solid #5F6368;
+}
