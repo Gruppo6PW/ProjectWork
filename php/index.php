@@ -1,12 +1,12 @@
 <?php
 // Configurazione del database
 $servername = "localhost";
-$username = "gruppo6";
-$password = "ZQ5Z4Dzc6Ddd";
+$username = "root";
+$password = "";
 $dbname = "my_gruppo6";
 
 // Connessione al database
-$conn = new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
+$conn = new mysqli($servername, $username, $password, $dbname);
 
 // Verifica della connessione
 if ($conn->connect_error) {
@@ -14,13 +14,13 @@ if ($conn->connect_error) {
 }
 
 // Query per recuperare i dati utente
-$sql1 = "SELECT * FROM tconticorrente WHERE ContoCorrenteID = 1";
+$sql1 = "SELECT * FROM tconticorrenti WHERE ContoCorrenteID = 1";
 $result1 = $conn->query($sql1);
 // Verifica dei risultati della query
-if ($result1->num_rows > 0) {
+if ($result1 !== false && $result1->num_rows > 0){
     // Recupero dei dati dei movimenti
     $utente = array();
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result1->fetch_assoc()) {
         $utente[] = $row;
     }
 } else {
@@ -31,10 +31,10 @@ if ($result1->num_rows > 0) {
 $sql2 = "SELECT * FROM tmovimenticontocorrente ORDER BY data DESC LIMIT 5";
 $result2 = $conn->query($sql2);
 // Verifica dei risultati della query
-if ($result->num_rows > 0) {
+if ($result2 !== false && $result2->num_rows > 0){
     // Recupero dei dati dei movimenti
     $movimenti = array();
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result2->fetch_assoc()) {
         $movimenti[] = $row;
     }
 } else {
