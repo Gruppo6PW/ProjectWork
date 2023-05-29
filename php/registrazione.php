@@ -38,7 +38,7 @@
     }
 
     // Controllo se è stato premuto il button di submit, ossia è presente un elemento inviato in POST con chiave Registrazione nell'array superglobale
-    if(isset($_POST["Registrati"])){
+    if(isset($_POST["Registrati"]) && isset($_POST["g-recaptcha-response"])){
         // Prendo i valori inviata dalla pagina di registrazione
         $email = $_POST["email"];
         $password = $_POST["password"];
@@ -57,6 +57,29 @@
 
                     if(!empty($cognomeTitolare) != "" && is_string($cognomeTitolare) && controllaSeCiSonoNumeri($cognomeTitolare)){
                         // Non vuota e stringa senza numeri
+
+                        // Verifica del captcha
+                        $chiaveServer = "6Lc0L0wmAAAAANdAgFJdpPd7_Sv-M4Mm9zrXT-8R";
+                        $rispostaCaptcha = $_POST['g-recaptcha-response'];
+
+                        $curl = curl_init();
+                        curl_setopt_array($curl, [
+                        CURLOPT_RETURNTRANSFER => 1,
+                        CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify',
+                        CURLOPT_POST => 1,
+                        CURLOPT_POSTFIELDS => [
+                            'secret' => $chiaveServer,
+                            'response' => $rispostaCaptcha
+                        ]
+                        ]);
+
+                        $risposta = curl_exec($curl);
+                        curl_close($curl);
+
+                        $datiCaptcha = json_decode($risposta);
+                        if (!$datiCaptcha->success) {
+                            die('Captcha non valido.');
+                        }
                         
                             // Controllo che la mail non esista
                 
@@ -133,10 +156,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Registrazione</title>
+
+    <!-- Recaptcha -->
+    <!-- <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script> -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    
 </head>
 <body>
     <!-- JS -->
     <script>
+        // Recaptcha
+        var onloadCallback = function() {
+            alert("grecaptcha is ready!");
+        };
+
         function controllaInput(){
             // Prendo i valori
             email = formRegistrazione.emailID.value;
@@ -269,6 +302,11 @@
 
         <label for="confermaPasswordID">Conferma password:</label>
         <input type="password" name="confermaPassword" id="confermaPasswordID" required>
+
+        <br>
+
+        <!-- Recaptcha -->
+        <div class="g-recaptcha" data-sitekey="6Lc0L0wmAAAAAHIusv0dCKOV9a4msMJLD516RB1r"></div>
 
         <br>
 
