@@ -23,6 +23,7 @@ if ($result1 !== false && $result1->num_rows > 0){
     while ($row = $result1->fetch_assoc()) {
         $utente[] = $row;
     }
+    $NomeUtente = $utente[0][4];
 } else {
     echo "Nessun utente corrispondente trovato.";
 }
@@ -63,7 +64,7 @@ $conn->close();
   </header>
 
   <main class="container my-5">
-    <h1 class="mb-4">Benvenuto, <?php echo $utente[4]; ?>!</h1>
+    <h1 class="mb-4">Benvenuto, <?php echo $NomeUtente; ?>!</h1>
     <p>Data di creazione del conto: <?php echo $DataApertura; ?></p>
     <p>Saldo totale: <?php echo $Saldo; ?></p>
 
