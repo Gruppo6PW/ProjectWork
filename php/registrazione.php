@@ -14,35 +14,34 @@
     }
 
     // Controllo se l'email è valida
-    function controllaRequisitiPassword($stringaDaControllare){
-        $passwordRegex = "/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/";
-        // Controllo se la password rispetta questi parametri
-        if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
+    function controllaRequisitiEmail($stringaDaControllare){
+        $emailRegex = "/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$/";
+        // Controllo se la email rispetta questi parametri
+        if (preg_match($emailRegex, $stringaDaControllare) == 1) {
             return true;
         } else{
-            echo("<h2>Password non valida</h2>");
+            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/registrazione.php'>Torna alla pagina registrazione</a>");
             return false;
         }
     }
     
     // Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
-    function controllaRequisitiEmail($stringaDaControllare){
+    function controllaRequisitiPassword($stringaDaControllare){
         $passwordRegex = "/^(?=\P{Ll}*\p{Ll})(?=\P{Lu}*\p{Lu})(?=\P{N}*\p{N})(?=[\p{L}\p{N}]*[^\p{L}\p{N}])[\s\S]{8,}$/";
         // Controllo se la password rispetta questi parametri
         if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
             return true;
         } else{
-            echo("<h2>Password non valida</h2>");
+            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/registrazione.php'>Torna alla pagina registrazione</a>");
             return false;
         }
     }
-
 
     // Controllo se è stato premuto il button di submit, ossia è presente un elemento inviato in POST con chiave Registrazione nell'array superglobale
     if(isset($_POST["Registrati"])){
         // Prendo i valori inviata dalla pagina di registrazione
         $email = $_POST["email"];
-        echo $password = $_POST["password"];
+        $password = $_POST["password"];
         $nomeTitolare = $_POST["nomeTitolare"];
         $cognomeTitolare = $_POST["cognomeTitolare"];
 
@@ -132,7 +131,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <title>Registrazione</title>
 </head>
 <body>
@@ -147,15 +146,15 @@
             cognomeTitolare = formRegistrazione.cognomeTitolareID.value;
 
             // Controllo che email non sia vuota e sia string
-            if((email != "" && (typeof email === 'string' || email instanceof String))){
+            if((email != "" && (typeof email === 'string' || email instanceof String) && controllaRequisitiEmail(email))){
                 // Non vuota e stringa
 
                 // Controllo che password non sia vuota e sia string
-                if((password != "" && (typeof password === 'string' || password instanceof String))){
+                if(password != "" && (typeof password === 'string' || password instanceof String) && controllaRequisitiPassword(password)){
                     // Non vuota e stringa
 
                     // Controllo che confermaPassword non sia vuota e sia string
-                    if((confermaPassword != "" && (typeof confermaPassword === 'string' || confermaPassword instanceof String))){
+                    if(confermaPassword != "" && (typeof confermaPassword === 'string' || confermaPassword instanceof String) && controllaRequisitiPassword(confermaPassword)){
                         // Non vuota e stringa
                         
                         // Controllo se le password sono uguali
@@ -197,7 +196,7 @@
                         document.getElementById('confermaPasswordID').value = '';
                     }
                 } else{
-                    alert("Inserisci una password che sia stringa");
+                    alert("Inserisci una password valida");
 
                     // Cancello l'input
                     document.getElementById('passwordID').value = '';
@@ -219,6 +218,28 @@
                 return true;    // True, può procedere
             }
         }
+
+        // Controllo se l'email è valida
+        function controllaRequisitiEmail(stringaDaControllare){
+            emailRegex = /^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+            // Controllo se la email rispetta questi parametri
+            if (emailRegex.test(stringaDaControllare)) {
+                return true;
+            } else{
+                return false;
+            }
+        }
+        
+        // Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
+        function controllaRequisitiPassword(stringaDaControllare){
+            passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d\s:])([^\s]){8,}$/;
+            // Controllo se la password rispetta questi parametri
+            if (passwordRegex.test(stringaDaControllare)) {
+                return true;
+            } else{
+                return false;
+            }
+        }
     </script>
 
     <!-- HTML -->
@@ -226,6 +247,16 @@
 
     <!-- Action vuota, punta a se stessa -->
     <form action="" method="POST" name="formRegistrazione">
+        <label for="nomeTitolareID">Nome titolare:</label>
+        <input type="text" name="nomeTitolare" id="nomeTitolareID" required>
+    
+        <br>
+    
+        <label for="cognomeTitolareID">Cognome titolare:</label>
+        <input type="text" name="cognomeTitolare" id="cognomeTitolareID" required>
+
+        <br>
+
         <label for="emailID">Email:</label>
         <input type="email" name="email" id="emailID" required>
 
@@ -238,16 +269,6 @@
 
         <label for="confermaPasswordID">Conferma password:</label>
         <input type="password" name="confermaPassword" id="confermaPasswordID" required>
-
-        <br>
-
-        <label for="nomeTitolareID">Nome titolare:</label>
-        <input type="text" name="nomeTitolare" id="nomeTitolareID" required>
-
-        <br>
-
-        <label for="cognomeTitolareID">Cognome titolare:</label>
-        <input type="text" name="cognomeTitolare" id="cognomeTitolareID" required>
 
         <br>
 
