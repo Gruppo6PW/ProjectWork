@@ -49,15 +49,15 @@ $conn->close();
 <html>
 <head>
   <title>Gestione Conto Corrente</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.7.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/stylesIndex.css">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
   <header class="bg-light py-3">
     <div class="container d-flex justify-content-between align-items-center">
-        <a href="ProfiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente"> </a>
-        <img src="Media/searchIcon.png" alt="Icona Ricerca">
-      <img src="Media/transactionIcon.png" alt="Icona Operazioni">
+    <img src="Media/searchIcon.png" alt="Icona Ricerca" width=200>
+    <a href="ProfiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente" width=200> </a>
+    <img src="Media/transactionIcon.png" alt="Icona Operazioni" width=200>
     </div>
   </header>
 
