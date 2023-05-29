@@ -20,7 +20,7 @@ $result1 = $conn->query($sql1);
 if ($result1 !== false && $result1->num_rows > 0){
     // Recupero dei dati dei movimenti
     $utente = array();
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result1->fetch_assoc()) {
         $utente[] = $row;
     }
 } else {
@@ -34,7 +34,7 @@ $result2 = $conn->query($sql2);
 if ($result2 !== false && $result2->num_rows > 0){
     // Recupero dei dati dei movimenti
     $movimenti = array();
-    while ($row = $result->fetch_assoc()) {
+    while ($row = $result2->fetch_assoc()) {
         $movimenti[] = $row;
     }
 } else {
