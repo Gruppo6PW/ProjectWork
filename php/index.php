@@ -1,8 +1,57 @@
+<?php
+// Configurazione del database
+$servername = "localhost";
+$username = "gruppo6";
+$password = "";
+$dbname = "my_gruppo6";
+
+// Connessione al database
+$conn = new mysqli($servername, $username, $password, $dbname);
+
+// Verifica della connessione
+if ($conn->connect_error) {
+    die("Connessione al database fallita: " . $conn->connect_error);
+}
+
+// Query per recuperare i dati utente
+$sql1 = "SELECT * FROM tconticorrente WHERE ContoCorrenteID = 1";
+$result1 = $conn->query($sql1);
+// Verifica dei risultati della query
+if ($result1->num_rows > 0) {
+    // Recupero dei dati dei movimenti
+    $utente = array();
+    while ($row = $result->fetch_assoc()) {
+        $utente[] = $row;
+    }
+} else {
+    echo "Nessun utente corrispondente trovato.";
+}
+
+// Query per recuperare i movimenti
+$sql2 = "SELECT * FROM tmovimenticontocorrente ORDER BY data DESC LIMIT 5";
+$result2 = $conn->query($sql2);
+// Verifica dei risultati della query
+if ($result->num_rows > 0) {
+    // Recupero dei dati dei movimenti
+    $movimenti = array();
+    while ($row = $result->fetch_assoc()) {
+        $movimenti[] = $row;
+    }
+} else {
+    echo "Nessun movimento trovato.";
+}
+
+// Chiusura della connessione al database
+$conn->close();
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
   <title>Gestione Conto Corrente</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.7.0/dist/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
   <header class="bg-light py-3">
