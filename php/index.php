@@ -14,9 +14,9 @@
   </header>
 
   <main class="container my-5">
-    <h1 class="mb-4">Benvenuto, <?php echo $nome_utente; ?>!</h1>
-    <p>Data di creazione del conto: <?php echo $data_creazione; ?></p>
-    <p>Saldo totale: <?php echo $saldo; ?></p>
+    <h1 class="mb-4">Benvenuto, <?php echo $NomeTitolare; ?>!</h1>
+    <p>Data di creazione del conto: <?php echo $DataApertura; ?></p>
+    <p>Saldo totale: <?php echo $Saldo; ?></p>
 
     <table class="table mt-4">
       <caption>Ultimi movimenti</caption>
