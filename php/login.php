@@ -1,33 +1,10 @@
 <!-- PHP -->
 <?php
 // Controllo se è stato premuto il button di submit, ossia è presente un elemento inviato in POST con chiave Registrazione nell'array superglobale
-if (isset($_POST["Login"]) && isset($_POST["g-recaptcha-response"])) {
+if (isset($_POST["Login"])) {
     // Prendo i valori inviata dalla pagina di registrazione
     $email = $_POST["email"];
     $password = $_POST["password"];
-}
-
-// Verifica del captcha
-$chiaveServer = "6Lc0L0wmAAAAANdAgFJdpPd7_Sv-M4Mm9zrXT-8R";
-$rispostaCaptcha = $_POST['g-recaptcha-response'];
-
-$curl = curl_init();
-curl_setopt_array($curl, [
-    CURLOPT_RETURNTRANSFER => 1,
-    CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify',
-    CURLOPT_POST => 1,
-    CURLOPT_POSTFIELDS => [
-        'secret' => $chiaveServer,
-        'response' => $rispostaCaptcha
-    ]
-]);
-
-$risposta = curl_exec($curl);
-curl_close($curl);
-
-$datiCaptcha = json_decode($risposta);
-if (!$datiCaptcha->success) {
-    die('Captcha non valido.');
 }
 
 ?>
@@ -46,18 +23,10 @@ if (!$datiCaptcha->success) {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
 
-    <!-- Recaptcha -->
-    <!-- <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script> -->
-    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
-
 </head>
 
 <body>
     <script>
-        // Recaptcha
-        var onloadCallback = function() {
-            alert("grecaptcha is ready!");
-        };
 
         function controllaInput() {
             // Prendo i valori
