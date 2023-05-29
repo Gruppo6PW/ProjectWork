@@ -6,7 +6,7 @@ $password = "ZQ5Z4Dzc6Ddd";
 $dbname = "my_gruppo6";
 
 // Connessione al database
-$conn = new mysqli($servername, $username, $password, $dbname);
+$conn = new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
 
 // Verifica della connessione
 if ($conn->connect_error) {
