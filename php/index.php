@@ -14,7 +14,7 @@ if ($conn->connect_error) {
 }
 
 // Query per recuperare i dati utente
-$sql1 = "SELECT * FROM tconticorrente WHERE ContoCorrenteID = 1";
+$sql1 = "SELECT * FROM tconticorrenti WHERE ContoCorrenteID = 1";
 $result1 = $conn->query($sql1);
 echo($result1);
 // Verifica dei risultati della query
