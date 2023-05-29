@@ -12,90 +12,93 @@
         // Ciclo terminato, quindi niente numeri
         return true;
     }
-    
-    // Prendo i valori inviata dalla pagina di registrazione
-    $email = $_POST["email"];
-    $password = $_POST["password"];
-    $nomeTitolare = $_POST["nomeTitolare"];
-    $cognomeTitolare = $_POST["cognomeTitolare"];
 
-    // Controllo che non siano vuote e chi siano stringhe
-    if(!empty($email) && is_string($email)){
-        // Non vuota e stringa
+    // Controllo se è stato premuto il button di submit, ossia è presente un elemento inviato in POST con chiave Registrazione nell'array superglobale
+    if(isset($_POST["Registrati"])){
+        // Prendo i valori inviata dalla pagina di registrazione
+        $email = $_POST["email"];
+        $password = $_POST["password"];
+        $nomeTitolare = $_POST["nomeTitolare"];
+        $cognomeTitolare = $_POST["cognomeTitolare"];
 
-        if(!empty($password) && is_string($password)){
+        // Controllo che non siano vuote e chi siano stringhe
+        if(!empty($email) && is_string($email)){
             // Non vuota e stringa
 
-            if(!empty($nomeTitolare) != "" && is_string($nomeTitolare) && controllaSeCiSonoNumeri($nomeTitolare)){
-                // Non vuota e stringa senza numeri
+            if(!empty($password) && is_string($password)){
+                // Non vuota e stringa
 
-                if(!empty($cognomeTitolare) != "" && is_string($cognomeTitolare) && controllaSeCiSonoNumeri($cognomeTitolare)){
+                if(!empty($nomeTitolare) != "" && is_string($nomeTitolare) && controllaSeCiSonoNumeri($nomeTitolare)){
                     // Non vuota e stringa senza numeri
-                    
-                        // Controllo che la mail non esista
-            
-                    // Mi connetto al db
-                    $conn = mysqli_connect('localhost', "*nomeUtenteAltervista*", "*passwordAccessoAltervista*", "dbprojectwork");
-            
-                    // Controllo che la connessione sia andata buon fine, altrimenti mostro l'errore
-                    if ($conn->connect_error) {
-                        die("Connessione fallita: " . $conn->connect_error);
+
+                    if(!empty($cognomeTitolare) != "" && is_string($cognomeTitolare) && controllaSeCiSonoNumeri($cognomeTitolare)){
+                        // Non vuota e stringa senza numeri
+                        
+                            // Controllo che la mail non esista
+                
+                        // Mi connetto al db
+                        $conn = mysqli_connect('localhost', "*nomeUtenteAltervista*", "*passwordAccessoAltervista*", "dbprojectwork");
+                
+                        // Controllo che la connessione sia andata buon fine, altrimenti mostro l'errore
+                        if ($conn->connect_error) {
+                            die("Connessione fallita: " . $conn->connect_error);
+                        }
+                
+                        // Creo ed eseguo la query di controllo con il prepared statement per evitare SQL Injection
+                        $statement = $conn -> prepare("SELECT email FROM tconticorrenti WHERE 'Email'=? LIMIT 1");  // E' necessario il punto di domanda || Ho messo il limit perchè deve ritornare 1 email solo, quindi così siamo sicuri di evitare dump della tabella
+                        $statement -> bind_param("s", $email);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
+                        $statement -> execute();
+                        
+                        // Chiudo lo statement
+                        $statement->close();
+
+                        if ($result->num_rows > 0) {
+                            // C'è una tupla. La mail esista già
+                            return;
+                        }
+
+                        // La mail non esiste. Calcolo l'hash della password
+                        $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
+                        $passwordCriptata = crypt($password, $salt);
+
+                        // Genero il token per la conferma della mail
+                        $testoRandom = md5($email.$password.$nomeTitolare.$cognomeTitolare);    // Genero un hash MD5 concatenando le informazioni personali dell'utente, per renderlo univoco
+                        $token = uniqid() . '_' . $testoRandom;
+
+                        // Calcolo la data di apertura
+                        $dataApertura = date("Y-m-d") . " " . date("h:i:s"); // Anno-Mese-Giorno Ora-Minuti-Secondi
+                        
+                        //Faccio l'inserimento
+                        $statement = $conn -> prepare("INSERT INTO tconticorrenti('Email', 'Password', 'CognomeTitolare', 'NomeTitolare', 'DataApertura', 'RegistrazioneConfermata', 'Token') VALUES(?, ?, ?, ?, ?, ?, ?");  // E' necessario il punto di domanda || Escludo l'ID e l'IBAN perchè è vanno fatti dopo
+                        $statement -> bind_param("ssssssss", $email, $passwordCriptata, $cognomeTitolare, $nomeTitolare, $dataApertura, 0, $token);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
+                        $statement -> execute();
+                        
+                        // Chiudo lo statement
+                        $statement->close();
+                
+                        // Chiudo la connessione al db
+                        $conn->close();
+                
+                        // Reinderizzo l'utente alla pagina di invio della mail di conferma
+                        header("locate: invioMailConferma.php?Email=$email&token=$token");
+
+                    } else{
+                        echo("<h2>Cognome titolare non valido</h2>");
+                    return;
                     }
-            
-                    // Creo ed eseguo la query di controllo con il prepared statement per evitare SQL Injection
-                    $statement = $conn -> prepare("SELECT email FROM tconticorrenti WHERE 'Email'=? LIMIT 1");  // E' necessario il punto di domanda || Ho messo il limit perchè deve ritornare 1 email solo, quindi così siamo sicuri di evitare dump della tabella
-                    $statement -> bind_param("s", $email);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
-                    $statement -> execute();
-                    
-                    // Chiudo lo statement
-                    $statement->close();
-
-                    if ($result->num_rows > 0) {
-                        // C'è una tupla. La mail esista già
-                        return;
-                    }
-
-                    // La mail non esiste. Calcolo l'hash della password
-                    $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
-                    $passwordCriptata = crypt($password, $salt);
-
-                    // Genero il token per la conferma della mail
-                    $testoRandom = md5($email.$password.$nomeTitolare.$cognomeTitolare);    // Genero un hash MD5 concatenando le informazioni personali dell'utente, per renderlo univoco
-                    $token = uniqid() . '_' . $testoRandom;
-
-                    // Calcolo la data di apertura
-                    $dataApertura = date("Y-m-d") . " " . date("h:i:s"); // Anno-Mese-Giorno Ora-Minuti-Secondi
-                    
-                    //Faccio l'inserimento
-                    $statement = $conn -> prepare("INSERT INTO tconticorrenti('Email', 'Password', 'CognomeTitolare', 'NomeTitolare', 'DataApertura', 'RegistrazioneConfermata', 'Token') VALUES(?, ?, ?, ?, ?, ?, ?");  // E' necessario il punto di domanda || Escludo l'ID e l'IBAN perchè è vanno fatti dopo
-                    $statement -> bind_param("ssssssss", $email, $passwordCriptata, $cognomeTitolare, $nomeTitolare, $dataApertura, 0, $token);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
-                    $statement -> execute();
-                    
-                    // Chiudo lo statement
-                    $statement->close();
-            
-                    // Chiudo la connessione al db
-                    $conn->close();
-            
-                    // Reinderizzo l'utente alla pagina di invio della mail di conferma
-                    header("locate: invioMailConferma.php?Email=$email&token=$token");
-
                 } else{
-                    echo("<h2>Cognome titolare non valido</h2>");
-                return;
+                    echo("<h2>Nome titolare non valido</h2>");
+                    return;
                 }
+
             } else{
-                echo("<h2>Nome titolare non valido</h2>");
+                echo("<h2>Password non valida</h2>");
                 return;
             }
-
         } else{
-            echo("<h2>Password non valida</h2>");
+            echo("<h2>L'email non è valida</h2>");
             return;
         }
-    } else{
-        echo("<h2>L'email non è valida</h2>");
-        return;
     }
 ?>
 
