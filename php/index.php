@@ -31,7 +31,7 @@ if ($result1 !== false && $result1->num_rows > 0){
 $sql2 = "SELECT * FROM tmovimenticontocorrente ORDER BY data DESC LIMIT 5";
 $result2 = $conn->query($sql2);
 // Verifica dei risultati della query
-if ($result->num_rows > 0) {
+if ($result2 !== false && $result2->num_rows > 0){
     // Recupero dei dati dei movimenti
     $movimenti = array();
     while ($row = $result->fetch_assoc()) {
