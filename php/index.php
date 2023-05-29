@@ -17,7 +17,7 @@ if ($conn->connect_error) {
 $sql1 = "SELECT * FROM tconticorrente WHERE ContoCorrenteID = 1";
 $result1 = $conn->query($sql1);
 // Verifica dei risultati della query
-if ($result1->num_rows > 0) {
+if ($result1 !== false && $result1->num_rows > 0){
     // Recupero dei dati dei movimenti
     $utente = array();
     while ($row = $result->fetch_assoc()) {
