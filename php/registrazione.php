@@ -84,7 +84,7 @@
                             // Controllo che la mail non esista
                 
                         // Mi connetto al db
-                        $conn = mysqli_connect('localhost', "*nomeUtenteAltervista*", "*passwordAccessoAltervista*", "dbprojectwork");
+                        $conn = mysqli_connect('localhost', "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
                 
                         // Controllo che la connessione sia andata buon fine, altrimenti mostro l'errore
                         if ($conn->connect_error) {
@@ -92,15 +92,26 @@
                         }
                 
                         // Creo ed eseguo la query di controllo con il prepared statement per evitare SQL Injection
-                        $statement = $conn -> prepare("SELECT email FROM tconticorrenti WHERE 'Email'=? LIMIT 1");  // E' necessario il punto di domanda || Ho messo il limit perchè deve ritornare 1 email solo, quindi così siamo sicuri di evitare dump della tabella
-                        $statement -> bind_param("s", $email);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
-                        $statement -> execute();
-                        
-                        // Chiudo lo statement
-                        $statement->close();
+                        $SQL = "SELECT Email FROM tconticorrenti WHERE Email=? LIMIT 1"; // E' necessario il punto di domanda || Ho messo il limit perchè deve ritornare 1 email solo, quindi così siamo sicuri di evitare dump della tabella
+                        if($statement = $conn -> prepare($SQL)){
+                            $statement -> bind_param("s", $email);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
+                            $statement -> execute();
 
-                        if ($result->num_rows > 0) {
-                            // C'è una tupla. La mail esista già
+                            // Prendo il risultato della query
+                            $result = $statement->get_result();
+
+                            if ($result->num_rows > 0) {
+                                // C'è una tupla. La mail esista già
+                                echo("<h2>Email già esistente, prova con un'altra</h2>");
+                                return;
+                            }
+
+                            // Chiudo lo statement
+                            $statement->close();
+                        } else{
+                            // C'è stato un errore, lo stampo
+                            $errore = $mysqli->errno . ' ' . $mysqli->error;
+                            echo $errore;
                             return;
                         }
 
@@ -114,20 +125,32 @@
 
                         // Calcolo la data di apertura
                         $dataApertura = date("Y-m-d") . " " . date("h:i:s"); // Anno-Mese-Giorno Ora-Minuti-Secondi
+
+                        $registrazioneConfermata = 0;
                         
                         //Faccio l'inserimento
-                        $statement = $conn -> prepare("INSERT INTO tconticorrenti('Email', 'Password', 'CognomeTitolare', 'NomeTitolare', 'DataApertura', 'RegistrazioneConfermata', 'Token') VALUES(?, ?, ?, ?, ?, ?, ?");  // E' necessario il punto di domanda || Escludo l'ID e l'IBAN perchè è vanno fatti dopo
-                        $statement -> bind_param("ssssssss", $email, $passwordCriptata, $cognomeTitolare, $nomeTitolare, $dataApertura, 0, $token);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
-                        $statement -> execute();
-                        
-                        // Chiudo lo statement
-                        $statement->close();
+                        $SQL = "INSERT INTO tconticorrenti(Email, Password, CognomeTitolare, NomeTitolare, DataApertura, RegistrazioneConfermata, Token) VALUES(?, ?, ?, ?, ?, ?, ?)"; // E' necessario il punto di domanda || Escludo l'ID e l'IBAN perchè è vanno fatti dopo
+                        if($statement = $conn -> prepare($SQL)){
+                            $statement -> bind_param("sssssis", $email, $passwordCriptata, $cognomeTitolare, $nomeTitolare, $dataApertura, $registrazioneConfermata, $token);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
+                            echo $sqlInsert = "INSERT INTO tconticorrenti(Email, Password, CognomeTitolare, NomeTitolare, DataApertura, RegistrazioneConfermata, Token) VALUES('$email', '$passwordCriptata', '$cognomeTitolare', '$nomeTitolare', '$dataApertura', $registrazioneConfermata, '$token')";
+                            $statement -> execute();
+                            
+                            // Prendo il risultato della query
+                            $result = $statement->get_result();
+
+                            // Chiudo lo statement
+                            $statement->close();
+                        } else{
+                            // C'è stato un errore, lo stampo
+                            $errore = $mysqli->errno . ' ' . $mysqli->error;
+                            echo $errore;
+                        }
                 
                         // Chiudo la connessione al db
                         $conn->close();
                 
                         // Reinderizzo l'utente alla pagina di invio della mail di conferma
-                        header("locate: invioMailConferma.php?Email=$email&token=$token");
+                        header("Location: http://gruppo6.altervista.org/ProjectWork/php/invioMailConferma.php?email=$email&token=$token");
 
                     } else{
                         echo("<h2>Cognome titolare non valido</h2>");
@@ -208,12 +231,14 @@
 
                                     // Cancello gli input
                                     document.getElementById('cognomeTitolare').value = '';
+                                    return false;
                                 }
                             } else {
                                 alert("Nome titolare non valido. Rimuovi i numeri");
 
                                 // Cancello gli input
                                 document.getElementById('nomeTitolare').value = '';
+                                return false;
                             }
                         } else{
                             alert("Le password non corrispondono");
@@ -221,24 +246,28 @@
                             // Cancello gli input
                             document.getElementById('passwordID').value = '';
                             document.getElementById('confermaPasswordID').value = '';
+                            return false;
                         }
                     } else{
                         alert("Inserisci una conferma password che sia una stringa");
 
                         // Cancello l'input
                         document.getElementById('confermaPasswordID').value = '';
+                        return false;
                     }
                 } else{
                     alert("Inserisci una password valida");
 
                     // Cancello l'input
                     document.getElementById('passwordID').value = '';
+                    return false;
                 }
             } else{
                 alert("Inserisci una email valida");
 
                 // Cancello l'input
                 document.getElementById('emailID').value = '';
+                return false;
             }
         }
 
