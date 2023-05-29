@@ -23,7 +23,7 @@ if ($result1 !== false && $result1->num_rows > 0){
     while ($row = $result1->fetch_assoc()) {
         $utente[] = $row;
     }
-    $NomeUtente = $utente[0][4];
+    $NomeUtente = $utente[0]['NomeTitolare'];
 } else {
     echo "Nessun utente corrispondente trovato.";
 }
