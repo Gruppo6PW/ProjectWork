@@ -17,15 +17,16 @@ if ($conn->connect_error) {
 $sql1 = "SELECT * FROM tconticorrenti WHERE ContoCorrenteID = 1";
 $result1 = $conn->query($sql1);
 // Verifica dei risultati della query
-if ($result1 !== false && $result1->num_rows > 0){
+if ($result1 !== false && $result1->num_rows == 1){
     // Recupero dei dati dei movimenti
     $utente = array();
     while ($row = $result1->fetch_assoc()) {
         $utente[] = $row;
     }
     $NomeUtente = $utente[0]['NomeTitolare'];
+    $DataApertura = $utente[0]['DataApertura'];
 } else {
-    echo "Nessun utente corrispondente trovato.";
+    echo "Errore nella ricerca dell'utente.";
 }
 
 // Query per recuperare i movimenti
@@ -38,6 +39,7 @@ if ($result2 !== false && $result2->num_rows > 0){
     while ($row = $result2->fetch_assoc()) {
         $movimenti[] = $row;
     }
+    $Saldo = $movimenti[0]['Saldo'];
 } else {
     echo "Nessun movimento trovato.";
 }
