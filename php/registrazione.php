@@ -1,72 +1,69 @@
 <!-- PHP -->
 <?php
-function controllaSeCiSonoNumeri($stringaDaControllare)
-{
-    // Ciclo che controlla ogni cella se ci sono numeri
-    for ($i = 0; $i < strlen($stringaDaControllare); $i++) {
-        if ((is_numeric($stringaDaControllare[$i]))) {
-            // E' un numero, non valida
+    function controllaSeCiSonoNumeri($stringaDaControllare){
+        // Ciclo che controlla ogni cella se ci sono numeri
+        for($i = 0; $i < strlen($stringaDaControllare); $i++){
+            if((is_numeric($stringaDaControllare[$i]))){
+                // E' un numero, non valida
+                return false;
+            }
+        }
+
+        // Ciclo terminato, quindi niente numeri
+        return true;
+    }
+
+    // Controllo se l'email è valida
+    function controllaRequisitiEmail($stringaDaControllare){
+        $emailRegex = "/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$/";
+        // Controllo se la email rispetta questi parametri
+        if (preg_match($emailRegex, $stringaDaControllare) == 1) {
+            return true;
+        } else{
+            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/registrazione.php'>Torna alla pagina registrazione</a>");
+            return false;
+        }
+    }
+    
+    // Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
+    function controllaRequisitiPassword($stringaDaControllare){
+        $passwordRegex = "/^(?=\P{Ll}*\p{Ll})(?=\P{Lu}*\p{Lu})(?=\P{N}*\p{N})(?=[\p{L}\p{N}]*[^\p{L}\p{N}])[\s\S]{8,}$/";
+        // Controllo se la password rispetta questi parametri
+        if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
+            return true;
+        } else{
+            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/registrazione.php'>Torna alla pagina registrazione</a>");
             return false;
         }
     }
 
-    // Ciclo terminato, quindi niente numeri
-    return true;
-}
+    // Controllo se è stato premuto il button di submit, ossia è presente un elemento inviato in POST con chiave Registrazione nell'array superglobale
+    if(isset($_POST["Registrati"]) && isset($_POST["g-recaptcha-response"])){
+        // Prendo i valori inviata dalla pagina di registrazione
+        $email = $_POST["email"];
+        $password = $_POST["password"];
+        $nomeTitolare = $_POST["nomeTitolare"];
+        $cognomeTitolare = $_POST["cognomeTitolare"];
 
-// Controllo se l'email è valida
-function controllaRequisitiEmail($stringaDaControllare)
-{
-    $emailRegex = "/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$/";
-    // Controllo se la email rispetta questi parametri
-    if (preg_match($emailRegex, $stringaDaControllare) == 1) {
-        return true;
-    } else {
-        echo ("<a href='http://gruppo6.altervista.org/ProjectWork/registrazione.php'>Torna alla pagina registrazione</a>");
-        return false;
-    }
-}
-
-// Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
-function controllaRequisitiPassword($stringaDaControllare)
-{
-    $passwordRegex = "/^(?=\P{Ll}*\p{Ll})(?=\P{Lu}*\p{Lu})(?=\P{N}*\p{N})(?=[\p{L}\p{N}]*[^\p{L}\p{N}])[\s\S]{8,}$/";
-    // Controllo se la password rispetta questi parametri
-    if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
-        return true;
-    } else {
-        echo ("<a href='http://gruppo6.altervista.org/ProjectWork/registrazione.php'>Torna alla pagina registrazione</a>");
-        return false;
-    }
-}
-
-// Controllo se è stato premuto il button di submit, ossia è presente un elemento inviato in POST con chiave Registrazione nell'array superglobale
-if (isset($_POST["Registrati"]) && isset($_POST["g-recaptcha-response"])) {
-    // Prendo i valori inviata dalla pagina di registrazione
-    $email = $_POST["email"];
-    $password = $_POST["password"];
-    $nomeTitolare = $_POST["nomeTitolare"];
-    $cognomeTitolare = $_POST["cognomeTitolare"];
-
-    // Controllo che non siano vuote e chi siano stringhe
-    if (!empty($email) && is_string($email) && controllaRequisitiEmail($email)) {
-        // Non vuota e stringa
-
-        if (!empty($password) && is_string($password) && controllaRequisitiPassword($password)) {
+        // Controllo che non siano vuote e chi siano stringhe
+        if(!empty($email) && is_string($email) && controllaRequisitiEmail($email)){
             // Non vuota e stringa
 
-            if (!empty($nomeTitolare) != "" && is_string($nomeTitolare) && controllaSeCiSonoNumeri($nomeTitolare)) {
-                // Non vuota e stringa senza numeri
+            if(!empty($password) && is_string($password) && controllaRequisitiPassword($password)){
+                // Non vuota e stringa
 
-                if (!empty($cognomeTitolare) != "" && is_string($cognomeTitolare) && controllaSeCiSonoNumeri($cognomeTitolare)) {
+                if(!empty($nomeTitolare) != "" && is_string($nomeTitolare) && controllaSeCiSonoNumeri($nomeTitolare)){
                     // Non vuota e stringa senza numeri
 
-                    // Verifica del captcha
-                    $chiaveServer = "6Lc0L0wmAAAAANdAgFJdpPd7_Sv-M4Mm9zrXT-8R";
-                    $rispostaCaptcha = $_POST['g-recaptcha-response'];
+                    if(!empty($cognomeTitolare) != "" && is_string($cognomeTitolare) && controllaSeCiSonoNumeri($cognomeTitolare)){
+                        // Non vuota e stringa senza numeri
 
-                    $curl = curl_init();
-                    curl_setopt_array($curl, [
+                        // Verifica del captcha
+                        $chiaveServer = "6Lc0L0wmAAAAANdAgFJdpPd7_Sv-M4Mm9zrXT-8R";
+                        $rispostaCaptcha = $_POST['g-recaptcha-response'];
+
+                        $curl = curl_init();
+                        curl_setopt_array($curl, [
                         CURLOPT_RETURNTRANSFER => 1,
                         CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify',
                         CURLOPT_POST => 1,
@@ -74,10 +71,10 @@ if (isset($_POST["Registrati"]) && isset($_POST["g-recaptcha-response"])) {
                             'secret' => $chiaveServer,
                             'response' => $rispostaCaptcha
                         ]
-                    ]);
+                        ]);
 
-                    $risposta = curl_exec($curl);
-                    curl_close($curl);
+                        $risposta = curl_exec($curl);
+                        curl_close($curl);
 
                         $datiCaptcha = json_decode($risposta);
                         if (!$datiCaptcha->success) {
@@ -87,7 +84,7 @@ if (isset($_POST["Registrati"]) && isset($_POST["g-recaptcha-response"])) {
                             // Controllo che la mail non esista
                 
                         // Mi connetto al db
-                        $conn = mysqli_connect('localhost', "*nomeUtenteAltervista*", "*passwordAccessoAltervista*", "dbprojectwork");
+                        $conn = mysqli_connect('localhost', "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
                 
                         // Controllo che la connessione sia andata buon fine, altrimenti mostro l'errore
                         if ($conn->connect_error) {
@@ -95,42 +92,65 @@ if (isset($_POST["Registrati"]) && isset($_POST["g-recaptcha-response"])) {
                         }
                 
                         // Creo ed eseguo la query di controllo con il prepared statement per evitare SQL Injection
-                        $statement = $conn -> prepare("SELECT email FROM tconticorrenti WHERE 'Email'=? LIMIT 1");  // E' necessario il punto di domanda || Ho messo il limit perchè deve ritornare 1 email solo, quindi così siamo sicuri di evitare dump della tabella
-                        $statement -> bind_param("s", $email);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
-                        $statement -> execute();
-                        
-                        // Chiudo lo statement
-                        $statement->close();
+                        $SQL = "SELECT Email FROM tconticorrenti WHERE Email=? LIMIT 1"; // E' necessario il punto di domanda || Ho messo il limit perchè deve ritornare 1 email solo, quindi così siamo sicuri di evitare dump della tabella
+                        if($statement = $conn -> prepare($SQL)){
+                            $statement -> bind_param("s", $email);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
+                            $statement -> execute();
 
-                        if ($result->num_rows > 0) {
-                            // C'è una tupla. La mail esista già
+                            // Prendo il risultato della query
+                            $result = $statement->get_result();
+
+                            if ($result->num_rows > 0) {
+                                // C'è una tupla. La mail esista già
+                                echo("<h2>Email già esistente, prova con un'altra</h2>");
+                                return;
+                            }
+
+                            // Chiudo lo statement
+                            $statement->close();
+                        } else{
+                            // C'è stato un errore, lo stampo
+                            $errore = $mysqli->errno . ' ' . $mysqli->error;
+                            echo $errore;
                             return;
                         }
 
-                    // La mail non esiste. Calcolo l'hash della password
-                    $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
-                    $passwordCriptata = crypt($password, $salt);
+                        // La mail non esiste. Calcolo l'hash della password
+                        $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
+                        $passwordCriptata = crypt($password, $salt);
 
-                    // Genero il token per la conferma della mail
-                    $testoRandom = md5($email . $password . $nomeTitolare . $cognomeTitolare);    // Genero un hash MD5 concatenando le informazioni personali dell'utente, per renderlo univoco
-                    $token = uniqid() . '_' . $testoRandom;
+                        // Genero il token per la conferma della mail
+                        $testoRandom = md5($email.$password.$nomeTitolare.$cognomeTitolare);    // Genero un hash MD5 concatenando le informazioni personali dell'utente, per renderlo univoco
+                        $token = uniqid() . '_' . $testoRandom;
 
                         // Calcolo la data di apertura
                         $dataApertura = date("Y-m-d") . " " . date("h:i:s"); // Anno-Mese-Giorno Ora-Minuti-Secondi
+
+                        $registrazioneConfermata = 0;
                         
                         //Faccio l'inserimento
-                        $statement = $conn -> prepare("INSERT INTO tconticorrenti('Email', 'Password', 'CognomeTitolare', 'NomeTitolare', 'DataApertura', 'RegistrazioneConfermata', 'Token') VALUES(?, ?, ?, ?, ?, ?, ?");  // E' necessario il punto di domanda || Escludo l'ID e l'IBAN perchè è vanno fatti dopo
-                        $statement -> bind_param("ssssssss", $email, $passwordCriptata, $cognomeTitolare, $nomeTitolare, $dataApertura, 0, $token);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
-                        $statement -> execute();
-                        
-                        // Chiudo lo statement
-                        $statement->close();
+                        $SQL = "INSERT INTO tconticorrenti(Email, Password, CognomeTitolare, NomeTitolare, DataApertura, RegistrazioneConfermata, Token) VALUES(?, ?, ?, ?, ?, ?, ?)"; // E' necessario il punto di domanda || Escludo l'ID e l'IBAN perchè è vanno fatti dopo
+                        if($statement = $conn -> prepare($SQL)){
+                            $statement -> bind_param("sssssis", $email, $passwordCriptata, $cognomeTitolare, $nomeTitolare, $dataApertura, $registrazioneConfermata, $token);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
+                            echo $sqlInsert = "INSERT INTO tconticorrenti(Email, Password, CognomeTitolare, NomeTitolare, DataApertura, RegistrazioneConfermata, Token) VALUES('$email', '$passwordCriptata', '$cognomeTitolare', '$nomeTitolare', '$dataApertura', $registrazioneConfermata, '$token')";
+                            $statement -> execute();
+                            
+                            // Prendo il risultato della query
+                            $result = $statement->get_result();
+
+                            // Chiudo lo statement
+                            $statement->close();
+                        } else{
+                            // C'è stato un errore, lo stampo
+                            $errore = $mysqli->errno . ' ' . $mysqli->error;
+                            echo $errore;
+                        }
                 
                         // Chiudo la connessione al db
                         $conn->close();
                 
                         // Reinderizzo l'utente alla pagina di invio della mail di conferma
-                        header("locate: invioMailConferma.php?Email=$email&token=$token");
+                        header("Location: http://gruppo6.altervista.org/ProjectWork/php/invioMailConferma.php?email=$email&token=$token");
 
                     } else{
                         echo("<h2>Cognome titolare non valido</h2>");
@@ -140,19 +160,16 @@ if (isset($_POST["Registrati"]) && isset($_POST["g-recaptcha-response"])) {
                     echo("<h2>Nome titolare non valido</h2>");
                     return;
                 }
-            } else {
-                echo ("<h2>Nome titolare non valido</h2>");
+
+            } else{
+                echo("<h2>Password non valida</h2>");
                 return;
             }
-        } else {
-            echo ("<h2>Password non valida</h2>");
+        } else{
+            echo("<h2>L'email non è valida</h2>");
             return;
         }
-    } else {
-        echo ("<h2>L'email non è valida</h2>");
-        return;
     }
-}
 ?>
 
 <!DOCTYPE html>
