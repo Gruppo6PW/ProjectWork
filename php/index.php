@@ -63,7 +63,7 @@ $conn->close();
 
   <main class="container my-5">
     <h1 class="mb-4">Benvenuto, <?php echo $NomeUtente; ?>!</h1>
-    <p>Data di creazione del conto: <?php echo $DataApertura; ?></p>
+    <p>Conto creato in data: <?php echo $DataApertura; ?></p>
     <p>Saldo totale: <?php echo $Saldo; ?></p>
 
     <table class="table mt-4">
@@ -72,7 +72,6 @@ $conn->close();
         <tr>
           <th scope="col">Tipo operazione</th>
           <th scope="col">Importo</th>
-          <th scope="col">Destinatario</th>
           <th scope="col">Data</th>
           <th scope="col"></th>
         </tr>
