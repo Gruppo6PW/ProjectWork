@@ -16,7 +16,6 @@ if ($conn->connect_error) {
 // Query per recuperare i dati utente
 $sql1 = "SELECT * FROM tconticorrenti WHERE ContoCorrenteID = 1";
 $result1 = $conn->query($sql1);
-echo($result1);
 // Verifica dei risultati della query
 if ($result1 !== false && $result1->num_rows > 0){
     // Recupero dei dati dei movimenti
