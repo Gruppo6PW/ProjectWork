@@ -12,12 +12,24 @@
         // Ciclo terminato, quindi niente numeri
         return true;
     }
+    
+    // Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
+    function controllaRequisitiPassword($stringaDaControllare){
+        $passwordRegex = "/^(?=\P{Ll}*\p{Ll})(?=\P{Lu}*\p{Lu})(?=\P{N}*\p{N})(?=[\p{L}\p{N}]*[^\p{L}\p{N}])[\s\S]{8,}$/";
+        // Controllo se la password rispetta questi parametri
+        if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
+            return true;
+        } else{
+            echo("<h2>Password non valida</h2>");
+            return false;
+        }
+    }
 
     // Controllo se è stato premuto il button di submit, ossia è presente un elemento inviato in POST con chiave Registrazione nell'array superglobale
     if(isset($_POST["Registrati"])){
         // Prendo i valori inviata dalla pagina di registrazione
         $email = $_POST["email"];
-        $password = $_POST["password"];
+        echo $password = $_POST["password"];
         $nomeTitolare = $_POST["nomeTitolare"];
         $cognomeTitolare = $_POST["cognomeTitolare"];
 
@@ -25,7 +37,7 @@
         if(!empty($email) && is_string($email)){
             // Non vuota e stringa
 
-            if(!empty($password) && is_string($password)){
+            if(!empty($password) && is_string($password) && controllaRequisitiPassword($password)){
                 // Non vuota e stringa
 
                 if(!empty($nomeTitolare) != "" && is_string($nomeTitolare) && controllaSeCiSonoNumeri($nomeTitolare)){
@@ -137,11 +149,11 @@
                         if(password == confermaPassword){
                             // Uguali
 
-                            // Controllo che nomeTitolare non sia vuota e sia string
+                            // Controllo che nomeTitolare non sia vuota e sia string senza numeri
                             if((nomeTitolare != "" && (typeof nomeTitolare === 'string' || nomeTitolare instanceof String)) && controllaSeCiSonoNumeri(nomeTitolare)){
                                 // Non vuota e stringa senza numeri
 
-                                // Controllo che cognomeTitolare non sia vuota e sia string
+                                // Controllo che cognomeTitolare non sia vuota e sia string senza numeri
                                 if((cognomeTitolare != "" && (typeof cognomeTitolare === 'string' || cognomeTitolare instanceof String)) && controllaSeCiSonoNumeri(cognomeTitolare)){
                                     // Non vuota e stringa senza numeri
                                     // Tutto ok, invio
@@ -226,7 +238,7 @@
 
         <br>
 
-        <input type="submit" value="Registrati" onclick="controllaInput()">
+        <input type="submit" value="Registrati" name="Registrati" onclick="controllaInput()">
 
     </form>
 </body>
