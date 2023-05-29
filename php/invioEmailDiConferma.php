@@ -4,7 +4,7 @@
     $token = $_GET["token"];
 
     // Mando la mail di conferma
-    $msg = "Clicca sul link per confermare la mail: http://corsocyberdallavalle.altervista.org/Sito1/AttivaAccount.php?token=$token";   // Sostutuire con il proprio dominio di altervista
+    $msg = "Clicca sul link per confermare la mail: http://gruppo6.altervista.org/ProjectWork/attivaAccount.php?token=$token";   // Sostutuire con il proprio dominio di altervista
     $msg = wordwrap($msg,70);   // Necessario sopra i 50 caratteri
     mail("$email", "Conferma Registrazione - Project Work", $msg);
 ?>
