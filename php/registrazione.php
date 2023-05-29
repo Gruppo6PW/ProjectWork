@@ -20,7 +20,7 @@
         if (preg_match($emailRegex, $stringaDaControllare) == 1) {
             return true;
         } else{
-            echo ("<a href='//registrazione.php'>Torna alla pagina registrazione</a>"); // DA SISTEMARE CON IL LINK DI ALTERVISTA
+            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/registrazione.php'>Torna alla pagina registrazione</a>");
             return false;
         }
     }
@@ -32,7 +32,7 @@
         if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
             return true;
         } else{
-            echo ("<a href='//registrazione.php'>Torna alla pagina registrazione</a>"); // DA SISTEMARE CON IL LINK DI ALTERVISTA
+            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/registrazione.php'>Torna alla pagina registrazione</a>");
             return false;
         }
     }
