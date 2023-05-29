@@ -1,7 +1,7 @@
 <?php
 // Connessione database
-$conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
-//$conn=new mysqli("localhost", "root", "", "my_gruppo6");
+//$conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
+$conn=new mysqli("localhost", "root", "", "my_gruppo6");
 
 
 // Verifica della connessione
