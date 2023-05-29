@@ -13,6 +13,18 @@
         return true;
     }
     
+    // Controllo se l'email è valida
+    function controllaRequisitiPassword($stringaDaControllare){
+        $passwordRegex = "/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/";
+        // Controllo se la password rispetta questi parametri
+        if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
+            return true;
+        } else{
+            echo("<h2>Password non valida</h2>");
+            return false;
+        }
+    }
+    
     // Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
     function controllaRequisitiPassword($stringaDaControllare){
         $passwordRegex = "/^(?=\P{Ll}*\p{Ll})(?=\P{Lu}*\p{Lu})(?=\P{N}*\p{N})(?=[\p{L}\p{N}]*[^\p{L}\p{N}])[\s\S]{8,}$/";
@@ -25,6 +37,7 @@
         }
     }
 
+
     // Controllo se è stato premuto il button di submit, ossia è presente un elemento inviato in POST con chiave Registrazione nell'array superglobale
     if(isset($_POST["Registrati"])){
         // Prendo i valori inviata dalla pagina di registrazione
@@ -34,7 +47,7 @@
         $cognomeTitolare = $_POST["cognomeTitolare"];
 
         // Controllo che non siano vuote e chi siano stringhe
-        if(!empty($email) && is_string($email)){
+        if(!empty($email) && is_string($email) && controllaRequisitiEmail($email)){
             // Non vuota e stringa
 
             if(!empty($password) && is_string($password) && controllaRequisitiPassword($password)){
