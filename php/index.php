@@ -2,7 +2,7 @@
 // Configurazione del database
 $servername = "localhost";
 $username = "gruppo6";
-$password = "ZQ5Z4Dzc6Ddd";
+$password = "";
 $dbname = "my_gruppo6";
 
 // Connessione al database
