@@ -12,7 +12,7 @@
         // Ciclo terminato, quindi niente numeri
         return true;
     }
-    
+
     // Controllo se l'email è valida
     function controllaRequisitiPassword($stringaDaControllare){
         $passwordRegex = "/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/";
@@ -26,7 +26,7 @@
     }
     
     // Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
-    function controllaRequisitiPassword($stringaDaControllare){
+    function controllaRequisitiEmail($stringaDaControllare){
         $passwordRegex = "/^(?=\P{Ll}*\p{Ll})(?=\P{Lu}*\p{Lu})(?=\P{N}*\p{N})(?=[\p{L}\p{N}]*[^\p{L}\p{N}])[\s\S]{8,}$/";
         // Controllo se la password rispetta questi parametri
         if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
