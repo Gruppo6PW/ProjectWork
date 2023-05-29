@@ -55,8 +55,8 @@ $conn->close();
 <body>
   <header class="bg-light py-3">
     <div class="container d-flex justify-content-between align-items-center">
-      <img src="Media/searchIcon.png" alt="Icona Ricerca">
-      <img src="Media/profileIcon.png" alt="Icona Profilo Utente">
+        <a href="ProfiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente"> </a>
+        <img src="Media/searchIcon.png" alt="Icona Ricerca">
       <img src="Media/transactionIcon.png" alt="Icona Operazioni">
     </div>
   </header>
