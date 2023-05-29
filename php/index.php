@@ -1,12 +1,8 @@
 <?php
-// Configurazione del database
-$servername = "localhost";
-$username = "gruppo6"; //
-$password = "ZQ5Z4Dzc6Ddd";
-$dbname = "my_gruppo6";
+// Connessione database
+$conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
+//$conn=new mysqli("localhost", "root", "", "my_gruppo6");
 
-// Connessione al database
-$conn = new mysqli($servername, $username, $password, $dbname);
 
 // Verifica della connessione
 if ($conn->connect_error) {
