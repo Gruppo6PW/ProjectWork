@@ -12,34 +12,34 @@
      }
 
     // Faccio la query per il controllo del token
-    $SQL = "SELECT ContoCorrenteID FROM tconticorrente WHERE Token=?";
-    if($statement -> $conn -> prepare($SQL)){
+    $SQL = "SELECT ContoCorrenteID FROM tconticorrenti WHERE Token=?";
+    if($statement=$conn->prepare($SQL)){
         $statement -> bind_param("s", $token);
         $statement -> execute();
 
-        // Prendo il risultato della query
-        $result = $statement->get_result();
-
-        // Salvo l'id
-        $id = int()$result -> fetch_assoc();
-
+        // Prendo l'output della query e li salvo in result
+        $result = $statement -> get_result();
+        
+        // Salvo il contenuto del result
+        while ($row = $result->fetch_assoc()) {
+            // Prendo l'id (è gia int)
+            $id = $row["ContoCorrenteID"];
+        }
+        
         // Chiudo lo statement
         $statement->close();
     } else{
         // C'è stato un errore, lo stampo
-        $errore = $mysqli->errno . ' ' . $mysqli->error;
+        $errore = $conn->errno . ' ' . $conn->error;
         echo $errore;
     }
 
     // Modifico il campo RegistrazioneConfermata
     $registrazioneConfermata = 1;
     $SQL = "UPDATE tconticorrenti SET RegistrazioneConfermata = ? WHERE tconticorrenti.ContoCorrenteID = ?";
-    if($statement -> $conn -> prepare($SQL)){
+    if($statement = $conn -> prepare($SQL)){
         $statement -> bind_param("ii", $registrazioneConfermata, $id);
         $statement -> execute();
-
-        // Prendo il risultato della query
-        $result = $statement->get_result();
 
         // Chiudo lo statement
         $statement->close();
