@@ -27,7 +27,8 @@ try{
 
 // Prepared statement per ricavare le ultime 5 operazioni
 try{
-    $query2 = $conn->prepare("SELECT MovimentoID, CategoriaMovimentoID, Data, Importo, Saldo FROM tmovimenticontocorrente WHERE ContoCorrenteID = ? ORDER BY data DESC LIMIT 5");
+    $query2 = $conn->prepare("SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID WHERE movimenti.ContoCorrenteID = ? ORDER BY movimenti.Data DESC LIMIT 5
+    ");
     $query2->bind_param("i", $contoCorrenteID);
     $query2->execute();
     $risultato2 = $query2->get_result();
@@ -81,7 +82,7 @@ $conn->close();
         <?php foreach ($ultimeOperazioni as $operazione): ?>
           <tr>
             <!-- !!! Necessario convertire da CategoriaMovimentoID a Categoria-->
-            <td><?php echo $operazione['CategoriaMovimentoID']; ?></td>
+            <td><?php echo $operazione['NomeCategoria']; ?></td>
             <td><?php echo $operazione['Importo']; ?></td>
             <td><?php echo $operazione['Data']; ?></td>
             <td><a href="DettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>">
