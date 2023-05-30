@@ -72,20 +72,19 @@
                 <?php endforeach ?>
             </select>
         </form>
-
-        <h2>Storico operazioni:</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Tipo Operazione</th>
-                    <th>Importo</th>
-                    <th>Data</th>
-                    <th></th>
-                </tr>
-            </thead>
-        <tbody>
-           <?php
-                foreach ($operazioni as $operazione): ?>
+        <?php if ($categoriaID > 0): ?> <!-- Verifica se è stata selezionata una categoria valida -->
+            <h2>Storico operazioni:</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tipo Operazione</th>
+                        <th>Importo</th>
+                        <th>Data</th>
+                        <th></th>
+                    </tr>
+                </thead>
+            <tbody>
+            <?php foreach ($operazioni as $operazione): ?>
                     <tr>
                         <td><?php echo $operazione['NomeCategoria']; ?></td>
                         <td><?php echo $operazione['Importo']; ?>€</td>
@@ -93,8 +92,9 @@
                         <td><a href="DettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>">
                         <img src="Media/details.png" alt="Icona Dettagli" width="25"></a></td>
                     </tr>
-            <?php endforeach;?>
-        </tbody>
-    </table>
+                <?php endforeach;?>
+            </tbody>
+        </table>
+        <?php endif ?>
     </body>
 </html>
