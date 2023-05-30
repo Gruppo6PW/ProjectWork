@@ -109,12 +109,16 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifica Password</title>
-</head>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>ModificaPassword</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="style.css">
+
+    </head>
 <body>
     <!-- JS -->
     <script>
@@ -186,43 +190,7 @@
     </script>
 
     <!-- HTML -->
-    <form action="" method="post" name="formModificaPassword">
-        <label for="passwordCorrenteID">Password attuale:</label>
-        <input type="password" name="passwordCorrente" id="passwordCorrenteID">
-
-        <br>
-
-        <label for="passwordNuovaID">Nuova password:</label>
-        <input type="password" name="passwordNuova" id="passwordNuovaID">
-
-        <br>
-
-        <label for="confermaPasswordNuovaID">Conferma nuova password:</label>
-        <input type="password" name="confermaPasswordNuova" id="confermaPasswordNuovaID">
-
-        <br>
-
-        <input type="submit" name="Modifica" value="Modifica">
-
-        <a href="http://gruppo6.altervista.org/ProjectWork/php/profiloUtente.php">Cliccato per errore? Torna alla pagina del profilo senza fare modifiche</a>
-    </form>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>ModificaPassword</title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css" rel="stylesheet">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="style.css">
-
-    </head>
-    <body>
-        <div class="registration-form">
+    <div class="registration-form">
             <form>
                 <div class="form-icon">
                 <!-- Codice per l'icona SVG  -->
@@ -290,5 +258,5 @@
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
         <script src="assets/js/script.js"></script>
-    </body>
+</body>
 </html>
