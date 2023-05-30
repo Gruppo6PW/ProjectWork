@@ -81,7 +81,6 @@ $conn->close();
         <!-- Creazione tabella ultimi movimenti -->
         <?php foreach ($ultimeOperazioni as $operazione): ?>
           <tr>
-            <!-- !!! Necessario convertire da CategoriaMovimentoID a Categoria-->
             <td><?php echo $operazione['NomeCategoria']; ?></td>
             <td><?php echo $operazione['Importo']; ?></td>
             <td><?php echo $operazione['Data']; ?></td>
