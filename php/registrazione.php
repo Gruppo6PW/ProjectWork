@@ -40,10 +40,10 @@
     // Controllo se è stato premuto il button di submit, ossia è presente un elemento inviato in POST con chiave Registrazione nell'array superglobale
     if(isset($_POST["Registrati"]) && isset($_POST["g-recaptcha-response"])){
         // Prendo i valori inviata dalla pagina di registrazione
-        $email = $_POST["email"];
-        $password = $_POST["password"];
-        $nomeTitolare = $_POST["nomeTitolare"];
-        $cognomeTitolare = $_POST["cognomeTitolare"];
+        echo $email = $_POST["email"];
+        echo $password = $_POST["password"];
+        echo $nomeTitolare = $_POST["nomeTitolare"];
+        echo $cognomeTitolare = $_POST["cognomeTitolare"];
 
         // Controllo che non siano vuote e chi siano stringhe
         if(!empty($email) && is_string($email) && controllaRequisitiEmail($email)){
@@ -351,34 +351,44 @@
                     </svg>
                 </span>
             </div>
+
             <div class="form-group">
                 <input type="text" class="form-control item" name="nomeTitolare" id="nomeTitolareID" placeholder="Nome" required>
             </div>
+
             <div class="form-group">
                 <input type="text" class="form-control item" name="cognomeTitolare" id="cognomeTitolareID" placeholder="Cognome" required>
             </div>
+
             <div class="form-group">
                 <input type="email" class="form-control item" name="email" id="emailID" placeholder="E-Mail" required>
             </div>
+
             <div class="form-group">
                 <input type="password" class="form-control item" name="password" id="passwordID" placeholder="Password" required>
             </div>
+
             <div class="form-group">
                 <input type="password" class="form-control item" name="confermaPassword" id="confermaPasswordID" placeholder="Conferma Password" required>
             </div>
+
             <br>
+
             <!-- Recaptcha -->
             <div class="text-center">
                 <div class="g-recaptcha" data-sitekey="6Lc0L0wmAAAAAHIusv0dCKOV9a4msMJLD516RB1r"></div>
             </div>
-            <div class="social-media">
-                <div class="form-group">
-                    <button type="submit" class="btn btn-block create-account" name="Registrati" onclick="controllaInput()">Registrati</button>
-                </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-block create-account" name="Registrati" onclick="controllaInput()">Registrati</button>
             </div>
         </form>
+        
+        <div class="social-media">
+        	<a href="http://gruppo6.altervista.org/ProjectWork/php/login.php">Già registrato? Accedi al tuo conto</a>
+        </div>
     </div>
-    </div>
+  
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
     <script src="assets/js/script.js"></script>
