@@ -203,6 +203,8 @@
         <br>
 
         <input type="submit" name="Modifica" value="Modifica">
+
+        <a href="http://gruppo6.altervista.org/ProjectWork/php/profiloUtente.php">Cliccato per errore? Torna alla pagina del profilo senza fare modifiche</a>
     </form>
 </body>
 </html>
