@@ -2,45 +2,48 @@
 // Connessione database
 //$conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
 $conn=new mysqli("localhost", "root", "", "my_gruppo6");
-
-
 // Verifica della connessione
 if ($conn->connect_error) {
     die("Connessione al database fallita: " . $conn->connect_error);
 }
 
-// Query per recuperare i dati utente
-$sql1 = "SELECT * FROM tconticorrenti WHERE ContoCorrenteID = 1";
-$result1 = $conn->query($sql1);
-// Verifica dei risultati della query
-if ($result1 !== false && $result1->num_rows == 1){
-    // Recupero dei dati dei movimenti
-    $utente = array();
-    while ($row = $result1->fetch_assoc()) {
-        $utente[] = $row;
-    }
-    $NomeUtente = $utente[0]['NomeTitolare'];
-    $DataApertura = $utente[0]['DataApertura'];
-} else {
-    echo "Errore nella ricerca dell'utente.";
+//Da sistemare con session utente
+$contoCorrenteID = 1;
+
+// Prepared statement per ricavare i dati utente (nome, data apertura conto)
+try{
+    $query1 = $conn->prepare("SELECT NomeTitolare, DataApertura FROM tconticorrenti WHERE ContoCorrenteID = ?");
+    $query1->bind_param("i", $contoCorrenteID);
+    $query1->execute();
+    $risultato1 = $query1->get_result();
+
+    $datiUtente = $risultato1->fetch_assoc();
+    $nomeUtente = $datiUtente['NomeTitolare'];
+    $dataApertura = $datiUtente['DataApertura'];
+    $query1->close();
+} catch(Exception $e){
+    echo "Qualcosa è andato storto nella richiesta dei dati dell'utente al db.";
 }
 
-// Query per recuperare i movimenti
-$sql2 = "SELECT * FROM tmovimenticontocorrente ORDER BY data DESC LIMIT 5";
-$result2 = $conn->query($sql2);
-// Verifica dei risultati della query
-if ($result2 !== false && $result2->num_rows > 0){
-    // Recupero dei dati dei movimenti
-    $movimenti = array();
-    while ($row = $result2->fetch_assoc()) {
-        $movimenti[] = $row;
+// Prepared statement per ricavare le ultime 5 operazioni
+try{
+    $query2 = $conn->prepare("SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria 
+    FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON 
+    movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID WHERE movimenti.ContoCorrenteID = ? ORDER BY movimenti.Data 
+    DESC LIMIT 5");
+    $query2->bind_param("i", $contoCorrenteID);
+    $query2->execute();
+    $risultato2 = $query2->get_result();
+    $ultimeOperazioni = array();
+    while($row = $risultato2->fetch_assoc()){
+        $ultimeOperazioni[] = $row;
     }
-    $Saldo = $movimenti[0]['Saldo'];
-} else {
-    echo "Nessun movimento trovato.";
+$saldo = $ultimeOperazioni[4]['Saldo'];
+$query2->close();
+} catch(Exception $e){
+    echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
 }
 
-// Chiusura della connessione al database
 $conn->close();
 ?>
 
@@ -48,47 +51,47 @@ $conn->close();
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Gestione Conto Corrente</title>
-  <link rel="stylesheet" href="/css/stylesIndex.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Gestione Conto Corrente</title>
+    <link rel="stylesheet" href="/css/stylesIndex.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-  <header class="bg-light py-3">
-    <div class="container d-flex justify-content-between align-items-center">
-    <img src="Media/searchIcon.png" alt="Icona Ricerca" width=200>
-    <a href="ProfiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente" width=200> </a>
-    <img src="Media/transactionIcon.png" alt="Icona Operazioni" width=200>
+  <header>
+    <div>
+        <img src="Media/searchIcon.png" alt="Icona Ricerca" width=200>
+        <a href="ProfiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente" width=200> </a>
+        <img src="Media/transactionIcon.png" alt="Icona Operazioni" width=200>
     </div>
   </header>
 
-  <main class="container my-5">
-    <h1 class="mb-4">Benvenuto, <?php echo $NomeUtente; ?>!</h1>
-    <p>Conto creato in data: <?php echo $DataApertura; ?></p>
-    <p>Saldo totale: <?php echo $Saldo; ?></p>
+  <main>
+    <h1>Benvenuto, <?php echo $nomeUtente; ?>!</h1>
+    <p>Conto creato in data: <?php echo $dataApertura; ?></p>
+    <p>Saldo totale: <?php echo $saldo; ?></p>
 
-    <table class="table mt-4">
+    <table>
       <caption>Ultimi movimenti</caption>
       <thead>
         <tr>
-          <th scope="col">Tipo operazione</th>
-          <th scope="col">Importo</th>
-          <th scope="col">Data</th>
-          <th scope="col"></th>
+          <th>Tipo operazione</th>
+          <th>Importo</th>
+          <th>Data</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-        <?php foreach ($movimenti as $movimento): ?>
+        <!-- Creazione tabella ultimi movimenti -->
+        <?php foreach ($ultimeOperazioni as $operazione): ?>
           <tr>
-            <td><?php echo $movimento['CategoriaMovimentoID']; ?></td>
-            <td><?php echo $movimento['Importo']; ?></td>
-            <td><?php echo $movimento['Data']; ?></td>
-            <td><a href="DettaglioMovimento.php?id=<?php echo $movimento['MovimentoID']; ?>"><img src="icona_dettagli.png" alt="Icona Dettagli"></a></td>
+            <td><?php echo $operazione['NomeCategoria']; ?></td>
+            <td><?php echo $operazione['Importo']; ?>€</td>
+            <td><?php echo $operazione['Data']; ?></td>
+            <td><a href="DettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>">
+                <img src="Media/details.png" alt="Icona Dettagli" width="25"></a></td>
           </tr>
         <?php endforeach; ?>
       </tbody>
     </table>
   </main>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.7.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

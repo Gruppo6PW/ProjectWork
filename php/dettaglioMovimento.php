@@ -5,25 +5,23 @@ $movimentoID = $_GET["id"];
 //$conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
 $conn=new mysqli("localhost", "root", "", "my_gruppo6");
 
-
 // Verifica della connessione
 if ($conn->connect_error) {
     die("Connessione al database fallita: " . $conn->connect_error);
 }
 
-// Query per recuperare i dati utente
-$sql = "SELECT * FROM tmovimenticontocorrente WHERE MovimentoID = $movimentoID";
-$result = $conn->query($sql);
-// Verifica dei risultati della query
-if ($result !== false && $result->num_rows == 1){
-    // Recupero dei dati dei movimenti
-    $movimenti = array();
-    while ($row = $result->fetch_assoc()) {
-        $movimento[] = $row;
-    }
-} else {
-    echo "Errore nel caricamento delle informazioni.";
+// Prepared statement per ricavare i dati movimento
+try{
+    $query = $conn->prepare("SELECT movimenti.Data, movimenti.Importo, movimenti.DescrizioneEstesa, categorie.NomeCategoria FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID WHERE movimenti.MovimentoID = ?");
+    $query->bind_param("i", $movimentoID);
+    $query->execute();
+    $risultato = $query->get_result();
+    $datiMovimento = $risultato->fetch_assoc();
+    $query->close();
+} catch(Exception $e){
+    echo "Qualcosa è andato storto nella richiesta dei dati del movimento al db.";
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -34,8 +32,8 @@ if ($result !== false && $result->num_rows == 1){
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
-  <header class="bg-light py-3">
-    <div class="container d-flex justify-content-between align-items-center">
+  <header>
+    <div>
     <img src="Media/searchIcon.png" alt="Icona Ricerca" width=200>
     <a href="ProfiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente" width=200> </a>
     <img src="Media/transactionIcon.png" alt="Icona Operazioni" width=200>
@@ -45,20 +43,20 @@ if ($result !== false && $result->num_rows == 1){
     <h1>Tabella Dettagli Movimento</h1>
     <table>
         <tr>
-            <th>CategoriaMovimentoID</th>
-            <td><?php echo $movimento[0]['CategoriaMovimentoID']; ?></td>
+            <th>Categoria Movimento</th>
+            <td><?php echo $datiMovimento['NomeCategoria']; ?></td>
         </tr>
         <tr>
             <th>Data</th>
-            <td><?php echo $movimento[0]['Data']; ?></td>
+            <td><?php echo $datiMovimento['Data']; ?></td>
         </tr>
         <tr>
             <th>Importo</th>
-            <td><?php echo $movimento[0]['Importo']; ?></td>
+            <td><?php echo $datiMovimento['Importo']; ?>€</td>
         </tr>
         <tr>
             <th>DescrizioneEstesa</th>
-            <td><?php echo $movimento[0]['DescrizioneEstesa']; ?></td>
+            <td><?php echo $datiMovimento['DescrizioneEstesa']; ?></td>
         </tr>
     </table>
 </body>
