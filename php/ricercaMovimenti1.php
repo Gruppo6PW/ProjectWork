@@ -51,7 +51,7 @@
             <input type="number" name="numeroRighe">
             <button type="submit">Mostra</button>
         </form>
-
+        <?php if ($numeroRighe > 0): ?> <!-- Verifica se è stata selezionata una categoria valida -->
         <h2>Storico operazioni:</h2>
         <table>
             <thead>
@@ -76,6 +76,7 @@
             ?>
         </tbody>
     </table>
+    <?php endif ?>
     </body>
 </html>
 
