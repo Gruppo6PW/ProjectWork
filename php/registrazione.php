@@ -76,35 +76,6 @@
                         $risposta = curl_exec($curl);
                         curl_close($curl);
 
-<<<<<<< HEAD
-                    $datiCaptcha = json_decode($risposta);
-                    if (!$datiCaptcha->success) {
-                        die('Captcha non valido.');
-                    }
-
-                    // Controllo che la mail non esista
-
-                    // Mi connetto al db
-                    $conn = mysqli_connect('localhost', "*nomeUtenteAltervista*", "*passwordAccessoAltervista*", "dbprojectwork");
-
-                    // Controllo che la connessione sia andata buon fine, altrimenti mostro l'errore
-                    if ($conn->connect_error) {
-                        die("Connessione fallita: " . $conn->connect_error);
-                    }
-
-                    // Creo ed eseguo la query di controllo con il prepared statement per evitare SQL Injection
-                    $statement = $conn->prepare("SELECT email FROM tconticorrenti WHERE 'Email'=? LIMIT 1");  // E' necessario il punto di domanda || Ho messo il limit perchè deve ritornare 1 email solo, quindi così siamo sicuri di evitare dump della tabella
-                    $statement->bind_param("s", $email);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
-                    $statement->execute();
-
-                    // Chiudo lo statement
-                    $statement->close();
-
-                    if ($result->num_rows > 0) {
-                        // C'è una tupla. La mail esista già
-                        return;
-                    }
-=======
                         $datiCaptcha = json_decode($risposta);
                         if (!$datiCaptcha->success) {
                             die('Captcha non valido.');
@@ -143,7 +114,6 @@
                             echo $errore;
                             return;
                         }
->>>>>>> 2544ab7034929d0b7bfe634d198c9201ab87820f
 
                         // La mail non esiste. Calcolo l'hash della password
                         $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
@@ -153,10 +123,6 @@
                         $testoRandom = md5($email.$password.$nomeTitolare.$cognomeTitolare);    // Genero un hash MD5 concatenando le informazioni personali dell'utente, per renderlo univoco
                         $token = uniqid() . '_' . $testoRandom;
 
-<<<<<<< HEAD
-                    // Calcolo la data di apertura
-                    $dataApertura = date("Y-m-d") . " " . date("h:i:s"); // Anno-Mese-Giorno Ora-Minuti-Secondi
-=======
                         // Calcolo la data di apertura
                         $dataApertura = date("Y-m-d") . " " . date("h:i:s"); // Anno-Mese-Giorno Ora-Minuti-Secondi
 
@@ -166,7 +132,6 @@
                         $SQL = "INSERT INTO tconticorrenti(Email, Password, CognomeTitolare, NomeTitolare, DataApertura, RegistrazioneConfermata, Token) VALUES(?, ?, ?, ?, ?, ?, ?)"; // E' necessario il punto di domanda || Escludo l'ID e l'IBAN perchè è vanno fatti dopo
                         if($statement = $conn -> prepare($SQL)){
                             $statement -> bind_param("sssssis", $email, $passwordCriptata, $cognomeTitolare, $nomeTitolare, $dataApertura, $registrazioneConfermata, $token);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
-                            echo $sqlInsert = "INSERT INTO tconticorrenti(Email, Password, CognomeTitolare, NomeTitolare, DataApertura, RegistrazioneConfermata, Token) VALUES('$email', '$passwordCriptata', '$cognomeTitolare', '$nomeTitolare', '$dataApertura', $registrazioneConfermata, '$token')";
                             $statement -> execute();
                             
                             // Prendo il risultato della query
@@ -185,21 +150,6 @@
                 
                         // Reinderizzo l'utente alla pagina di invio della mail di conferma
                         header("Location: http://gruppo6.altervista.org/ProjectWork/php/invioMailConferma.php?email=$email&token=$token");
->>>>>>> 2544ab7034929d0b7bfe634d198c9201ab87820f
-
-                    //Faccio l'inserimento
-                    $statement = $conn->prepare("INSERT INTO tconticorrenti('Email', 'Password', 'CognomeTitolare', 'NomeTitolare', 'DataApertura', 'RegistrazioneConfermata', 'Token') VALUES(?, ?, ?, ?, ?, ?, ?");  // E' necessario il punto di domanda || Escludo l'ID e l'IBAN perchè è vanno fatti dopo
-                    $statement->bind_param("ssssssss", $email, $passwordCriptata, $cognomeTitolare, $nomeTitolare, $dataApertura, 0, $token);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
-                    $statement->execute();
-
-                    // Chiudo lo statement
-                    $statement->close();
-
-                    // Chiudo la connessione al db
-                    $conn->close();
-
-                    // Reinderizzo l'utente alla pagina di invio della mail di conferma
-                    header("locate: invioMailConferma.php?Email=$email&token=$token");
                 } else {
                     echo ("<h2>Cognome titolare non valido</h2>");
                     return;
@@ -209,7 +159,6 @@
                 echo("<h2>Password non valida</h2>");
                 return;
             }
-<<<<<<< HEAD
         } else {
             echo ("<h2>Nome titolare non valido</h2>");
             return;
@@ -217,19 +166,11 @@
     } else {
         echo ("<h2>Password non valida</h2>");
         return;
+    } else {
+        echo ("<h2>L'email non è valida</h2>");
+        return;
     }
-} else {
-    echo ("<h2>L'email non è valida</h2>");
-    return;
 }
-}
-=======
-        } else{
-            echo("<h2>L'email non è valida</h2>");
-            return;
-        }
-    }
->>>>>>> 2544ab7034929d0b7bfe634d198c9201ab87820f
 ?>
 
 <!DOCTYPE html>
