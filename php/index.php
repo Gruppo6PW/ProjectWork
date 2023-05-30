@@ -27,8 +27,10 @@ try{
 
 // Prepared statement per ricavare le ultime 5 operazioni
 try{
-    $query2 = $conn->prepare("SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID WHERE movimenti.ContoCorrenteID = ? ORDER BY movimenti.Data DESC LIMIT 5
-    ");
+    $query2 = $conn->prepare("SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria 
+    FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON 
+    movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID WHERE movimenti.ContoCorrenteID = ? ORDER BY movimenti.Data 
+    DESC LIMIT 5");
     $query2->bind_param("i", $contoCorrenteID);
     $query2->execute();
     $risultato2 = $query2->get_result();
