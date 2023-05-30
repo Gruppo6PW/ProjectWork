@@ -40,10 +40,10 @@
     // Controllo se è stato premuto il button di submit, ossia è presente un elemento inviato in POST con chiave Registrazione nell'array superglobale
     if(isset($_POST["Registrati"]) && isset($_POST["g-recaptcha-response"])){
         // Prendo i valori inviata dalla pagina di registrazione
-        echo $email = $_POST["email"];
-        echo $password = $_POST["password"];
-        echo $nomeTitolare = $_POST["nomeTitolare"];
-        echo $cognomeTitolare = $_POST["cognomeTitolare"];
+        $email = $_POST["email"];
+        $password = $_POST["password"];
+        $nomeTitolare = $_POST["nomeTitolare"];
+        $cognomeTitolare = $_POST["cognomeTitolare"];
 
         // Controllo che non siano vuote e chi siano stringhe
         if(!empty($email) && is_string($email) && controllaRequisitiEmail($email)){
