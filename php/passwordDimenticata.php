@@ -1,64 +1,82 @@
 <?php
-    // Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
-    function controllaRequisitiPassword($stringaDaControllare){
-        $passwordRegex = "/^(?=\P{Ll}*\p{Ll})(?=\P{Lu}*\p{Lu})(?=\P{N}*\p{N})(?=[\p{L}\p{N}]*[^\p{L}\p{N}])[\s\S]{8,}$/";
-        // Controllo se la password rispetta questi parametri
-        if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
+    // Controllo se l'email è valida
+    function controllaRequisitiEmail($stringaDaControllare){
+        $emailRegex = "/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$/";
+        // Controllo se la email rispetta questi parametri
+        if (preg_match($emailRegex, $stringaDaControllare) == 1) {
             return true;
         } else{
-            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/passwordDimenticata.php'>Torna alla pagina registrazione</a>");
+            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/passwordDimenticata.php'>Torna alla pagina per la password dimenticata</a>");
             return false;
         }
     }
-    
-    if(isset($_POST["Imposta"])){
-        // Prendo i valori
-        $nuovaPassword = $_POST["passwordNuova"];
-        $confermaNuovaPassword = $_POST["confermaPasswordNuova"];
 
-        if(!empty($nuovaPassword) && is_string($nuovaPassword) && controllaRequisitiPassword($nuovaPassword)){
-            // Non vuota e stringa
-            if(!empty($confermaNuovaPassword) && is_string($confermaNuovaPassword) && controllaRequisitiPassword($confermaNuovaPassword)){
-                // Non vuota e stringa
+    if(isset($_POST["Invia"])){
+        // Prendi il valore
+        $email = $_POST["email"];
 
-                // Mi connetto al db
-                $conn = mysqli_connect('localhost', "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
+        // Controllo che non siano vuote e chi siano stringhe
+        if(!empty($email) && is_string($email) && controllaRequisitiEmail($email)){
+            // Non vuota e stringa valida
+
+            // Mi connetto al db
+            $conn = mysqli_connect('localhost', "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
                     
-                // Controllo che la connessione sia andata buon fine, altrimenti mostro l'errore
-                if ($conn->connect_error) {
-                    die("Connessione fallita: " . $conn->connect_error);
-                }
-
-                    // Hasho la nuova password
-                $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
-                $nuovaPasswordCriptata = crypt($nuovaPassword, $salt);
-
-                // Creo la query di update
-                $SQL = "UPDATE tconticorrenti SET Password = ? WHERE tconticorrenti.ContoCorrenteID = ?";
-                if($statement = $conn -> prepare($SQL)){
-                    $statement -> bind_param("ss", $passwordNuovaCriptata, $email);
-                    $statement -> execute();
-
-                    // Chiudo lo statement
-                    $statement->close();
-                } else{
-                    // C'è stato un errore, lo stampo
-                    $errore = $mysqli->errno . ' ' . $mysqli->error;
-                    echo $errore;
-                }
-                
-                // Chiudo la connessione al db
-                $conn->close();
-
-                // Reinderizzo alla pgina di login
-            } else {
-                echo ("<h2>La nuova password non è valida</h2>");
-                return;
+            // Controllo che la connessione sia andata buon fine, altrimenti mostro l'errore
+            if ($conn->connect_error) {
+                die("Connessione fallita: " . $conn->connect_error);
             }
+
+            // Genero un token
+            $testoRandom = md5($email);    // Genero un hash MD5 per rendere il token univoco
+            $token = uniqid() . '_' . $testoRandom;
+
+            // Aggiorno il token del db
+            $SQL = "UPDATE tconticorrenti SET Token = ? WHERE tconticorrenti.Email = ?";
+            if($statement = $conn -> prepare($SQL)){
+                $statement -> bind_param("ss", $token, $email);
+                $statement -> execute();
+        
+                // Chiudo lo statement
+                $statement->close();
+            } else{
+                // C'è stato un errore, lo stampo
+                $errore = $mysqli->errno . ' ' . $mysqli->error;
+                echo $errore;
+            }
+            
+            // Chiudo la connessione al db
+            $conn->close();
+
+            // Invio la mail
+            $msg = "Clicca <a href='http://gruppo6.altervista.org/ProjectWork/php/reimpostaPassword.php?token=$token'>qui</a> per reimpostare la tua password";   // Sostutuire con il proprio dominio di altervista
+            $msg = wordwrap($msg,70);   // Necessario sopra i 50 caratteri
+            $specificheHtml = "MIME-Version: 1.0" . "\r\n" . "Content-type:text/html;charset=UTF-8" . "\r\n";
+            mail("$email", "Reimposta Password - Project Work", $msg, $specificheHtml);
+
+            // Creo una variabile per modificare l'html visualizzato
+            $html = "
+            <h2>Ti è stata inviata una email contenente un link per reimpostare la password</h2>
+            ";
+
         } else {
-            echo ("<h2>La conferma password non è valida</h2>");
+            echo ("<h2>L'email non è valida</h2>");
             return;
         }
+    } else{
+        // Carica html della form
+        $html = "
+        <h1>Inserisci la tua mail, in modo da ricevere il link per reimpostare la password</h1>
+
+        <form action='' name='formPasswordDimenticata' method='POST'>
+            <label for='email'>Email:</label>
+            <input type='email' name='email' id='emailID'>
+    
+            <br>
+    
+            <input type='submit' value='Invia' name='Invia' onclick='controllaInput()'>
+        </form>
+        ";
     }
 ?>
 
@@ -71,76 +89,7 @@
     <title>Password Dimenticata</title>
 </head>
 <body>
-    <!-- JS -->
-    <script>
-        function controllaInput() {
-            // Prendo i valori
-            passwordNuova = formPasswordDimenticata.passwordNuovaID.value;
-            confermaPasswordNuova = formPasswordDimenticata.confermaPasswordNuovaID.value;
-
-            // Controllo che la passwordCorrente non sia vuota e sia string
-            if ((!passwordNuova.isEmpty() && (typeof passwordNuova === 'string' || passwordNuova instanceof String) && controllaRequisitiPassword(passwordNuova))) {
-                // Non vuota e stringa
-
-                // Controllo che password non sia vuota e sia string
-                if ((!confermaPasswordNuova.isEmpty() && (typeof confermaPasswordNuova === 'string' || confermaPasswordNuova instanceof String) && controllaRequisitiPassword(confermaPasswordNuova))) {
-                    // Non vuota e stringa
-
-                    // Controllo se le password sono uguali
-                    if (passwordNuova == confermaPasswordNuova) {
-                        // Uguali
-
-                        // Tutto ok, invio
-                        formPasswordDimenticata.submit(); // Invio il submit
-                    } else {
-                        alert("Le password non corrispondono");
-
-                        // Cancello gli input
-                        document.getElementById('passwordNuovaID').value = '';
-                        document.getElementById('confermaPasswordNuovaID').value = '';
-                        return false;
-                    }
-                } else {
-                    alert("La password nuova deve valida");
-
-                    // Cancello l'input
-                    document.getElementById('passwordNuovaID').value = '';
-                    return false;
-                }
-            } else {
-                alert("La conferma della nuova password deve valida");
-
-                // Cancello l'input
-                document.getElementById('confermaPasswordNuovaID').value = '';
-                return false;
-            }
-        }
-
-        // Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
-        function controllaRequisitiPassword(stringaDaControllare) {
-            passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d\s:])([^\s]){8,}$/;
-            // Controllo se la password rispetta questi parametri
-            if (passwordRegex.test(stringaDaControllare)) {
-                return true;
-            } else {
-                return false;
-            }
-        }
-    </script>
-
     <!-- HTML -->
-    <form action="" name="formPasswordDimenticata" method="POST">
-        <label for="passwordNuovaID">Nuova password:</label>
-        <input type="password" name="passwordNuova" id="passwordNuovaID">
-
-        <br>
-
-        <label for="confermaPasswordNuovaID">Conferma nuova password:</label>
-        <input type="password" name="confermaPasswordNuova" id="confermaPasswordNuovaID">
-
-        <br>
-
-        <input type="submit" value="Imposta" name="Imposta" onclick="controllaInput()">
-    </form>
+    <?php echo $html; // Si adatta ad ogni caricamento ?>
 </body>
 </html>
