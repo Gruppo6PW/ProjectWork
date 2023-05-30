@@ -6,7 +6,7 @@
         if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
             return true;
         } else{
-            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/modificaPassword.php'>Torna alla pagina registrazione</a>");
+            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/modificaPassword.php'>Torna alla pagina di modifica della password</a>");
             return false;
         }
     }
