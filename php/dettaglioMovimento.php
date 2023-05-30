@@ -35,7 +35,7 @@ try{
   <header>
     <div>
     <img src="Media/searchIcon.png" alt="Icona Ricerca" width=200>
-    <a href="ProfiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente" width=200> </a>
+    <a href="profiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente" width=200> </a>
     <img src="Media/transactionIcon.png" alt="Icona Operazioni" width=200>
     </div>
   </header>
