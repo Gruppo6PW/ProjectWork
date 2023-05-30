@@ -52,7 +52,7 @@ try{
         </tr>
         <tr>
             <th>Importo</th>
-            <td><?php echo $datiMovimento['Importo']; ?></td>
+            <td><?php echo $datiMovimento['Importo']; ?>€</td>
         </tr>
         <tr>
             <th>DescrizioneEstesa</th>

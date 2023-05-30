@@ -84,7 +84,7 @@ $conn->close();
         <?php foreach ($ultimeOperazioni as $operazione): ?>
           <tr>
             <td><?php echo $operazione['NomeCategoria']; ?></td>
-            <td><?php echo $operazione['Importo']; ?></td>
+            <td><?php echo $operazione['Importo']; ?>€</td>
             <td><?php echo $operazione['Data']; ?></td>
             <td><a href="DettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>">
                 <img src="Media/details.png" alt="Icona Dettagli" width="25"></a></td>
