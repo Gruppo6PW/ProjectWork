@@ -150,27 +150,23 @@
                 
                         // Reinderizzo l'utente alla pagina di invio della mail di conferma
                         header("Location: http://gruppo6.altervista.org/ProjectWork/php/invioMailConferma.php?email=$email&token=$token");
+                    } else {
+                        echo ("<h2>Cognome titolare non valido</h2>");
+                        return;
+                    }
                 } else {
-                    echo ("<h2>Cognome titolare non valido</h2>");
+                    echo ("<h2>Nome titolare non valido</h2>");
                     return;
                 }
-
             } else{
                 echo("<h2>Password non valida</h2>");
                 return;
             }
         } else {
-            echo ("<h2>Nome titolare non valido</h2>");
+            echo ("<h2>L'email non è valida</h2>");
             return;
         }
-    } else {
-        echo ("<h2>Password non valida</h2>");
-        return;
-    } else {
-        echo ("<h2>L'email non è valida</h2>");
-        return;
     }
-}
 ?>
 
 <!DOCTYPE html>
