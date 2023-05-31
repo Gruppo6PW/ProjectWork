@@ -1,168 +1,3 @@
-<!-- PHP -->
-<?php
-function controllaRequisitiEmail($stringaDaControllare)
-{
-    $emailRegex = "/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$/";
-    // Controllo se la email rispetta questi parametri
-    if (preg_match($emailRegex, $stringaDaControllare) == 1) {
-        return true;
-    } else {
-        echo ("<a href='http://gruppo6.altervista.org/ProjectWork/login.php'>Torna alla pagina login</a>");
-        return false;
-    }
-}
-
-// Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
-function controllaRequisitiPassword($stringaDaControllare)
-{
-    $passwordRegex = "/^(?=\P{Ll}*\p{Ll})(?=\P{Lu}*\p{Lu})(?=\P{N}*\p{N})(?=[\p{L}\p{N}]*[^\p{L}\p{N}])[\s\S]{8,}$/";
-    // Controllo se la password rispetta questi parametri
-    if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
-        return true;
-    } else {
-        echo ("<a href='http://gruppo6.altervista.org/ProjectWork/login.php'>Torna alla pagina login</a>");
-        return false;
-    }
-}
-
-if (isset($_POST["Login"])) {
-    // Prendo i campi
-    $email = $_POST["email"];
-    $password = $_POST["password"];
-
-    // Controllo input utente
-    if (!empty($email) && is_string($email) && controllaRequisitiEmail($email)) {
-        // Non vuota e stringa valida
-
-        if (!empty($password) && is_string($password) && controllaRequisitiPassword($password)) {
-            // Non vuota e stringa valida
-
-                // Mi connetto al db
-            $conn = mysqli_connect('localhost', "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
-                
-            // Controllo che la connessione sia andata buon fine, altrimenti mostro l'errore
-            if ($conn->connect_error) {
-                die("Connessione fallita: " . $conn->connect_error);
-            }
-
-                // Calcolo l'hash della password
-            $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
-            $passwordCriptata = crypt($password, $salt);
-
-            // Controllo quanti tentativi di login ha fatto e li salvo
-            $SQL = "SELECT ContoCorrenteID, NumeroTentativiLogin FROM tconticorrenti WHERE Email = ? AND Password = ? LIMIT 1";
-            if($statement = $conn -> prepare($SQL)){
-                $statement -> bind_param("ss", $email, $passwordCriptata);
-                $statement -> execute();
-                
-                // Prendo il risultato della query
-                $result = $statement->get_result();
-
-                if ($result->num_rows == 0) {
-                    // Nessuna tupla ritornata, credenzali errate
-                    echo("<h2>Credenziali errate</h2>");
-
-                    $accessoValido = 0;
-
-                    // Variabile per bloccare dopo l'insert
-                    $esciDopoInsert = true;
-
-                    return;
-                } else{
-                    // Una tupla è presente, quindi credenziali corrette
-                    $accessoValido = 1;
-                }
-
-                // Salvo il contenuto del result
-                while ($row = $result->fetch_assoc()) {
-                    // Prendo l'id (è gia int)
-                    $id = $row["ContoCorrenteID"];
-                    $numeroTentativiLogin = $row["NumeroTentativiLogin"];
-                }
-
-                // Chiudo lo statement
-                $statement->close();
-
-                // Prendo indirizzo ip
-                $indirizzoIP = $_SERVER["REMOTE_ADDR"];
-
-                $dataAccesso = date("Y-m-d") . " " . date("h:i:s");
-                
-                    // Aggiungo una tupla nella taccessi
-                $SQL = "INSERT INTO taccessi(IndirizzoIP, Data, AccessoValido) VALUES(?, ?, ?)";
-                if($statement = $conn -> prepare($SQL)){
-                    $statement -> bind_param("ssi", $indirizzoIP, $dataAccesso, $accessoValido);
-                    $statement -> execute();
-
-                    // Prendo il risultato della query
-                    $result = $statement->get_result();
-
-                    // Chiudo lo statement
-                    $statement->close();
-                } else{
-                    // C'è stato un errore, lo stampo
-                    $errore = $mysqli->errno . ' ' . $mysqli->error;
-                    echo $errore;
-                }
-
-                if ($esciDopoInsert){
-                    // Esco dal php perchè le credenziali sono incorrette
-                    return;
-                }
-
-            } else{
-                // C'è stato un errore, lo stampo
-                $errore = $mysqli->errno . ' ' . $mysqli->error;
-                echo $errore;
-            }
-
-                // Sommo + 1 a tentativi di login
-            $numeroTentativiLogin += 1;
-            $SQL = "UPDATE tconticorrenti SET NumeroTentativiLogin = ? WHERE tconticorrenti.ContoCorrenteID = ?";
-            if($statement = $conn -> prepare($SQL)){
-                $statement -> bind_param("ii", $numeroTentativiLogin, $id);
-                $statement -> execute();
-
-                // Chiudo lo statement
-                $statement->close();
-            } else{
-                // C'è stato un errore, lo stampo
-                $errore = $mysqli->errno . ' ' . $mysqli->error;
-                echo $errore;
-            }
-
-                // Controllo se è arrivato a 3 tentativi di accesso
-            if($numeroTentativiLogin == 3){
-                // Disabilito le textbox e il submit, avvisando quando puo ricompilare
-                
-
-                // Reimposto 0 nel campo del db
-                $numeroTentativiLogin = 0;
-                $SQL = "UPDATE tconticorrenti SET NumeroTentativiLogin = ? WHERE tconticorrenti.ContoCorrenteID = ?";
-                if($statement = $conn -> prepare($SQL)){
-                    $statement -> bind_param("ii", $numeroTentativiLogin, $id);
-                    $statement -> execute();
-
-                    // Chiudo lo statement
-                    $statement->close();
-                } else{
-                    // C'è stato un errore, lo stampo
-                    $errore = $mysqli->errno . ' ' . $mysqli->error;
-                    echo $errore;
-                }
-            }
-
-        } else {
-            echo ("<h2>Password non valida</h2>");
-            return;
-        }
-    } else {
-        echo ("<h2>L'email non è valida</h2>");
-        return;
-    }
-}
-?>
-
 <!-- HTML -->
 <!DOCTYPE html>
 <html>
@@ -172,24 +7,17 @@ if (isset($_POST["Login"])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Login Page</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css"
-        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
 
-    <script>
-        function cancellaCredenziali() {
-            document.getElementById("emailID").value = "";
-            document.getElementById("passwordID").value = "";
-        }
-
-        function timerCancellazioneCredenziali() {
-            setInterval(cancellaCredenziali(), 30000);
-        }
-    </script>
+    <!-- BOOTSTRAP -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+    <script src="assets/js/script.js"></script>
 </head>
 
-<body onload="timerCancellazioneCredenziali()">
+<body>
     <script>
         function controllaInput() {
             // Prendo i valori
@@ -206,8 +34,7 @@ if (isset($_POST["Login"])) {
 
                     // Tutto ok, invio
                     loginForm.submit();
-                }
-                else {
+                } else {
                     alert("Inserisci una password valida");
                     // Cancello l'input
                     cancellaCredenziali();
@@ -242,8 +69,9 @@ if (isset($_POST["Login"])) {
                 return false;
             }
         }
-
     </script>
+
+
     <div class="registration-form">
         <form name="loginForm" method="POST">
             <div class="form-icon">
@@ -253,13 +81,13 @@ if (isset($_POST["Login"])) {
                 <input type="email" class="form-control item" id="emailID" name="email" placeholder="E-Mail" required>
             </div>
             <div class="form-group">
-                <input type="password" class="form-control item" id="passwordID" name="password" placeholder="Password" required>
+                <input type="password" class="form-control item" id="passwordID" name="password" placeholder="Password" value="Pippo" required>
             </div>
             <div class="text-center">
                 <div class="g-recaptcha" data-sitekey="6Lc0L0wmAAAAAHIusv0dCKOV9a4msMJLD516RB1r"></div>
             </div>
             <div class="form-group">
-                <input type="submit" class="btn btn-block create-account" name="Login" value="Login">
+                <input type="submit" class="btn btn-block create-account" name="Login" id="LoginID" value="Login" onclick="controllaInput()">
             </div>
         </form>
         <div class="social-media">
@@ -269,11 +97,231 @@ if (isset($_POST["Login"])) {
             <a href="passwordDimenticata.php">Hai dimenticato la Password?</a>
         </div>
     </div>
-    </div>
-    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script type="text/javascript"
-        src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
-    <script src="assets/js/script.js"></script>
+
+    <!-- JS pulizia textbox -->
+    <script>
+        function cancellaCredenziali() {
+            document.getElementById("emailID").value = "";
+            document.getElementById("passwordID").value = "";
+        }
+
+        function timerCancellazioneCredenziali() {
+            setInterval(cancellaCredenziali(), 10000);
+        }
+    </script>
+
+    <!-- PHP -->
+    <?php
+    function controllaRequisitiEmail($stringaDaControllare)
+    {
+        $emailRegex = "/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$/";
+        // Controllo se la email rispetta questi parametri
+        if (preg_match($emailRegex, $stringaDaControllare) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
+    function controllaRequisitiPassword($stringaDaControllare)
+    {
+        $passwordRegex = "/^(?=\P{Ll}*\p{Ll})(?=\P{Lu}*\p{Lu})(?=\P{N}*\p{N})(?=[\p{L}\p{N}]*[^\p{L}\p{N}])[\s\S]{8,}$/";
+        // Controllo se la password rispetta questi parametri
+        if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    if (isset($_POST["Login"])) {
+        // Prendo i campi
+        $email = $_POST["email"];
+        $password = $_POST["password"];
+
+        // Controllo input utente
+        if (!empty($email) && is_string($email) && controllaRequisitiEmail($email)) {
+            // Non vuota e stringa valida
+
+            if (!empty($password) && is_string($password) && controllaRequisitiPassword($password)) {
+                // Non vuota e stringa valida
+
+                // Mi connetto al db
+                $conn = mysqli_connect('localhost', "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
+
+                // Controllo che la connessione sia andata buon fine, altrimenti mostro l'errore
+                if ($conn->connect_error) {
+                    die("Connessione fallita: " . $conn->connect_error);
+                }
+
+                // Calcolo l'hash della password
+                $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
+                $passwordCriptata = crypt($password, $salt);
+
+                // Controllo quanti tentativi di login ha fatto e li salvo
+                $SQL = "SELECT ContoCorrenteID, NumeroTentativiLogin FROM tconticorrenti WHERE Email = ? AND Password = ? LIMIT 1";
+                if ($statement = $conn->prepare($SQL)) {
+                    $statement->bind_param("ss", $email, $passwordCriptata);
+                    $statement->execute();
+
+                    // Prendo il risultato della query
+                    $result = $statement->get_result();
+
+                    if ($result->num_rows == 0) {
+                        // Nessuna tupla ritornata, credenzali errate
+                        echo ("<h2>Credenziali errate</h2>");
+
+                        $accessoValido = 0;
+
+                        // Variabile per bloccare dopo l'insert
+                        $esciDopoInsert = "si";
+                    } else {
+                        // Una tupla è presente, quindi credenziali corrette
+                        $accessoValido = 1;
+
+                        // Salvo il contenuto del result
+                        while ($row = $result->fetch_assoc()) {
+                            // Prendo l'id (è gia int)
+                            $id = $row["ContoCorrenteID"];
+                            $numeroTentativiLogin = $row["NumeroTentativiLogin"];
+
+                        }
+                    }
+                    
+                    // Chiudo lo statement
+                    $statement->close();
+
+                    // Rifaccio la query per avere il numero di tentativi solo dalla mail
+                    $SQL = "SELECT ContoCorrenteID, NumeroTentativiLogin FROM tconticorrenti WHERE Email = ? LIMIT 1";
+                    if ($statement = $conn->prepare($SQL)) {
+                        $statement->bind_param("s", $email);
+                        $statement->execute();
+
+                        // Prendo il risultato della query
+                        $result = $statement->get_result();
+
+                        // C'è una tupla, prendo il NumeroTentativiLogin
+                        if ($result->num_rows != 0) {
+                            // Salvo il contenuto del result
+                            while ($row = $result->fetch_assoc()) {
+                                // Prendo l'id (è gia int)
+                                $numeroTentativiLogin = $row["NumeroTentativiLogin"];
+                            }
+                        }
+                    } else {
+                        // C'è stato un errore, lo stampo
+                        $errore = $mysqli->errno . ' ' . $mysqli->error;
+                        echo $errore;
+                    }
+
+                    // Prendo indirizzo ip
+                    $indirizzoIP = $_SERVER["REMOTE_ADDR"];
+
+                    $dataAccesso = date("Y-m-d") . " " . date("h:i:s");
+
+                    // Aggiungo una tupla nella taccessi
+                    $SQL = "INSERT INTO taccessi(IndirizzoIP, Data, AccessoValido) VALUES(?, ?, ?)";
+                    if ($statement = $conn->prepare($SQL)) {
+                        $statement->bind_param("ssi", $indirizzoIP, $dataAccesso, $accessoValido);
+                        $statement->execute();
+
+                        // Prendo il risultato della query
+                        $result = $statement->get_result();
+
+                        // Chiudo lo statement
+                        $statement->close();
+                    } else {
+                        // C'è stato un errore, lo stampo
+                        $errore = $mysqli->errno . ' ' . $mysqli->error;
+                        echo $errore;
+                    }
+
+                    if ($esciDopoInsert == "si") {
+                            // Sommo + 1 a tentativi di login
+                        $numeroTentativiLogin += 1;
+                        $SQL = "UPDATE tconticorrenti SET NumeroTentativiLogin = ? WHERE tconticorrenti.Email = ?";
+                        if ($statement = $conn->prepare($SQL)) {
+                            $statement->bind_param("ii", $numeroTentativiLogin, $email);
+                            $statement->execute();
+
+                            // Chiudo lo statement
+                            $statement->close();
+                        } else {
+                            // C'è stato un errore, lo stampo
+                            $errore = $mysqli->errno . ' ' . $mysqli->error;
+                            echo $errore;
+                        }
+
+                        // Controllo se è arrivato a 3 tentativi di accesso
+                        if ($numeroTentativiLogin == 3) {
+                                // Blocco
+                            echo "\n <script> \n";
+                            echo "function disabilita(){ \n";
+                            echo "document.getElementById('emailID').disabled = true;  \n";
+                            // echo "loginForm.emailID.disabled = true;  \n";
+                            echo "document.getElementById('passwordID').disabled = true;  \n";
+                            echo "document.getElementById('LoginID').disabled = true;  \n";
+                            echo "alert('Attendi un minuto prima di riprovare') \n";
+                            echo "} \n";
+
+                            echo "disabilita(); \n ";
+                            echo "</script> \n";
+
+                            // Sblocco
+                            echo "<script> \n ";
+                            echo "setTimeout(function(){ \n";
+                            echo "document.getElementById('emailID').disabled = false;  \n";
+                            echo "document.getElementById('passwordID').disabled = false;  \n";
+                            echo "document.getElementById('LoginID').disabled = false;  \n";
+                            echo "alert('Ora puoi riprovare') \n";
+                            echo "}, 60000); \n";
+                            echo "</script> \n";
+
+                            // Reimposto 0 nel campo del db
+                            $numeroTentativiLogin = 0;
+                            $SQL = "UPDATE tconticorrenti SET NumeroTentativiLogin = ? WHERE tconticorrenti.Email = ?";
+                            if ($statement = $conn->prepare($SQL)) {
+                                $statement->bind_param("ii", $numeroTentativiLogin, $email);
+                                $statement->execute();
+
+                                // Chiudo lo statement
+                                $statement->close();
+                            } else {
+                                // C'è stato un errore, lo stampo
+                                $errore = $mysqli->errno . ' ' . $mysqli->error;
+                                echo $errore;
+                            }
+                        }
+                    } else {
+                        // Reimposto a 0 dato che ha eseguito il login correttamente
+                        $numeroTentativiLogin = 0;
+                        $SQL = "UPDATE tconticorrenti SET NumeroTentativiLogin = ? WHERE tconticorrenti.Email = ?";
+                        if ($statement = $conn->prepare($SQL)) {
+                            $statement->bind_param("ii", $numeroTentativiLogin, $email);
+                            $statement->execute();
+
+                            // Chiudo lo statement
+                            $statement->close();
+                        } else {
+                            // C'è stato un errore, lo stampo
+                            $errore = $mysqli->errno . ' ' . $mysqli->error;
+                            echo $errore;
+                        }
+                    }
+                } else {
+                    // C'è stato un errore, lo stampo
+                    $errore = $mysqli->errno . ' ' . $mysqli->error;
+                    echo $errore;
+                }
+            } else {
+                echo ("<h2>Password non valida</h2>");
+            }
+        } else {
+            echo ("<h2>L'email non è valida</h2>");
+        }
+    }
+    ?>
 </body>
 
 </html>
