@@ -1,30 +1,5 @@
 <!-- PHP -->
 <?php
-$visibilitaSubmit = "";
-function disabilitaInserimentoCredenziali()
-{
-    $visibilitaSubmit = "";
-
-    if (!isset($_COOKIE["tentativiLogin"])) {
-        echo "Creo cookie";
-        $cookieName = "tentativiLogin";
-        $cookieValue = "0";
-        setcookie($cookieName, $cookieValue, time() + (60), "/");
-    } else {
-        $cookieName = "tentativiLogin";
-        $numeroTentativi = $_COOKIE["$cookieName"];
-        if ($numeroTentativi < 3) {
-            echo "Sommo + 1";
-            $cookieValue = $_COOKIE["$cookieName"] + 1;
-            $visibilitaSubmit = "";
-        } else {
-            echo "Metto disabled";
-            $visibilitaSubmit = "disabled";
-        }
-    }
-    return $visibilitaSubmit;
-}
-
 function controllaRequisitiEmail($stringaDaControllare)
 {
     $emailRegex = "/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$/";
@@ -62,10 +37,120 @@ if (isset($_POST["Login"])) {
         if (!empty($password) && is_string($password) && controllaRequisitiPassword($password)) {
             // Non vuota e stringa valida
 
-            // Chiamo la funzione per il cookie
-            $VisibilitaSubmit = disabilitaInserimentoCredenziali();
+                // Mi connetto al db
+            $conn = mysqli_connect('localhost', "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
+                
+            // Controllo che la connessione sia andata buon fine, altrimenti mostro l'errore
+            if ($conn->connect_error) {
+                die("Connessione fallita: " . $conn->connect_error);
+            }
 
-            
+                // Calcolo l'hash della password
+            $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
+            $passwordCriptata = crypt($password, $salt);
+
+            // Controllo quanti tentativi di login ha fatto e li salvo
+            $SQL = "SELECT ContoCorrenteID, NumeroTentativiLogin FROM tconticorrenti WHERE Email = ? AND Password = ? LIMIT 1";
+            if($statement = $conn -> prepare($SQL)){
+                $statement -> bind_param("ss", $email, $passwordCriptata);
+                $statement -> execute();
+                
+                // Prendo il risultato della query
+                $result = $statement->get_result();
+
+                if ($result->num_rows == 0) {
+                    // Nessuna tupla ritornata, credenzali errate
+                    echo("<h2>Credenziali errate</h2>");
+
+                    $accessoValido = 0;
+
+                    // Variabile per bloccare dopo l'insert
+                    $esciDopoInsert = true;
+
+                    return;
+                } else{
+                    // Una tupla è presente, quindi credenziali corrette
+                    $accessoValido = 1;
+                }
+
+                // Salvo il contenuto del result
+                while ($row = $result->fetch_assoc()) {
+                    // Prendo l'id (è gia int)
+                    $id = $row["ContoCorrenteID"];
+                    $numeroTentativiLogin = $row["NumeroTentativiLogin"];
+                }
+
+                // Chiudo lo statement
+                $statement->close();
+
+                // Prendo indirizzo ip
+                $indirizzoIP = $_SERVER["REMOTE_ADDR"];
+
+                $dataAccesso = date("Y-m-d") . " " . date("h:i:s");
+                
+                    // Aggiungo una tupla nella taccessi
+                $SQL = "INSERT INTO taccessi(IndirizzoIP, Data, AccessoValido) VALUES(?, ?, ?)";
+                if($statement = $conn -> prepare($SQL)){
+                    $statement -> bind_param("ssi", $indirizzoIP, $dataAccesso, $accessoValido);
+                    $statement -> execute();
+
+                    // Prendo il risultato della query
+                    $result = $statement->get_result();
+
+                    // Chiudo lo statement
+                    $statement->close();
+                } else{
+                    // C'è stato un errore, lo stampo
+                    $errore = $mysqli->errno . ' ' . $mysqli->error;
+                    echo $errore;
+                }
+
+                if ($esciDopoInsert){
+                    // Esco dal php perchè le credenziali sono incorrette
+                    return;
+                }
+
+            } else{
+                // C'è stato un errore, lo stampo
+                $errore = $mysqli->errno . ' ' . $mysqli->error;
+                echo $errore;
+            }
+
+                // Sommo + 1 a tentativi di login
+            $numeroTentativiLogin += 1;
+            $SQL = "UPDATE tconticorrenti SET NumeroTentativiLogin = ? WHERE tconticorrenti.ContoCorrenteID = ?";
+            if($statement = $conn -> prepare($SQL)){
+                $statement -> bind_param("ii", $numeroTentativiLogin, $id);
+                $statement -> execute();
+
+                // Chiudo lo statement
+                $statement->close();
+            } else{
+                // C'è stato un errore, lo stampo
+                $errore = $mysqli->errno . ' ' . $mysqli->error;
+                echo $errore;
+            }
+
+                // Controllo se è arrivato a 3 tentativi di accesso
+            if($numeroTentativiLogin == 3){
+                // Disabilito le textbox e il submit, avvisando quando puo ricompilare
+                
+
+                // Reimposto 0 nel campo del db
+                $numeroTentativiLogin = 0;
+                $SQL = "UPDATE tconticorrenti SET NumeroTentativiLogin = ? WHERE tconticorrenti.ContoCorrenteID = ?";
+                if($statement = $conn -> prepare($SQL)){
+                    $statement -> bind_param("ii", $numeroTentativiLogin, $id);
+                    $statement -> execute();
+
+                    // Chiudo lo statement
+                    $statement->close();
+                } else{
+                    // C'è stato un errore, lo stampo
+                    $errore = $mysqli->errno . ' ' . $mysqli->error;
+                    echo $errore;
+                }
+            }
 
         } else {
             echo ("<h2>Password non valida</h2>");
@@ -106,54 +191,33 @@ if (isset($_POST["Login"])) {
 
 <body onload="timerCancellazioneCredenziali()">
     <script>
-        // function controllaInput() {
-        //     // Prendo i valori
-        //     email = loginForm.emailID.value;
-        //     password = loginForm.passwordID.value;
+        function controllaInput() {
+            // Prendo i valori
+            email = loginForm.emailID.value;
+            password = loginForm.passwordID.value;
 
-        //     // Controllo che email non sia vuota e sia string
-        //     if ((email != "" && (typeof email === 'string' || email instanceof String) && controllaRequisitiEmail(email))) {
-        //         // Non vuota e stringa
+            // Controllo che email non sia vuota e sia string
+            if ((email != "" && (typeof email === 'string' || email instanceof String) && controllaRequisitiEmail(email))) {
+                // Non vuota e stringa
 
-        //         // Controllo che password non sia vuota e sia string
-        //         if (password != "" && (typeof password === 'string' || password instanceof String) && controllaRequisitiPassword(password)) {
-        //             // Non vuota e stringa
+                // Controllo che password non sia vuota e sia string
+                if (password != "" && (typeof password === 'string' || password instanceof String) && controllaRequisitiPassword(password)) {
+                    // Non vuota e stringa
 
-        //             // Chiamo la funzione php per creare o controllare il cookie
-        //             returnFunzionePHPPerDisabilitare = "?php echo (disabilitaInserimentoCredenziali()); ?>";
-        //             if(returnFunzionePHPPerDisabilitare == ""){
-        //                 loginForm.submit();
-        //             } else{
-        //                 alert("Devi attende lo scadere del timer prima del prossimo tentativo di accesso");
-        //                 setInterval(sbloccaSubmit(), 60);
-        //                 return false;
-        //             }
-        //         }
-        //         else {
-        //             alert("Inserisci una password valida");
-        //             // Cancello l'input
-        //             cancellaCredenziali();
-        //             return false;
-        //         }
-        //     } else {
-        //         alert("Inserisci una email valida");
-        //         // Cancello l'input
-        //         cancellaCredenziali();
-        //         return false;
-        //     }
-        // }
-
-        function sbloccaSubmit() {
-            return <?php $visibilitaSubmit = ""; ?>
-        }
-
-        function controllaSeCiSonoNumeri(stringaDaControllare) {
-            if (/\d/.test(stringaDaControllare)) {
-                // Ci sono numeri
-                return false; // False, NON può procedere
+                    // Tutto ok, invio
+                    loginForm.submit();
+                }
+                else {
+                    alert("Inserisci una password valida");
+                    // Cancello l'input
+                    cancellaCredenziali();
+                    return false;
+                }
             } else {
-                // Non ci sono numeri
-                return true; // True, può procedere
+                alert("Inserisci una email valida");
+                // Cancello l'input
+                cancellaCredenziali();
+                return false;
             }
         }
 
@@ -186,20 +250,16 @@ if (isset($_POST["Login"])) {
                 <span><i class="icon"></i></span>
             </div>
             <div class="form-group">
-                <input type="email" class="form-control item" id="emailID" name="email" placeholder="E-Mail" value=""
-                    required>
-                <!-- <input type="hidden" name="tentativiLogin" id="tentativiLoginID" -->
-                    <!-- value="?php echo ($_COOKIE["tentativiLogin"]); ?>"> -->
+                <input type="email" class="form-control item" id="emailID" name="email" placeholder="E-Mail" required>
             </div>
             <div class="form-group">
-                <input type="password" class="form-control item" id="passwordID" name="password" placeholder="Password"
-                    value="" required>
+                <input type="password" class="form-control item" id="passwordID" name="password" placeholder="Password" required>
             </div>
             <div class="text-center">
                 <div class="g-recaptcha" data-sitekey="6Lc0L0wmAAAAAHIusv0dCKOV9a4msMJLD516RB1r"></div>
             </div>
             <div class="form-group">
-                <input type="submit" class="btn btn-block create-account" name="Login" value="Login" <?php echo ($visibilitaSubmit); ?></input>
+                <input type="submit" class="btn btn-block create-account" name="Login" value="Login">
             </div>
         </form>
         <div class="social-media">
