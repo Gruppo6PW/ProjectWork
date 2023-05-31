@@ -38,7 +38,7 @@ try{
     while($row = $risultato2->fetch_assoc()){
         $ultimeOperazioni[] = $row;
     }
-$saldo = $ultimeOperazioni[4]['Saldo'];
+$saldo = $ultimeOperazioni[0]['Saldo'];
 $query2->close();
 } catch(Exception $e){
     echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
