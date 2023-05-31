@@ -39,7 +39,7 @@ if(isset($_POST['numero_telefono'])){
           VALUES (?, ?, ?, ?, 5, ?)");
             $queryInsert->bind_param("isdss", $contoCorrenteID, $data, $importo, $nuovoSaldo, $descrizione);
             $queryInsert->execute();
-            $saldo = $queryInsert->get_result();
+            $risultato = $queryInsert->get_result();
             $queryInsert->close();
         } catch(Exception $e){
             echo "Qualcosa è andato storto nella richiesta del saldo al db..";
@@ -47,7 +47,7 @@ if(isset($_POST['numero_telefono'])){
         //insert query
     } else {
         // Il numero di telefono non è valido
-        echo 'Siamo spiacenti, abbiamo riscontrato un errore. Riprovare inserendo i dati corretti.';
+        echo 'Siamo spiacenti, abbiamo riscontrato un errore. Riprovare ricaricando la pagina e inserendo i dati corretti.';
     }
 }
 
@@ -56,7 +56,7 @@ if(isset($_POST['numero_telefono'])){
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Gestione Conto Corrente</title>
+    <title>Ricarica telefonica</title>
     <link rel="stylesheet" href="/css/stylesIndex.css">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
