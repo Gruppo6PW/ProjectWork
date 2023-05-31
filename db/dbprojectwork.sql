@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 26, 2023 alle 17:32
--- Versione del server: 10.4.28-MariaDB
--- Versione PHP: 8.2.4
+-- Generation Time: May 31, 2023 at 04:31 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,20 +24,20 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `taccessi`
+-- Table structure for table `taccessi`
 --
 
 CREATE TABLE `taccessi` (
   `AccessoID` int(11) NOT NULL,
-  `Indirizzo IP` text NOT NULL,
-  `Data` datetime NOT NULL,
-  `AccessoValido` bit(1) NOT NULL
+  `IndirizzoIP` text NOT NULL,
+  `Data` text NOT NULL,
+  `AccessoValido` bit(1) NOT NULL DEFAULT b'0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `tcategoriemovimenti`
+-- Table structure for table `tcategoriemovimenti`
 --
 
 CREATE TABLE `tcategoriemovimenti` (
@@ -47,23 +47,23 @@ CREATE TABLE `tcategoriemovimenti` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dump dei dati per la tabella `tcategoriemovimenti`
+-- Dumping data for table `tcategoriemovimenti`
 --
 
 INSERT INTO `tcategoriemovimenti` (`CategoriaMovimentoID`, `NomeCategoria`, `Tipologia`) VALUES
-(0, 'Apertura conto', 'Apertura'),
+(0, 'Apertura conto', 'Apertura conto'),
 (1, 'Bonifico in entrata', 'Entrata'),
 (2, 'Bonifico in uscita', 'Uscita'),
-(3, 'Prelievo in contanti-Bancomat', 'Uscita'),
-(4, 'Pagamento utenze', 'Uscita'),
-(5, 'Ricarica', 'Uscita'),
-(6, 'Versamento in contanti-Bancomat', 'Entrata'),
-(7, 'Pagamento con carta di credito collegata', 'Uscita');
+(3, 'Prelievo contanti', 'Entrata'),
+(4, 'Pagamento delle utenze', 'Uscita'),
+(5, 'Ricarica telefonica', 'Uscita'),
+(6, 'Versamento al Bancomat', 'Uscita'),
+(7, 'Pagamento con Carta Credito', 'Uscita');
 
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `tconticorrenti`
+-- Table structure for table `tconticorrenti`
 --
 
 CREATE TABLE `tconticorrenti` (
@@ -72,31 +72,33 @@ CREATE TABLE `tconticorrenti` (
   `Password` text NOT NULL,
   `CognomeTitolare` text NOT NULL,
   `NomeTitolare` text NOT NULL,
-  `DataApertura` datetime NOT NULL,
+  `DataApertura` text NOT NULL,
   `IBAN` text DEFAULT NULL,
-  `RegistrazioneConfermata` bit(1) NOT NULL,
-  `Token` text NOT NULL
+  `RegistrazioneConfermata` bit(1) NOT NULL DEFAULT b'0',
+  `Token` text NOT NULL,
+  `NumeroTentativiLogin` int(11) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dump dei dati per la tabella `tconticorrenti`
+-- Dumping data for table `tconticorrenti`
 --
 
-INSERT INTO `tconticorrenti` (`ContoCorrenteID`, `Email`, `Password`, `CognomeTitolare`, `NomeTitolare`, `DataApertura`, `IBAN`, `RegistrazioneConfermata`, `Token`) VALUES
-(1, 'claudiaschiavone2@gmail.com', 'wHS8l8VyZe8tO5J', 'Schiavone', 'Claudia', '2023-05-26 15:11:39', 'IT59O0300203280481447977572', b'0', 'jkbdf65'),
-(2, 'riccardopanicucci29@gmail.com', 'Fxap5ElyBkOq3RT', 'Panicucci', 'Riccardo', '2023-05-26 15:15:59', 'IT06R0300203280965384535441', b'0', 'febrt832'),
-(3, 'noemiloggia153@gmail.com', 'OB3vqs0kyMTDi3b', 'Loggia', 'noemi', '2023-05-26 15:18:00', 'IT15W0300203280788344212161', b'0', 'dfabvtr5433');
+INSERT INTO `tconticorrenti` (`ContoCorrenteID`, `Email`, `Password`, `CognomeTitolare`, `NomeTitolare`, `DataApertura`, `IBAN`, `RegistrazioneConfermata`, `Token`, `NumeroTentativiLogin`) VALUES
+(1, 'alberto.basso@gmail.com', 'iFT*du3*26u!whHz', 'Basso', 'Alberto', '2020-02-01 07:30:00', 'IT16B0300203280876544945647', b'0', 'fudh4238', 0),
+(2, 'samuele.carnacini@gmail.com', 'Sqs&7@pEhUqEc3!!', 'Carnacini', 'Samuele', '2021-06-10 16:30:00', 'IT27W0300203280356731624263', b'0', 'worf0398', 0),
+(3, 'mattia.pozza@gmail.com', 'K2N^4FkML$DGF!#!', 'Pozza', 'Mattia', '2021-12-10 12:30:00', 'IT29J0300203280382868853545', b'0', 'iofd4219', 0),
+(4, 'tommaso.zini@gmail.com', 'DESF89#$QSF#fQwt', 'Zini', 'Tommaso', '2022-09-21 14:30:00', 'IT40N0300203280674763574942', b'0', 'nufs4832', 0);
 
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `tmovimenticontocorrente`
+-- Table structure for table `tmovimenticontocorrente`
 --
 
 CREATE TABLE `tmovimenticontocorrente` (
   `MovimentoID` int(11) NOT NULL,
   `ContoCorrenteID` int(11) NOT NULL,
-  `Data` datetime NOT NULL,
+  `Data` text NOT NULL,
   `Importo` float NOT NULL,
   `Saldo` float NOT NULL,
   `CategoriaMovimentoID` int(11) NOT NULL,
@@ -104,83 +106,95 @@ CREATE TABLE `tmovimenticontocorrente` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dump dei dati per la tabella `tmovimenticontocorrente`
+-- Dumping data for table `tmovimenticontocorrente`
 --
 
 INSERT INTO `tmovimenticontocorrente` (`MovimentoID`, `ContoCorrenteID`, `Data`, `Importo`, `Saldo`, `CategoriaMovimentoID`, `DescrizioneEstesa`) VALUES
-(1, 1, '2023-05-26 15:21:01', 3500, 3500, 1, 'Emolumenti per il mese di aprile 2023'),
-(2, 1, '2023-05-26 15:26:54', 350, 3850, 1, 'Premio di produttività/ Primo trimestre 2023'),
-(3, 1, '2023-05-26 15:29:10', 250, 3600, 7, 'Acquisto online tramite carta di credito di una console di gioco'),
-(4, 1, '2023-05-26 15:30:28', 25, 3575, 7, 'Acquisto online tramite carta di credito di gioielli '),
-(5, 1, '2023-05-26 15:31:45', 75, 3500, 2, 'Bonifico in uscita per tasse scolastiche'),
-(6, 1, '2023-05-26 15:33:29', 500, 3000, 2, 'Bonifico in uscita per il pagamento dell\'assicurazione della macchina'),
-(7, 1, '2023-05-26 15:34:39', 300, 2700, 3, 'Prelievo in contanti presso sportello'),
-(8, 1, '2023-05-26 15:35:35', 200, 2500, 4, 'Pagamento utenze mese di aprile'),
-(9, 1, '2023-05-26 15:37:08', 150, 2650, 6, 'Deposito in contanti presso bancomat'),
-(10, 1, '2023-05-26 15:37:59', 15, 2635, 5, 'Ricarica telefonica mensile'),
-(11, 2, '2023-05-26 15:40:01', 1500, 1500, 1, 'Emolumenti per il mese di marzo 2023'),
-(12, 2, '2023-05-26 15:41:12', 100, 1400, 7, 'Acquisto online tramite carta di credito'),
-(13, 2, '2023-05-26 15:41:52', 150, 1250, 2, 'Bonifico in uscita per l\'acquisto di libri scolastici'),
-(14, 2, '2023-05-26 15:44:09', 20, 1230, 5, 'Ricarica telefonica mensile'),
-(15, 2, '2023-05-26 15:45:18', 200, 1030, 2, 'Bonifico in  uscita per il pagamento della rata mensile della macchina'),
-(16, 2, '2023-05-26 15:46:24', 70, 1100, 1, 'Rimborso spese trasferta di lavoro'),
-(17, 2, '2023-05-26 15:47:11', 300, 800, 3, 'Prelievo in contanti al bancomat'),
-(18, 2, '2023-05-26 15:47:58', 1200, 2000, 1, 'Emolumenti mese di aprile 2023'),
-(19, 2, '2023-05-26 15:48:57', 250, 1750, 7, 'Acquisto online tramite carta di credito'),
-(20, 2, '2023-05-26 15:49:20', 250, 1500, 2, 'Pagamento bollette mese di maggio 2023');
+(1, 1, '2020-02-01 07:30:00', 0, 0, 0, 'Apertura del conto di Alberto Basso.'),
+(2, 1, '2020-02-10 09:00:00', 1000, 1000, 1, 'Bonifico in entrata.'),
+(3, 1, '2020-02-12 21:00:00', 10, 990, 5, 'Ricarica telefonica.'),
+(4, 3, '2021-12-10 12:30:00', 0, 0, 0, 'Apertura del conto di Mattia Pozza.'),
+(5, 3, '2021-12-10 14:30:00', 650, 650, 1, 'Bonifico in entrata.'),
+(6, 3, '2021-12-17 11:30:00', 250, 400, 7, 'Pagamento con Carta di Credito.'),
+(7, 3, '2021-12-19 11:30:00', 1500, 1900, 1, 'Bonifico in entrata.'),
+(8, 2, '2021-06-10 16:30:00', 0, 0, 0, 'Apertura del conto di Samuele Carnacini.'),
+(9, 2, '2021-06-10 18:30:00', 15000, 15000, 1, 'Bonifico in entrata.'),
+(10, 2, '2021-06-14 08:00:00', 7000, 8000, 2, 'Bonifico in uscita.'),
+(11, 2, '2021-06-17 08:00:00', 25, 7975, 5, 'Ricarica telefonica.'),
+(12, 2, '2021-06-17 08:00:00', 375, 7600, 2, 'Bonifico in uscita.'),
+(13, 4, '2022-09-21 14:30:00', 0, 0, 0, 'Apertura del conto per Tommaso Zini.'),
+(14, 4, '2022-09-21 19:30:00', 360, 360, 1, 'Bonifico in entrata.'),
+(15, 4, '2022-09-22 10:00:00', 25, 335, 5, 'Ricarica telefonica.'),
+(16, 4, '2022-09-22 11:00:00', 25, 310, 5, 'Ricarica telefonica.');
 
 --
--- Indici per le tabelle scaricate
+-- Indexes for dumped tables
 --
 
 --
--- Indici per le tabelle `taccessi`
+-- Indexes for table `taccessi`
 --
 ALTER TABLE `taccessi`
   ADD PRIMARY KEY (`AccessoID`);
 
 --
--- Indici per le tabelle `tcategoriemovimenti`
+-- Indexes for table `tcategoriemovimenti`
 --
 ALTER TABLE `tcategoriemovimenti`
   ADD PRIMARY KEY (`CategoriaMovimentoID`);
 
 --
--- Indici per le tabelle `tconticorrenti`
+-- Indexes for table `tconticorrenti`
 --
 ALTER TABLE `tconticorrenti`
-  ADD PRIMARY KEY (`ContoCorrenteID`),
-  ADD UNIQUE KEY `Email` (`Email`) USING HASH,
-  ADD UNIQUE KEY `IBAN` (`IBAN`) USING HASH,
-  ADD UNIQUE KEY `Token` (`Token`) USING HASH;
+  ADD PRIMARY KEY (`ContoCorrenteID`);
 
 --
--- Indici per le tabelle `tmovimenticontocorrente`
+-- Indexes for table `tmovimenticontocorrente`
 --
 ALTER TABLE `tmovimenticontocorrente`
-  ADD PRIMARY KEY (`MovimentoID`);
+  ADD PRIMARY KEY (`MovimentoID`),
+  ADD KEY `ContoCorrenteID` (`ContoCorrenteID`),
+  ADD KEY `CategoriaMovimentoID` (`CategoriaMovimentoID`);
 
 --
--- AUTO_INCREMENT per le tabelle scaricate
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT per la tabella `taccessi`
+-- AUTO_INCREMENT for table `taccessi`
 --
 ALTER TABLE `taccessi`
   MODIFY `AccessoID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT per la tabella `tconticorrenti`
+-- AUTO_INCREMENT for table `tcategoriemovimenti`
+--
+ALTER TABLE `tcategoriemovimenti`
+  MODIFY `CategoriaMovimentoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT for table `tconticorrenti`
 --
 ALTER TABLE `tconticorrenti`
   MODIFY `ContoCorrenteID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT per la tabella `tmovimenticontocorrente`
+-- AUTO_INCREMENT for table `tmovimenticontocorrente`
 --
 ALTER TABLE `tmovimenticontocorrente`
-  MODIFY `MovimentoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `MovimentoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `tmovimenticontocorrente`
+--
+ALTER TABLE `tmovimenticontocorrente`
+  ADD CONSTRAINT `tmovimenticontocorrente_ibfk_1` FOREIGN KEY (`ContoCorrenteID`) REFERENCES `tconticorrenti` (`ContoCorrenteID`),
+  ADD CONSTRAINT `tmovimenticontocorrente_ibfk_2` FOREIGN KEY (`CategoriaMovimentoID`) REFERENCES `tcategoriemovimenti` (`CategoriaMovimentoID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
