@@ -2,11 +2,11 @@
 <?php
 
 // da inserire il captcha
-// if (isset($_POST["Login"])) {
-//     // Prendo i valori inviata dalla pagina di registrazione
-//     $email = $_POST["email"];
-//     $password = $_POST["password"];
-// }
+if (isset($_POST["Login"])) {
+    // Prendo i valori inviata dalla pagina di registrazione
+    $email = $_POST["email"];
+    $password = $_POST["password"];
+}
 
 ?>
 
@@ -37,9 +37,10 @@
         setInterval(cancellaCredenziali, 30000);
 
         function tentativiInserimentoCredenziali() {
-            document.getElementById("tentativiLoginID").value += 1;
+            tentativi = document.getElementById("tentativiLoginID").value;
+            parseInt(tentativi);
+            console.log(tentativi);
             controllaInput();
-            alert("tentativo" + document.getElementById("tentativiLoginID").value);
         }
 
         function controllaInput() {
