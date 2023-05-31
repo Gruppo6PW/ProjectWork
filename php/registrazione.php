@@ -115,7 +115,7 @@
                             return;
                         }
 
-                        // La mail non esiste. Calcolo l'hash della password
+                            // La mail non esiste. Calcolo l'hash della password
                         $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
                         $passwordCriptata = crypt($password, $salt);
 

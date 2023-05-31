@@ -162,12 +162,12 @@
     <!-- HTML -->
     <form action="" name="formPasswordDimenticata" method="POST">
         <label for="passwordNuovaID">Nuova password:</label>
-        <input type="password" name="passwordNuova" id="passwordNuovaID">
+        <input type="password" name="passwordNuova" id="passwordNuovaID" required>
 
         <br>
 
         <label for="confermaPasswordNuovaID">Conferma nuova password:</label>
-        <input type="password" name="confermaPasswordNuova" id="confermaPasswordNuovaID">
+        <input type="password" name="confermaPasswordNuova" id="confermaPasswordNuovaID" required>
 
         <br>
 

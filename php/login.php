@@ -1,17 +1,84 @@
 <!-- PHP -->
 <?php
+$visibilitaSubmit = "";
+function disabilitaInserimentoCredenziali()
+{
+    $visibilitaSubmit = "";
 
-// da inserire il captcha
-if (isset($_POST["Login"])) {
-    // Prendo i valori inviata dalla pagina di registrazione
-    $email = $_POST["email"];
-    $password = $_POST["password"];
+    if (!isset($_COOKIE["tentativiLogin"])) {
+        echo "Creo cookie";
+        $cookieName = "tentativiLogin";
+        $cookieValue = "0";
+        setcookie($cookieName, $cookieValue, time() + (60), "/");
+    } else {
+        $cookieName = "tentativiLogin";
+        $numeroTentativi = $_COOKIE["$cookieName"];
+        if ($numeroTentativi < 3) {
+            echo "Sommo + 1";
+            $cookieValue = $_COOKIE["$cookieName"] + 1;
+            $visibilitaSubmit = "";
+        } else {
+            echo "Metto disabled";
+            $visibilitaSubmit = "disabled";
+        }
+    }
+    return $visibilitaSubmit;
 }
 
+function controllaRequisitiEmail($stringaDaControllare)
+{
+    $emailRegex = "/^[\w\-\.]+@([\w-]+\.)+[\w-]{2,4}$/";
+    // Controllo se la email rispetta questi parametri
+    if (preg_match($emailRegex, $stringaDaControllare) == 1) {
+        return true;
+    } else {
+        echo ("<a href='http://gruppo6.altervista.org/ProjectWork/login.php'>Torna alla pagina login</a>");
+        return false;
+    }
+}
+
+// Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
+function controllaRequisitiPassword($stringaDaControllare)
+{
+    $passwordRegex = "/^(?=\P{Ll}*\p{Ll})(?=\P{Lu}*\p{Lu})(?=\P{N}*\p{N})(?=[\p{L}\p{N}]*[^\p{L}\p{N}])[\s\S]{8,}$/";
+    // Controllo se la password rispetta questi parametri
+    if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
+        return true;
+    } else {
+        echo ("<a href='http://gruppo6.altervista.org/ProjectWork/login.php'>Torna alla pagina login</a>");
+        return false;
+    }
+}
+
+if (isset($_POST["Login"])) {
+    // Prendo i campi
+    $email = $_POST["email"];
+    $password = $_POST["password"];
+
+    // Controllo input utente
+    if (!empty($email) && is_string($email) && controllaRequisitiEmail($email)) {
+        // Non vuota e stringa valida
+
+        if (!empty($password) && is_string($password) && controllaRequisitiPassword($password)) {
+            // Non vuota e stringa valida
+
+            // Chiamo la funzione per il cookie
+            $VisibilitaSubmit = disabilitaInserimentoCredenziali();
+
+            
+
+        } else {
+            echo ("<h2>Password non valida</h2>");
+            return;
+        }
+    } else {
+        echo ("<h2>L'email non è valida</h2>");
+        return;
+    }
+}
 ?>
 
 <!-- HTML -->
-
 <!DOCTYPE html>
 <html>
 
@@ -25,50 +92,59 @@ if (isset($_POST["Login"])) {
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="style.css">
 
-</head>
-
-<body onload="cancellaCredenziali()">
     <script>
-
         function cancellaCredenziali() {
             document.getElementById("emailID").value = "";
             document.getElementById("passwordID").value = "";
         }
-        setInterval(cancellaCredenziali, 30000);
 
-        function tentativiInserimentoCredenziali() {
-            tentativi = document.getElementById("tentativiLoginID").value;
-            parseInt(tentativi);
-            console.log(tentativi);
-            controllaInput();
+        function timerCancellazioneCredenziali() {
+            setInterval(cancellaCredenziali(), 30000);
         }
+    </script>
+</head>
 
-        function controllaInput() {
-            // Prendo i valori
-            email = loginForm.emailID.value;
-            password = loginForm.passwordID.value;
+<body onload="timerCancellazioneCredenziali()">
+    <script>
+        // function controllaInput() {
+        //     // Prendo i valori
+        //     email = loginForm.emailID.value;
+        //     password = loginForm.passwordID.value;
 
-            // Controllo che email non sia vuota e sia string
-            if ((email != "" && (typeof email === 'string' || email instanceof String) && controllaRequisitiEmail(email))) {
-                // Non vuota e stringa
+        //     // Controllo che email non sia vuota e sia string
+        //     if ((email != "" && (typeof email === 'string' || email instanceof String) && controllaRequisitiEmail(email))) {
+        //         // Non vuota e stringa
 
-                // Controllo che password non sia vuota e sia string
-                if (password != "" && (typeof password === 'string' || password instanceof String) && controllaRequisitiPassword(password)) {
-                    // Non vuota e stringa
+        //         // Controllo che password non sia vuota e sia string
+        //         if (password != "" && (typeof password === 'string' || password instanceof String) && controllaRequisitiPassword(password)) {
+        //             // Non vuota e stringa
 
-                }
-                else {
-                    alert("Inserisci una password valida");
-                    // Cancello l'input
-                    cancellaCredenziali();
-                    return false;
-                }
-            } else {
-                alert("Inserisci una email valida");
-                // Cancello l'input
-                cancellaCredenziali();
-                return false;
-            }
+        //             // Chiamo la funzione php per creare o controllare il cookie
+        //             returnFunzionePHPPerDisabilitare = "?php echo (disabilitaInserimentoCredenziali()); ?>";
+        //             if(returnFunzionePHPPerDisabilitare == ""){
+        //                 loginForm.submit();
+        //             } else{
+        //                 alert("Devi attende lo scadere del timer prima del prossimo tentativo di accesso");
+        //                 setInterval(sbloccaSubmit(), 60);
+        //                 return false;
+        //             }
+        //         }
+        //         else {
+        //             alert("Inserisci una password valida");
+        //             // Cancello l'input
+        //             cancellaCredenziali();
+        //             return false;
+        //         }
+        //     } else {
+        //         alert("Inserisci una email valida");
+        //         // Cancello l'input
+        //         cancellaCredenziali();
+        //         return false;
+        //     }
+        // }
+
+        function sbloccaSubmit() {
+            return <?php $visibilitaSubmit = ""; ?>
         }
 
         function controllaSeCiSonoNumeri(stringaDaControllare) {
@@ -110,19 +186,20 @@ if (isset($_POST["Login"])) {
                 <span><i class="icon"></i></span>
             </div>
             <div class="form-group">
-                <input type="email" class="form-control item" id="emailID" name="email" placeholder="E-Mail">
-                <input type="hidden" name="tentativiLogin" id="tentativiLoginID">
+                <input type="email" class="form-control item" id="emailID" name="email" placeholder="E-Mail" value=""
+                    required>
+                <!-- <input type="hidden" name="tentativiLogin" id="tentativiLoginID" -->
+                    <!-- value="?php echo ($_COOKIE["tentativiLogin"]); ?>"> -->
             </div>
             <div class="form-group">
-                <input type="password" class="form-control item" id="passwordID" password="password"
-                    placeholder="Password">
+                <input type="password" class="form-control item" id="passwordID" name="password" placeholder="Password"
+                    value="" required>
             </div>
             <div class="text-center">
                 <div class="g-recaptcha" data-sitekey="6Lc0L0wmAAAAAHIusv0dCKOV9a4msMJLD516RB1r"></div>
             </div>
             <div class="form-group">
-                <button type="button" class="btn btn-block create-account"
-                    onclick=tentativiInserimentoCredenziali()>Login</button>
+                <input type="submit" class="btn btn-block create-account" name="Login" value="Login" <?php echo ($visibilitaSubmit); ?></input>
             </div>
         </form>
         <div class="social-media">

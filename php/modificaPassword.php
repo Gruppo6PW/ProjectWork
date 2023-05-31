@@ -236,13 +236,13 @@
                     </span>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control item" id="passwordCorrenteID" name="passwordCorrente" placeholder="Password corrente">
+                    <input type="password" class="form-control item" id="passwordCorrenteID" name="passwordCorrente" placeholder="Password corrente" required>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control item" id="passwordNuovaID" name="passwordNuova" placeholder="Nuova password">
+                    <input type="password" class="form-control item" id="passwordNuovaID" name="passwordNuova" placeholder="Nuova password" required>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control item" id="confermaPasswordNuovaID" name="confermaPasswordNuova" placeholder="Conferma password">
+                    <input type="password" class="form-control item" id="confermaPasswordNuovaID" name="confermaPasswordNuova" placeholder="Conferma password" required>
                 </div>
                 <div class="form-group">
                     <button type="button" class="btn btn-block create-account" name="Modifica" onclick="controllaInput()">Modifica password</button>
