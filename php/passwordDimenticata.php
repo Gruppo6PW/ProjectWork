@@ -70,7 +70,7 @@
 
         <form action='' name='formPasswordDimenticata' method='POST'>
             <label for='email'>Email:</label>
-            <input type='email' name='email' id='emailID'>
+            <input type='email' name='email' id='emailID' required>
     
             <br>
     
