@@ -12,7 +12,7 @@
      }
 
     // Faccio la query per il controllo del token
-    $SQL = "SELECT ContoCorrenteID FROM tconticorrenti WHERE Token=?";
+    $SQL = "SELECT ContoCorrenteID, NomeTitolare, CognomeTitolare FROM tconticorrenti WHERE Token=?";
     if($statement=$conn->prepare($SQL)){
         $statement -> bind_param("s", $token);
         $statement -> execute();
@@ -30,6 +30,8 @@
         while ($row = $result->fetch_assoc()) {
             // Prendo l'id (è gia int)
             $id = $row["ContoCorrenteID"];
+            $nomeTitolare = $row["NomeTitolare"];
+            $cognomeTitolare = $row["CognomeTitolare"];
         }
         
         // Chiudo lo statement
@@ -46,6 +48,27 @@
     if($statement = $conn -> prepare($SQL)){
         $statement -> bind_param("ii", $registrazioneConfermata, $id);
         $statement -> execute();
+
+        // Chiudo lo statement
+        $statement->close();
+    } else{
+        // C'è stato un errore, lo stampo
+        $errore = $mysqli->errno . ' ' . $mysqli->error;
+        echo $errore;
+    }
+
+        // Inserisco nel relativo conto corrente un movimento di apertura con tutti gli importi a zero (sia importo che saldo)
+    $importo = 0;
+    $saldo = 0;
+    $categoriaMovimentoID = 0; // = -> Apertura conto
+    $descrizioneEstesa = "Apertura conto $nomeTitolare $cognomeTitolare";
+    $SQL = "INSERT INTO tmovimenticontocorrente(ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa) VALUES(?, ?, ?, ?, ?, ?)"; // E' necessario il punto di domanda
+    if($statement = $conn -> prepare($SQL)){
+        $statement -> bind_param("isiiis", $id, $dataApertura, $importo, $saldo, $categoriaMovimentoID, $descrizioneEstesa);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
+        $statement -> execute();
+        
+        // Prendo il risultato della query
+        $result = $statement->get_result();
 
         // Chiudo lo statement
         $statement->close();

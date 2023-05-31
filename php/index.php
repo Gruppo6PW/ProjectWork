@@ -65,7 +65,7 @@ $conn->close();
   </header>
 
   <main>
-    <h1>Benvenuto, <?php echo $nomeUtente; ?>!</h1>
+    <h1>Salve, <?php echo $nomeUtente; ?>!</h1>
     <p>Conto creato in data: <?php echo $dataApertura; ?></p>
     <p>Saldo totale: <?php echo $saldo; ?></p>
 
