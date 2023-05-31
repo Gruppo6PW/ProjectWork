@@ -2,12 +2,15 @@
 <?php
 
 // da inserire il captcha
-if (isset($_POST["Login"])) {
-    // Prendo i valori inviata dalla pagina di registrazione
-    $email = $_POST["email"];
-    $password = $_POST["password"];
-}
+// if (isset($_POST["Login"])) {
+//     // Prendo i valori inviata dalla pagina di registrazione
+//     $email = $_POST["email"];
+//     $password = $_POST["password"];
+// }
 
+$cookie_name = "tentativi";
+$cookie_value = "0";
+setcookie($cookie_name, $cookie_value, time() + (300), "/");
 ?>
 
 <!-- HTML -->
@@ -39,9 +42,17 @@ if (isset($_POST["Login"])) {
         function tentativiInserimentoCredenziali() {
             tentativi = document.getElementById("tentativiLoginID").value;
             parseInt(tentativi);
-            console.log(tentativi);
             controllaInput();
         }
+
+        function bloccoInserimentoCredenziali() {
+
+        }
+
+        function timerInserimentoCredenziali() {
+            setInterval(bloccoInserimentoCredenziali, 60000);
+        }
+
 
         function controllaInput() {
             // Prendo i valori
@@ -104,6 +115,21 @@ if (isset($_POST["Login"])) {
         }
 
     </script>
+    <?php
+    if (!isset($_COOKIE[$cookie_name])) {
+        $cookie_name = "tentativiLogin";
+        $cookie_value = "0";
+        setcookie($cookie_name, $cookie_value, time() + (300), "/");
+    } else {
+        $numeroTentativi = $_COOKIE[$cookie_name];
+        if($numeroTentativi < 3){
+            echo '<script type="text/javascript">tentativiInserimentoCredenziali();</script>';
+        }
+        else{
+            echo '<script type="text/javascript">bloccoInserimentoCredenziali();</script>';
+        }
+    }
+    ?>
     <div class="registration-form">
         <form name="loginForm" method="POST">
             <div class="form-icon">
@@ -111,10 +137,10 @@ if (isset($_POST["Login"])) {
             </div>
             <div class="form-group">
                 <input type="email" class="form-control item" id="emailID" name="email" placeholder="E-Mail">
-                <input type="hidden" name="tentativiLogin" id="tentativiLoginID">
+                <input type="hidden" name="tentativiLogin" id="tentativiLoginID" value="$_COOKIE['tentativiLogin']">
             </div>
             <div class="form-group">
-                <input type="password" class="form-control item" id="passwordID" password="password"
+                <input type="password" class="form-control item" id="passwordID" name="password"
                     placeholder="Password">
             </div>
             <div class="text-center">
@@ -122,7 +148,7 @@ if (isset($_POST["Login"])) {
             </div>
             <div class="form-group">
                 <button type="button" class="btn btn-block create-account"
-                    onclick=tentativiInserimentoCredenziali()>Login</button>
+                onclick=tentativiInserimentoCredenziali()>Login</button>
             </div>
         </form>
         <div class="social-media">
