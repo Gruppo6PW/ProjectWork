@@ -42,7 +42,6 @@ setcookie($cookie_name, $cookie_value, time() + (300), "/");
         function tentativiInserimentoCredenziali() {
             tentativi = document.getElementById("tentativiLoginID").value;
             parseInt(tentativi);
-            console.log(tentativi);
             controllaInput();
         }
 
@@ -141,7 +140,7 @@ setcookie($cookie_name, $cookie_value, time() + (300), "/");
                 <input type="hidden" name="tentativiLogin" id="tentativiLoginID" value="$_COOKIE['tentativiLogin']">
             </div>
             <div class="form-group">
-                <input type="password" class="form-control item" id="passwordID" password="password"
+                <input type="password" class="form-control item" id="passwordID" name="password"
                     placeholder="Password">
             </div>
             <div class="text-center">
