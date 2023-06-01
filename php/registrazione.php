@@ -20,7 +20,6 @@
         if (preg_match($emailRegex, $stringaDaControllare) == 1) {
             return true;
         } else{
-            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/registrazione.php'>Torna alla pagina registrazione</a>");
             return false;
         }
     }
@@ -32,7 +31,6 @@
         if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
             return true;
         } else{
-            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/registrazione.php'>Torna alla pagina registrazione</a>");
             return false;
         }
     }
@@ -152,19 +150,15 @@
                         header("Location: http://gruppo6.altervista.org/ProjectWork/php/invioMailConferma.php?email=$email&token=$token");
                     } else {
                         echo ("<h2>Cognome titolare non valido</h2>");
-                        return;
                     }
                 } else {
                     echo ("<h2>Nome titolare non valido</h2>");
-                    return;
                 }
             } else{
                 echo("<h2>Password non valida</h2>");
-                return;
             }
         } else {
             echo ("<h2>L'email non è valida</h2>");
-            return;
         }
     }
 ?>

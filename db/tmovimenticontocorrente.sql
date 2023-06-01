@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 26, 2023 alle 17:35
--- Versione del server: 10.4.28-MariaDB
--- Versione PHP: 8.2.4
+-- Generation Time: May 31, 2023 at 04:32 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,13 +24,13 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `tmovimenticontocorrente`
+-- Table structure for table `tmovimenticontocorrente`
 --
 
 CREATE TABLE `tmovimenticontocorrente` (
   `MovimentoID` int(11) NOT NULL,
   `ContoCorrenteID` int(11) NOT NULL,
-  `Data` datetime NOT NULL,
+  `Data` text NOT NULL,
   `Importo` float NOT NULL,
   `Saldo` float NOT NULL,
   `CategoriaMovimentoID` int(11) NOT NULL,
@@ -38,50 +38,59 @@ CREATE TABLE `tmovimenticontocorrente` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dump dei dati per la tabella `tmovimenticontocorrente`
+-- Dumping data for table `tmovimenticontocorrente`
 --
 
 INSERT INTO `tmovimenticontocorrente` (`MovimentoID`, `ContoCorrenteID`, `Data`, `Importo`, `Saldo`, `CategoriaMovimentoID`, `DescrizioneEstesa`) VALUES
-(1, 1, '2023-05-26 15:21:01', 3500, 3500, 1, 'Emolumenti per il mese di aprile 2023'),
-(2, 1, '2023-05-26 15:26:54', 350, 3850, 1, 'Premio di produttività/ Primo trimestre 2023'),
-(3, 1, '2023-05-26 15:29:10', 250, 3600, 7, 'Acquisto online tramite carta di credito di una console di gioco'),
-(4, 1, '2023-05-26 15:30:28', 25, 3575, 7, 'Acquisto online tramite carta di credito di gioielli '),
-(5, 1, '2023-05-26 15:31:45', 75, 3500, 2, 'Bonifico in uscita per tasse scolastiche'),
-(6, 1, '2023-05-26 15:33:29', 500, 3000, 2, 'Bonifico in uscita per il pagamento dell\'assicurazione della macchina'),
-(7, 1, '2023-05-26 15:34:39', 300, 2700, 3, 'Prelievo in contanti presso sportello'),
-(8, 1, '2023-05-26 15:35:35', 200, 2500, 4, 'Pagamento utenze mese di aprile'),
-(9, 1, '2023-05-26 15:37:08', 150, 2650, 6, 'Deposito in contanti presso bancomat'),
-(10, 1, '2023-05-26 15:37:59', 15, 2635, 5, 'Ricarica telefonica mensile'),
-(11, 2, '2023-05-26 15:40:01', 1500, 1500, 1, 'Emolumenti per il mese di marzo 2023'),
-(12, 2, '2023-05-26 15:41:12', 100, 1400, 7, 'Acquisto online tramite carta di credito'),
-(13, 2, '2023-05-26 15:41:52', 150, 1250, 2, 'Bonifico in uscita per l\'acquisto di libri scolastici'),
-(14, 2, '2023-05-26 15:44:09', 20, 1230, 5, 'Ricarica telefonica mensile'),
-(15, 2, '2023-05-26 15:45:18', 200, 1030, 2, 'Bonifico in  uscita per il pagamento della rata mensile della macchina'),
-(16, 2, '2023-05-26 15:46:24', 70, 1100, 1, 'Rimborso spese trasferta di lavoro'),
-(17, 2, '2023-05-26 15:47:11', 300, 800, 3, 'Prelievo in contanti al bancomat'),
-(18, 2, '2023-05-26 15:47:58', 1200, 2000, 1, 'Emolumenti mese di aprile 2023'),
-(19, 2, '2023-05-26 15:48:57', 250, 1750, 7, 'Acquisto online tramite carta di credito'),
-(20, 2, '2023-05-26 15:49:20', 250, 1500, 2, 'Pagamento bollette mese di maggio 2023');
+(1, 1, '2020-02-01 07:30:00', 0, 0, 0, 'Apertura del conto di Alberto Basso.'),
+(2, 1, '2020-02-10 09:00:00', 1000, 1000, 1, 'Bonifico in entrata.'),
+(3, 1, '2020-02-12 21:00:00', 10, 990, 5, 'Ricarica telefonica.'),
+(4, 3, '2021-12-10 12:30:00', 0, 0, 0, 'Apertura del conto di Mattia Pozza.'),
+(5, 3, '2021-12-10 14:30:00', 650, 650, 1, 'Bonifico in entrata.'),
+(6, 3, '2021-12-17 11:30:00', 250, 400, 7, 'Pagamento con Carta di Credito.'),
+(7, 3, '2021-12-19 11:30:00', 1500, 1900, 1, 'Bonifico in entrata.'),
+(8, 2, '2021-06-10 16:30:00', 0, 0, 0, 'Apertura del conto di Samuele Carnacini.'),
+(9, 2, '2021-06-10 18:30:00', 15000, 15000, 1, 'Bonifico in entrata.'),
+(10, 2, '2021-06-14 08:00:00', 7000, 8000, 2, 'Bonifico in uscita.'),
+(11, 2, '2021-06-17 08:00:00', 25, 7975, 5, 'Ricarica telefonica.'),
+(12, 2, '2021-06-17 08:00:00', 375, 7600, 2, 'Bonifico in uscita.'),
+(13, 4, '2022-09-21 14:30:00', 0, 0, 0, 'Apertura del conto per Tommaso Zini.'),
+(14, 4, '2022-09-21 19:30:00', 360, 360, 1, 'Bonifico in entrata.'),
+(15, 4, '2022-09-22 10:00:00', 25, 335, 5, 'Ricarica telefonica.'),
+(16, 4, '2022-09-22 11:00:00', 25, 310, 5, 'Ricarica telefonica.');
 
 --
--- Indici per le tabelle scaricate
+-- Indexes for dumped tables
 --
 
 --
--- Indici per le tabelle `tmovimenticontocorrente`
+-- Indexes for table `tmovimenticontocorrente`
 --
 ALTER TABLE `tmovimenticontocorrente`
-  ADD PRIMARY KEY (`MovimentoID`);
+  ADD PRIMARY KEY (`MovimentoID`),
+  ADD KEY `ContoCorrenteID` (`ContoCorrenteID`),
+  ADD KEY `CategoriaMovimentoID` (`CategoriaMovimentoID`);
 
 --
--- AUTO_INCREMENT per le tabelle scaricate
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT per la tabella `tmovimenticontocorrente`
+-- AUTO_INCREMENT for table `tmovimenticontocorrente`
 --
 ALTER TABLE `tmovimenticontocorrente`
-  MODIFY `MovimentoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+  MODIFY `MovimentoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+
+--
+-- Constraints for dumped tables
+--
+
+--
+-- Constraints for table `tmovimenticontocorrente`
+--
+ALTER TABLE `tmovimenticontocorrente`
+  ADD CONSTRAINT `tmovimenticontocorrente_ibfk_1` FOREIGN KEY (`ContoCorrenteID`) REFERENCES `tconticorrenti` (`ContoCorrenteID`),
+  ADD CONSTRAINT `tmovimenticontocorrente_ibfk_2` FOREIGN KEY (`CategoriaMovimentoID`) REFERENCES `tcategoriemovimenti` (`CategoriaMovimentoID`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 26, 2023 alle 17:34
--- Versione del server: 10.4.28-MariaDB
--- Versione PHP: 8.2.4
+-- Generation Time: May 31, 2023 at 04:32 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,7 +24,7 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `tcategoriemovimenti`
+-- Table structure for table `tcategoriemovimenti`
 --
 
 CREATE TABLE `tcategoriemovimenti` (
@@ -34,28 +34,38 @@ CREATE TABLE `tcategoriemovimenti` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dump dei dati per la tabella `tcategoriemovimenti`
+-- Dumping data for table `tcategoriemovimenti`
 --
 
 INSERT INTO `tcategoriemovimenti` (`CategoriaMovimentoID`, `NomeCategoria`, `Tipologia`) VALUES
-(0, 'Apertura conto', 'Apertura'),
+(0, 'Apertura conto', 'Apertura conto'),
 (1, 'Bonifico in entrata', 'Entrata'),
 (2, 'Bonifico in uscita', 'Uscita'),
-(3, 'Prelievo in contanti-Bancomat', 'Uscita'),
-(4, 'Pagamento utenze', 'Uscita'),
-(5, 'Ricarica', 'Uscita'),
-(6, 'Versamento in contanti-Bancomat', 'Entrata'),
-(7, 'Pagamento con carta di credito collegata', 'Uscita');
+(3, 'Prelievo contanti', 'Entrata'),
+(4, 'Pagamento delle utenze', 'Uscita'),
+(5, 'Ricarica telefonica', 'Uscita'),
+(6, 'Versamento al Bancomat', 'Uscita'),
+(7, 'Pagamento con Carta Credito', 'Uscita');
 
 --
--- Indici per le tabelle scaricate
+-- Indexes for dumped tables
 --
 
 --
--- Indici per le tabelle `tcategoriemovimenti`
+-- Indexes for table `tcategoriemovimenti`
 --
 ALTER TABLE `tcategoriemovimenti`
   ADD PRIMARY KEY (`CategoriaMovimentoID`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `tcategoriemovimenti`
+--
+ALTER TABLE `tcategoriemovimenti`
+  MODIFY `CategoriaMovimentoID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

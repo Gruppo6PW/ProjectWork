@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 26, 2023 alle 17:34
--- Versione del server: 10.4.28-MariaDB
--- Versione PHP: 8.2.4
+-- Generation Time: May 31, 2023 at 04:31 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -24,32 +24,32 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `taccessi`
+-- Table structure for table `taccessi`
 --
 
 CREATE TABLE `taccessi` (
   `AccessoID` int(11) NOT NULL,
-  `Indirizzo IP` text NOT NULL,
-  `Data` datetime NOT NULL,
-  `AccessoValido` bit(1) NOT NULL
+  `IndirizzoIP` text NOT NULL,
+  `Data` text NOT NULL,
+  `AccessoValido` bit(1) NOT NULL DEFAULT b'0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Indici per le tabelle scaricate
+-- Indexes for dumped tables
 --
 
 --
--- Indici per le tabelle `taccessi`
+-- Indexes for table `taccessi`
 --
 ALTER TABLE `taccessi`
   ADD PRIMARY KEY (`AccessoID`);
 
 --
--- AUTO_INCREMENT per le tabelle scaricate
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT per la tabella `taccessi`
+-- AUTO_INCREMENT for table `taccessi`
 --
 ALTER TABLE `taccessi`
   MODIFY `AccessoID` int(11) NOT NULL AUTO_INCREMENT;
