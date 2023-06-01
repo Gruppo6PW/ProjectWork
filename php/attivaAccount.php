@@ -23,7 +23,6 @@
         if ($result->num_rows == 0) {
             // C'è una tupla. Password valida
             echo("<h2>Token errato</h2>");
-            return;
         }
         
         // Salvo il contenuto del result
