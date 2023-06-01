@@ -3,7 +3,8 @@
     session_start();
     if($_SESSION["accessoEseguito"]){
         // Ha l'accesso, lo reinderizzo
-        header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php");
+        $contoCorrenteID = $_SESSION["contoCorrenteID"];
+        header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=$contoCorrenteID");
     }
 ?>
 
