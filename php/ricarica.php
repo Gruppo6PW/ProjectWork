@@ -28,6 +28,9 @@ $importo = isset($_POST['importo']) ? $_POST['importo'] : 0;
 
 $pattern = '/^[0-9]{10}$/'; // Espressione regolare per un numero di telefono composto da 10 cifre
 if(isset($_POST['numero_telefono'])){
+}
+
+if(isset($_POST['invia'])){
     if (preg_match($pattern, $telefono)) {
         // Il numero di telefono è valido
         //echo 'Ricarica effettuata correttamente.' , $telefono , $operatore;
@@ -35,22 +38,33 @@ if(isset($_POST['numero_telefono'])){
             $data = date("Y-m-d-G-i-s");
             $descrizione = "Ricarica telefonica $operatore, $importo € al num $telefono";
             $nuovoSaldo = (float)$saldo - (float)$importo;
+            if($nuovoSaldo<0){
+                throw new Exception('', 1);
+            }
             $queryInsert = $conn->prepare("INSERT INTO tmovimenticontocorrente (ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa)
           VALUES (?, ?, ?, ?, 5, ?)");
             $queryInsert->bind_param("isdss", $contoCorrenteID, $data, $importo, $nuovoSaldo, $descrizione);
             $queryInsert->execute();
             $risultato = $queryInsert->get_result();
             $queryInsert->close();
+
+            $html="<h2>Ricarica effettuata correttamente.<br>€ $importo a favore di $telefono</h2>";
         } catch(Exception $e){
-            echo "Qualcosa è andato storto nella richiesta del saldo al db..";
+            $codErrore = $e->getCode();
+            if($codErrore===1){
+                echo "<h2>Qualcosa è andato storto. Controllare il saldo e riprovare.<h2>/";
+            } else{
+            echo "<h2>Qualcosa è andato storto. Rircaricare la pagina e riprovare.</h2>";
+            }
         }
         //insert query
     } else {
         // Il numero di telefono non è valido
         echo 'Siamo spiacenti, abbiamo riscontrato un errore. Riprovare ricaricando la pagina e inserendo i dati corretti.';
     }
-}
-
+    } else{
+        $html='';
+    }
 ?>
 
 <!DOCTYPE html>
@@ -97,10 +111,14 @@ if(isset($_POST['numero_telefono'])){
         </select>
         <br><br>
         <label for="numero_telefono">Numero di telefono:</label>
-        <input type="tel" name="numero_telefono" id="numero_telefono" placeholder="Numero di telefono" required>
+        <input type="tel" name="numero_telefono" id="numero_telefono" placeholder="Numero di telefono" minlength="10" maxlength="10" required>
         <br><br>
-        <input type="submit" value="Effettua ricarica">
+        <input type="submit" name="invia" value="Effettua ricarica">
+        <input type="reset" name="cancella" value="Cancella"> 
     </form>
+    <?php echo $html; ?>
+
+    <a class="button" href="index.php">Torna all'Homepage</a>
 
   </main>
 </body>

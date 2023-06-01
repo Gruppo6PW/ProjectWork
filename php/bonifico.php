@@ -34,6 +34,9 @@ if(isset($_POST['invia'])){
             $data = date("Y-m-d-G-i-s");
             $descrizione = "Bonifico a favore di $beneficiario. $importo € inviati a $iban. Causale: $causale";
             $nuovoSaldo = (float)$saldo - (float)$importo;
+            if($nuovoSaldo<0){
+                throw new Exception("", 1);
+            }
              $queryInsert = $conn->prepare("INSERT INTO tmovimenticontocorrente (ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa)
               VALUES (?, ?, ?, ?, 2, ?)");
             $queryInsert->bind_param("isdss", $contoCorrenteID, $data, $importo, $nuovoSaldo, $descrizione);
@@ -43,7 +46,13 @@ if(isset($_POST['invia'])){
 
             $html = "<h2>Bonifico effettuato correttamente.<br>€ $importo a favore di $beneficiario</h2>";
         } catch(Exception $e){
-            echo "<h2>Qualcosa non ha funzionato. Ricarica la pagina e riprova.</h2>";
+            $codErrore = $e->getCode();
+            if($codErrore===1){
+                echo "<h2>Qualcosa è andato storto. Controllare il saldo e riprovare.</h2>";
+            } else{
+                echo "<h2>Qualcosa non ha funzionato. Ricarica la pagina e riprova.</h2>";
+            }
+            $html='';
         }
     } else {
         echo "<h2>Inserisci tutti i dati correttamente e riprova.</h2>";
