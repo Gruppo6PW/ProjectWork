@@ -1,6 +1,7 @@
 <?php
 // Connessione database
 //$conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
+
 $conn=new mysqli("localhost", "root", "", "my_gruppo6");
 // Verifica della connessione
 if ($conn->connect_error) {
@@ -21,30 +22,35 @@ try{
     echo "Qualcosa è andato storto nella richiesta del saldo al db..";
 }
 
-// controllo che vengano passati tutti i valori
-$beneficiario = isset($_POST['nomeBeneficiario']) ? $_POST['nomeBeneficiario'] : '';
-$iban = isset($_POST['ibanBeneficiario']) ? $_POST['ibanBeneficiario'] : '';
-$importo = isset($_POST['importo']) ? $_POST['importo'] : '';
-$causale = isset($_POST['causale']) ? $_POST['causale'] : '';
+if(isset($_POST['invia'])){
+    // controllo che vengano passati tutti i valori
+    $beneficiario = isset($_POST['nomeBeneficiario']) ? $_POST['nomeBeneficiario'] : '';
+    $iban = isset($_POST['ibanBeneficiario']) ? $_POST['ibanBeneficiario'] : '';
+    $importo = isset($_POST['importo']) ? $_POST['importo'] : '';
+    $causale = isset($_POST['causale']) ? $_POST['causale'] : '';
 
-if(isset($_POST['ibanBeneficiario'])){
-    try{
-        $data = date("Y-m-d-G-i-s");
-        $descrizione = "Bonifico a favore di $beneficiario. $importo € inviati a $iban. Causale: $causale";
-        $nuovoSaldo = (float)$saldo - (float)$importo;
-         $queryInsert = $conn->prepare("INSERT INTO tmovimenticontocorrente (ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa)
-          VALUES (?, ?, ?, ?, 2, ?)");
-        $queryInsert->bind_param("isdss", $contoCorrenteID, $data, $importo, $nuovoSaldo, $descrizione);
-        $queryInsert->execute();
-        $risultato = $queryInsert->get_result();
-        $queryInsert->close();
+    if($beneficiario!=''&&$iban!=''&&$importo!=''&&$causale!=''){
+        try{
+            $data = date("Y-m-d-G-i-s");
+            $descrizione = "Bonifico a favore di $beneficiario. $importo € inviati a $iban. Causale: $causale";
+            $nuovoSaldo = (float)$saldo - (float)$importo;
+             $queryInsert = $conn->prepare("INSERT INTO tmovimenticontocorrente (ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa)
+              VALUES (?, ?, ?, ?, 2, ?)");
+            $queryInsert->bind_param("isdss", $contoCorrenteID, $data, $importo, $nuovoSaldo, $descrizione);
+            $queryInsert->execute();
+            $risultato = $queryInsert->get_result();
+            $queryInsert->close();
 
-        echo 'Bonifico effettuata correttamente.' . $beneficiario . $iban . $importo;
-    } catch(Exception $e){
-        echo "Qualcosa è andato storto nell'esecuzione del bonifico.";
+            $html = "<h2>Bonifico effettuato correttamente.<br>€ $importo a favore di $beneficiario</h2>";
+        } catch(Exception $e){
+            echo "<h2>Qualcosa non ha funzionato. Ricarica la pagina e riprova.</h2>";
+        }
+    } else {
+        echo "<h2>Inserisci tutti i dati correttamente e riprova.</h2>";
     }
-}
-
+    } else{
+        $html='';
+    }
 ?>
 
 <!DOCTYPE html>
@@ -76,8 +82,9 @@ if(isset($_POST['ibanBeneficiario'])){
         <label for="causale">Causale:</label>
         <input type="text" name="causale" id="causale" placeholder="" required>
 
-        <input type="submit" value="Effettua bonifico">
+        <input type="submit" name="invia" value="Effettua bonifico">
     </form>
+    <?php echo $html; ?>
   </main>
 </body>
 </html>
