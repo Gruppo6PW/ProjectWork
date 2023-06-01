@@ -60,7 +60,7 @@
             ";
 
         } else {
-            echo ("<h2>L'email non è valida</h2>");
+            $html = "<h2>L'email non è valida</h2>";
             return;
         }
     } else{
