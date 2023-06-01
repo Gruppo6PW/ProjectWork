@@ -15,10 +15,20 @@
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
     <script src="assets/js/script.js"></script>
+
+    <!-- ReCaptcha -->
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
 </head>
 
 <body>
     <script>
+
+        // ReCaptcha
+        var onloadCallback = function() {
+            alert("grecaptcha is ready!");
+        };
+
         function controllaInput() {
             // Prendo i valori
             email = loginForm.emailID.value;
@@ -116,6 +126,7 @@
                 <input type="password" class="form-control item" id="passwordID" name="password" placeholder="Password">
             </div>
             <p id="credenzialiErrateID" style="color:red;">Credenziali errate</p>
+            <!-- Recaptcha -->
             <div class="text-center">
                 <div class="g-recaptcha" data-sitekey="6Lc0L0wmAAAAAHIusv0dCKOV9a4msMJLD516RB1r"></div>
             </div>
@@ -162,7 +173,7 @@
         }
     }
 
-    if (isset($_POST["Login"])) {
+    if (isset($_POST["Login"]) && isset($_POST["g-recaptcha-response"])) {
         // Prendo i campi
         $email = $_POST["email"];
         $password = $_POST["password"];
@@ -173,6 +184,29 @@
 
             if (!empty($password) && is_string($password) && controllaRequisitiPassword($password)) {
                 // Non vuota e stringa valida
+
+                // Verifica del captcha
+                $chiaveServer = "6Lc0L0wmAAAAANdAgFJdpPd7_Sv-M4Mm9zrXT-8R";
+                $rispostaCaptcha = $_POST['g-recaptcha-response'];
+
+                $curl = curl_init();
+                curl_setopt_array($curl, [
+                CURLOPT_RETURNTRANSFER => 1,
+                CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify',
+                CURLOPT_POST => 1,
+                CURLOPT_POSTFIELDS => [
+                    'secret' => $chiaveServer,
+                    'response' => $rispostaCaptcha
+                ]
+                ]);
+
+                $risposta = curl_exec($curl);
+                curl_close($curl);
+
+                $datiCaptcha = json_decode($risposta);
+                if (!$datiCaptcha->success) {
+                    die('Captcha non valido.');
+                }
 
                 // Mi connetto al db
                 $conn = mysqli_connect('localhost', "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
