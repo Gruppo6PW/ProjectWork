@@ -442,7 +442,7 @@
                         ";*/
 
                         $conn->close();
-                        
+
                         $msg = wordwrap($msg, 70);   // Necessario sopra i 50 caratteri
                         $specificheHtml = "MIME-Version: 1.0" . "\r\n" . "Content-type:text/html;charset=UTF-8" . "\r\n";
                         mail("$email", "Codice OTP Login - Project Work", $msg, $specificheHtml);
@@ -451,7 +451,7 @@
                         echo "
                         <script> \n
                             window.location.href = 'http://gruppo6.altervista.org/ProjectWork/php/validazioneCodiceOTP.php'; \n
-                        </script> \n
+                        </script>
                         ";
                     }
                 } else {
