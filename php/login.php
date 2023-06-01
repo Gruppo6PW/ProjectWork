@@ -310,7 +310,11 @@
                         echo "Dopo query";
 
                         // Reinderizzo all'index
-                        header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php");
+                        echo "
+                        <script> \n
+                            window.location.href = 'http://gruppo6.altervista.org/ProjectWork/php/index.php'; \n
+                        </script> \n
+                        ";
                     }
                 } else {
                     // C'è stato un errore, lo stampo
