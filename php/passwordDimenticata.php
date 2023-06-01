@@ -74,7 +74,7 @@
     
             <br>
     
-            <input type='submit' value='Invia' name='Invia' onclick='controllaInput()'>
+            <input type='submit' value='Invia' name='Invia'>
         </form>
         ";
     }
