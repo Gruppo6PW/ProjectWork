@@ -83,9 +83,11 @@ if(isset($_POST['invia'])){
         <input type="text" name="causale" id="causale" placeholder="" required>
 
         <input type="submit" name="invia" value="Effettua bonifico">
+        <input type="reset" name="cancella" value="Cancella"> 
     </form>
     <?php echo $html; ?>
   </main>
+  <a class="button" href="index.php">Torna all'Homepage</a>
 </body>
 </html>
 
