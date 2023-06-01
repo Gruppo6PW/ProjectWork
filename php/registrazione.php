@@ -6,7 +6,8 @@
     // Controllo se l'utente ha la sessione valida, così lo mando subito su index.php
     if($_SESSION["accessoEseguito"]){
         // Ha l'accesso, lo reinderizzo
-        header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php");
+        $contoCorrenteID = $_SESSION["contoCorrenteID"];
+        header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=$contoCorrenteID");
     } else{
         function controllaSeCiSonoNumeri($stringaDaControllare){
             // Ciclo che controlla ogni cella se ci sono numeri
