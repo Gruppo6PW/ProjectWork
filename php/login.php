@@ -1,3 +1,12 @@
+<!-- SESSION -->
+<?php
+    session_start();
+    if($_SESSION["accessoEseguito"]){
+        // Ha l'accesso, lo reinderizzo
+        header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php");
+    }
+?>
+
 <!-- HTML -->
 <!DOCTYPE html>
 <html>
