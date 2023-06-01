@@ -75,6 +75,9 @@
                         // Prendo l'id (è gia int)
                         $contoCorrenteID = $row["ContoCorrenteID"];
                     }
+                    // Chiudo la connessione al db
+                    $conn->close();
+                    
                     // C'è una tupla. OTP valido. Reinderizzo all'index.php
                     header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=$contoCorrenteID");
                 } else{
