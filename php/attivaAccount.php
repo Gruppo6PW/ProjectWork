@@ -21,8 +21,9 @@
         $result = $statement -> get_result();
 
         if ($result->num_rows == 0) {
-            // C'è una tupla. Password valida
+            // Non c'è una tupla. Token errato
             echo("<h2>Token errato</h2>");
+            return;
         }
         
         // Salvo il contenuto del result
