@@ -5,6 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Validazione codice mail</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="styleNoSocial.css">
 </head>
 <body>
     <!-- JS -->
@@ -26,15 +29,45 @@
         }
     </script>
 
-    <h1>Controlla nella mail, ti è arrivato un codice a 6 cifre</h1>
+    <div class='registration-form'>
+        <form action="" name="formControlloOTP" method="post" >
+            <div class='form-icon'>
+            <!-- Codice per l'icona SVG  -->
+                <span>
+                    <svg xmlns='http://www.w3.org/2000/svg' height='70' width='70' fill='#dee9ff' class='bi bi-key-fill' viewBox='-1 0 17 9'>
+                    <path d='M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z'/>
+                    </svg>
+                </span>
+            </div>
+            <div class='form-group'>
+                <p> Inserisci il codice a 6 cifre che ti è arrivato nella mail: </p>
+                <p style="font-size: 13px"> (Se non vedi la mail controlla nella sezione spam)</p>
+            </div>
+            <div class='form-group'>
+                <input type='number' class='form-control item' oninput="controlloNumeroCaratteri(this)" oninput="controlloSoloNumeri(this)" name="codiceOTP" id="codiceOTPID" placeholder="Codice OTP" min="0" required maxlenght="6">
+                <p id="codiceOTPErratoID" style="color: red;">Codice OTP errato</p>
+            </div>
+            <div class='form-group'>
+                <input type='submit' class='btn btn-block create-account' name="Invia" value="Invia" onclick="controllaInput()"> 
+            </div>
+        </form>
+    </div>
 
-    <form action="" name="formControlloOTP" method="post">
-        <input type="number" name="codiceOTP" id="codiceOTPID" placeholder="Codice OTP">
+    <!-- Validazione input -->
+    <script> 
+        function controlloNumeroCaratteri(input) {
+            const valoreInput = input.value.trim();
+            const numeroCaratteriMassimo = 6;
 
-        <p id="codiceOTPErratoID" style="color: red;">Codice OTP errato</p>
-
-        <input type="submit" name="Invia" value="Invia" onclick="controllaInput()">
-    </form>
+            if (valoreInput.length > numeroCaratteriMassimo) {
+                input.value = valoreInput.slice(0, numeroCaratteriMassimo);
+            }
+        }
+        
+        function controlloSoloNumeri(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+        }
+    </script>
 
     <!-- JS che nasconde codice TOP errato -->
     <script>
