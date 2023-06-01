@@ -60,7 +60,7 @@
             }
 
             // Controllo che sia lo stesso OTP che ho sul server
-            $SQL = "SELECT AccessoValido FROM taccessi WHERE CodiceOTP=? LIMIT 1"; // Ritorno AccessoValido così l'attaccante non ottiene nessuna informazione rilevante
+            $SQL = "SELECT ContoCorrenteID FROM taccessi WHERE CodiceOTP=? LIMIT 1";
             if($statement=$conn->prepare($SQL)){
                 $statement -> bind_param("i", $OTP);
                 $statement -> execute();
@@ -68,9 +68,15 @@
                 // Prendo l'output della query e li salvo in result
                 $result = $statement -> get_result();
 
+                // C'è una tupla, prendo il NumeroTentativiLogin
                 if ($result->num_rows == 1) {
+                    // Salvo il contenuto del result
+                    while ($row = $result->fetch_assoc()) {
+                        // Prendo l'id (è gia int)
+                        $contoCorrenteID = $row["ContoCorrenteID"];
+                    }
                     // C'è una tupla. OTP valido. Reinderizzo all'index.php
-                    header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php");
+                    header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=$contoCorrenteID");
                 } else{
                     echo "
                     <script>
