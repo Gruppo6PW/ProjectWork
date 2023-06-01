@@ -62,6 +62,9 @@ if ($statement = $conn->prepare($SQL)) {
     $errore = $mysqli->errno . ' ' . $mysqli->error;
     echo $errore;
 }
+
+// Chiudo la connessione al db
+$conn->close();
 ?>
 
 <!DOCTYPE html>
