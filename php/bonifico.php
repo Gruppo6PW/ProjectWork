@@ -70,9 +70,9 @@ if(isset($_POST['ibanBeneficiario'])){
         <label for="nomeBeneficiario">Beneficiario:</label>
         <input type="text" name="nomeBeneficiario" id="nomeBeneficiario" placeholder="Nome Cognome" required>
         <label for="ibanBeneficiario">IBAN:</label>
-        <input type="text" name="ibanBeneficiario" id="ibanBeneficiario" placeholder="" required>
+        <input type="text" name="ibanBeneficiario" id="ibanBeneficiario" placeholder="" minlength="27" maxlength="27" required>
         <label for="importo">Importo:</label>
-        <input type="number" name="importo" id="importo" placeholder="" required>
+        <input type="number" name="importo" id="importo" placeholder="" min="0" step="0.01" required>
         <label for="causale">Causale:</label>
         <input type="text" name="causale" id="causale" placeholder="" required>
 
