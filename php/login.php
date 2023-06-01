@@ -81,34 +81,6 @@
         }
     </script>
 
-    <!-- <div class="registration-form">
-        <form name="loginForm" method="POST">
-            <div class="form-icon">
-                <span><i class="icon"></i></span>
-            </div>
-            <p id="tempoRimanenteID"></p>
-            <div class="form-group">
-                <input type="email" class="form-control item" id="emailID" name="email" placeholder="E-Mail" required>
-            </div>
-            <div class="form-group">
-                <input type="password" class="form-control item" id="passwordID" name="password" placeholder="Password" required>
-            </div>
-            <p id="credenzialiErrateID" style="color:red;">Credenziali errate</p>
-            <div class="text-center">
-                <div class="g-recaptcha" data-sitekey="6Lc0L0wmAAAAAHIusv0dCKOV9a4msMJLD516RB1r"></div>
-            </div>
-            <div class="form-group">
-                <input type="submit" class="btn btn-block create-account" name="Login" id="LoginID" value="Login" onclick="controllaInput()">
-            </div>
-        </form>
-        <div class="social-media">
-            <a href="registrazione.php">Non hai ancora un conto? Registrati ora!</a>
-            <br>
-            <br>
-            <a href="passwordDimenticata.php">Hai dimenticato la Password?</a>
-        </div>
-    </div> -->
-
     <div class="registration-form">
         <form name="loginForm" method="POST">
             <div class="form-icon">
@@ -125,11 +97,12 @@
             <div class="form-group">
                 <input type="password" class="form-control item" id="passwordID" name="password" placeholder="Password">
             </div>
-            <p id="credenzialiErrateID" style="color:red;">Credenziali errate</p>
+            <p id="credenzialiErrateID" style="color: red;">Credenziali errate</p>
             <!-- Recaptcha -->
             <div class="text-center">
                 <div class="g-recaptcha" data-sitekey="6Lc0L0wmAAAAAHIusv0dCKOV9a4msMJLD516RB1r"></div>
             </div>
+            <p id="numeroTentativiRimanentiID">Hai ancora a disposizione 3 tentativi</p>
             <div class="form-group">
                 <input type="submit" class="btn btn-block create-account" name="Login" ID="LoginID" value="Login" onclick=controllaInput()>
             </div>
@@ -309,6 +282,14 @@
                             $statement->bind_param("ii", $numeroTentativiLogin, $email);
                             $statement->execute();
 
+                            // Mostro quanti tentativi rimangono
+                            $numeroTentativiRimanenti = 3 - $numeroTentativiLogin;
+                            echo "
+                                <script> \n
+                                    document.getElementById('numeroTentativiRimanentiID').innerHTML = \"Hai ancora a disposizione \" + $numeroTentativiRimanenti + \" tentativi\";
+                                </script>
+                            ";
+
                             // Chiudo lo statement
                             $statement->close();
                         } else {
@@ -348,6 +329,14 @@
                                 $statement->bind_param("ii", $numeroTentativiLogin, $email);
                                 $statement->execute();
 
+                                // Reimposto i tentativi rimanenti a 3
+                                $numeroTentativiRimanenti = 3 - $numeroTentativiLogin;
+                                echo "
+                                    <script> \n
+                                        document.getElementById('numeroTentativiRimanentiID').innerHTML = \"Hai ancora a disposizione \" + $numeroTentativiRimanenti + \" tentativi\";
+                                    </script>
+                                ";
+
                                 // Chiudo lo statement
                                 $statement->close();
                             } else {
@@ -357,7 +346,6 @@
                             }
                         }
                     } else {
-                        echo "Dentro else";
                         // Reimposto a 0 dato che ha eseguito il login correttamente
                         $numeroTentativiLogin = 0;
                         $SQL = "UPDATE tconticorrenti SET NumeroTentativiLogin = ? WHERE tconticorrenti.Email = ?";
@@ -372,8 +360,6 @@
                             $errore = $mysqli->errno . ' ' . $mysqli->error;
                             echo $errore;
                         }
-
-                        echo "Dopo query";
 
                         // Reinderizzo all'index
                         echo "
