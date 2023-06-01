@@ -82,6 +82,7 @@
             <div class="form-group">
                 <input type="password" class="form-control item" id="passwordID" name="password" placeholder="Password" required>
             </div>
+            <p id="credenzialiErrateID" style="color:red;">Credenziali errate</p>
             <div class="text-center">
                 <div class="g-recaptcha" data-sitekey="6Lc0L0wmAAAAAHIusv0dCKOV9a4msMJLD516RB1r"></div>
             </div>
@@ -96,6 +97,11 @@
             <a href="passwordDimenticata.php">Hai dimenticato la Password?</a>
         </div>
     </div>
+
+    <!-- JS che nasconde credenziali errate -->
+    <script>
+        document.getElementById("credenzialiErrateID").style.visibility = 'hidden';
+    </script>
 
 
     <!-- PHP -->
@@ -157,8 +163,12 @@
                     $result = $statement->get_result();
                     
                     if ($result->num_rows == 0) {
-                        // Nessuna tupla ritornata, credenzali errate
-                        echo ("<h2>Credenziali errate</h2>");
+                        // Nessuna tupla ritornata, rendo visibile il paragrafo delle credenzali errate
+                        echo "
+                        <script> \n
+                            document.getElementById('credenzialiErrateID').style.visibility = 'visible';
+                        </script> \n
+                        ";
                         
                         $accessoValido = 0;
                         
@@ -247,7 +257,6 @@
                             echo "\n <script> \n";
                             echo "function disabilita(){ \n";
                                 echo "document.getElementById('emailID').disabled = true;  \n";
-                                // echo "loginForm.emailID.disabled = true;  \n";
                                 echo "document.getElementById('passwordID').disabled = true;  \n";
                                 echo "document.getElementById('LoginID').disabled = true;  \n";
                                 echo "alert('Attendi un minuto prima di riprovare') \n";
@@ -282,6 +291,7 @@
                             }
                         }
                     } else {
+                        echo "Dentro else";
                         // Reimposto a 0 dato che ha eseguito il login correttamente
                         $numeroTentativiLogin = 0;
                         $SQL = "UPDATE tconticorrenti SET NumeroTentativiLogin = ? WHERE tconticorrenti.Email = ?";
@@ -296,6 +306,11 @@
                             $errore = $mysqli->errno . ' ' . $mysqli->error;
                             echo $errore;
                         }
+
+                        echo "Dopo query";
+
+                        // Reinderizzo all'index
+                        header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php");
                     }
                 } else {
                     // C'è stato un errore, lo stampo
@@ -310,10 +325,6 @@
         }
     }
     ?>
-    
-    <script>
-        
-        </script>
 
     <!-- Funzione che fa partire il controllo per la cancellazione delle textbox -->
     <script>
@@ -323,7 +334,7 @@
             document.getElementById("passwordID").value = "";
         }
         
-         setInterval(cancellaCredenziali, 60000);  // Tempo in millisecondi
+         setInterval((cancellaCredenziali), 60000);  // Scrivo la funzione senza parentesi, perchè così passo il riferimento invece di eseguirla. Se metto le parentesi viene eseguita 1 sola volta | Tempo in millisecondi
     </script>
 </body>
 
