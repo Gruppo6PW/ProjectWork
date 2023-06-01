@@ -258,9 +258,9 @@
                     $dataAccesso = date("Y-m-d") . " " . date("h:i:s");
 
                     // Aggiungo una tupla nella taccessi
-                    $SQL = "INSERT INTO taccessi(IndirizzoIP, Data, AccessoValido) VALUES(?, ?, ?)";
+                    $SQL = "INSERT INTO taccessi(ContoCorrenteID, IndirizzoIP, Data, AccessoValido) VALUES(?, ?, ?, ?)";
                     if ($statement = $conn->prepare($SQL)) {
-                        $statement->bind_param("ssi", $indirizzoIP, $dataAccesso, $accessoValido);
+                        $statement->bind_param("issi", $id, $indirizzoIP, $dataAccesso, $accessoValido);
                         $statement->execute();
 
                         // Prendo il risultato della query
@@ -361,10 +361,83 @@
                             echo $errore;
                         }
 
+                        // Invio la mail con il codice OTP
+                        $OTP = mt_rand(100000, 999999); // Genera un numero casuale di 6 cifre
+
+                        // Faccio l'UPDATE
+                        $SQL = "UPDATE taccessi SET CodiceOTP = ? WHERE ContoCorrenteID = ?";
+                        if ($statement = $conn->prepare($SQL)) {
+                            $statement->bind_param("ii", $OTP, $id);
+                            $statement->execute();
+
+                            // Chiudo lo statement
+                            $statement->close();
+                        } else {
+                            // C'è stato un errore, lo stampo
+                            $errore = $mysqli->errno . ' ' . $mysqli->error;
+                            echo $errore;
+                        }
+
+                        // Invio il codice nella mail
+                        $msg = "Il tuo codice OTP è <h2>echo $OTP</h2>";
+                        // Tentativo di email bella, viene visualizzata male
+                        /*$msg = "
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <title>Codice di verifica</title>
+                            <style>
+                                body {
+                                    margin: 0;
+                                    padding: 0;
+                                    font-family: Arial, sans-serif;
+                                    background-color: #f2f2f2;
+                                }
+                                
+                                .container {
+                                    max-width: 600px;
+                                    margin: 0 auto;
+                                    padding: 20px;
+                                    background-color: #ffffff;
+                                    border: 1px solid #e6e6e6;
+                                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                                }
+                                
+                                h2 {
+                                    color: #333333;
+                                    font-size: 24px;
+                                    text-align: center;
+                                    margin-top: 0;
+                                }
+                                
+                                h1 {
+                                    color: #333333;
+                                    font-size: 36px;
+                                    text-align: center;
+                                    margin: 30px 0;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class='container'>
+                                <h2>Ecco il tuo codice di verifica</h2>
+                                <h1>
+                                    <?php
+                                        echo $OTP;
+                                    ?>
+                                </h1>
+                            </div>
+                        </body>
+                        </html>
+                        ";*/
+                        $msg = wordwrap($msg, 70);   // Necessario sopra i 50 caratteri
+                        $specificheHtml = "MIME-Version: 1.0" . "\r\n" . "Content-type:text/html;charset=UTF-8" . "\r\n";
+                        mail("$email", "Codice OTP Login - Project Work", $msg, $specificheHtml);
+
                         // Reinderizzo all'index
                         echo "
                         <script> \n
-                            window.location.href = 'http://gruppo6.altervista.org/ProjectWork/php/index.php'; \n
+                            window.location.href = 'http://gruppo6.altervista.org/ProjectWork/php/validazioneCodiceOTP.php'; \n
                         </script> \n
                         ";
                     }
