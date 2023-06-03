@@ -15,40 +15,75 @@
   }
 
   if($_SESSION["accessoEseguito"]){
-    // Prepared statement per ricavare i dati utente (nome, data apertura conto)
+    //Ricavo i dati dell'utente (nome, data apertura conto)
     try{
-        $query1 = $conn->prepare("SELECT NomeTitolare, DataApertura FROM tconticorrenti WHERE ContoCorrenteID = ?");
-        echo "SELECT NomeTitolare, DataApertura FROM tconticorrenti WHERE ContoCorrenteID = $contoCorrenteID";
-        $query1->bind_param("i", $contoCorrenteID);
-        $query1->execute();
-        $risultato1 = $query1->get_result();
+      $SQL = "SELECT NomeTitolare, DataApertura FROM tconticorrenti WHERE ContoCorrenteID = ? LIMIT 1";
+      if($statement = $conn -> prepare($SQL)){
+          $statement -> bind_param("i", $contoCorrenteID);
+          $statement -> execute();
   
-        $datiUtente = $risultato1->fetch_assoc();
-        $nomeUtente = $datiUtente['NomeTitolare'];
-        $dataApertura = $datiUtente['DataApertura'];
-        $query1->close();
+          // Prendo il risultato della query
+          $result = $statement->get_result();
+  
+          // C'è una tupla
+          if ($result->num_rows != 0) {
+            // Salvo il contenuto del result
+            while ($row = $result->fetch_assoc()) {
+                // Prendo l'AccessoValido
+                $nomeUtente = $datiUtente["NomeTitolare"];
+                $dataApertura = $datiUtente["DataApertura"];
+            }
+          }
+  
+          // Chiudo lo statement
+          $statement->close();
+      } else{
+          // C'è stato un errore, lo stampo
+          $errore = $mysqli->errno . ' ' . $mysqli->error;
+          echo $errore;
+          return;
+      }
     } catch(Exception $e){
         echo "Qualcosa è andato storto nella richiesta dei dati dell'utente al db.";
     }
   
-    // Prepared statement per ricavare le ultime 5 operazioni
     try{
-        $query2 = $conn->prepare("SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria 
-        FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON 
-        movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID WHERE movimenti.ContoCorrenteID = ? ORDER BY movimenti.Data 
-        DESC LIMIT 5");
-        $query2->bind_param("i", $contoCorrenteID);
-        $query2->execute();
-        $risultato2 = $query2->get_result();
-        $ultimeOperazioni = array();
-        while($row = $risultato2->fetch_assoc()){
-            $ultimeOperazioni[] = $row;
-        }
-      $saldo = $ultimeOperazioni[0]['Saldo'];
-      $query2->close();
-      } catch(Exception $e){
-          echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
-      }  
+      // Ricavo le ultime 5 operazioni
+      $SQL = "SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria 
+      FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID 
+      WHERE movimenti.ContoCorrenteID = ? 
+      ORDER BY movimenti.Data DESC 
+      LIMIT 5";
+      if($statement = $conn -> prepare($SQL)){
+          $statement -> bind_param("i", $contoCorrenteID);
+          $statement -> execute();
+  
+          // Prendo il risultato della query
+          $result = $statement->get_result();
+  
+          // C'è una tupla
+          if ($result->num_rows != 0) {
+            // Salvo il contenuto del result
+            $ultimeOperazioni = array();
+            while ($row = $result->fetch_assoc()) {
+                $ultimeOperazioni[] = $row;
+            }
+
+            // Prendo il saldo
+            $saldo = $ultimeOperazioni[0]['Saldo'];
+          }
+  
+          // Chiudo lo statement
+          $statement->close();
+      } else{
+          // C'è stato un errore, lo stampo
+          $errore = $mysqli->errno . ' ' . $mysqli->error;
+          echo $errore;
+          return;
+      }
+    } catch(Exception $e){
+        echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
+    }  
   } else{
       // Controllo nel db se l'accesso valido è true e la data dell'ultimo accesso. In quel caso gli creo la sessione, altrimenti lo mando al login
       $SQL = "SELECT AccessoValido, Data FROM taccessi WHERE ContoCorrenteID = ? ORDER BY Data DESC LIMIT 1";
@@ -62,7 +97,7 @@
         // Imposto inizialmente l'AccessoValido a 0. Se poi l'utente si è effettivamente registrato allora lo imposto a 1
         $accessoValido = 0;
 
-        // C'è una tupla, prendo il NumeroTentativiLogin
+        // C'è una tupla
         if ($result->num_rows != 0) {
             // Salvo il contenuto del result
             while ($row = $result->fetch_assoc()) {
