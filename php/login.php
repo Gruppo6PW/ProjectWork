@@ -4,7 +4,7 @@
     if($_SESSION["accessoEseguito"]){
         // Ha l'accesso, lo reinderizzo
         $contoCorrenteID = $_SESSION["contoCorrenteID"];
-        header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=$contoCorrenteID");
+        header("Location: https://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=$contoCorrenteID");
     }
 ?>
 
@@ -450,7 +450,7 @@
                         // Reinderizzo all'index
                         echo "
                         <script> \n
-                            window.location.href = 'http://gruppo6.altervista.org/ProjectWork/php/validazioneCodiceOTP.php'; \n
+                            window.location.href = 'https://gruppo6.altervista.org/ProjectWork/php/validazioneCodiceOTP.php'; \n
                         </script>
                         ";
                     }

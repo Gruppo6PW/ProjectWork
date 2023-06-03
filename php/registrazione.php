@@ -7,7 +7,7 @@
     if($_SESSION["accessoEseguito"]){
         // Ha l'accesso, lo reinderizzo
         $contoCorrenteID = $_SESSION["contoCorrenteID"];
-        header("Location: http://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=$contoCorrenteID");
+        header("Location: https://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=$contoCorrenteID");
     } else{
         function controllaSeCiSonoNumeri($stringaDaControllare){
             // Ciclo che controlla ogni cella se ci sono numeri
@@ -156,7 +156,7 @@
                             $conn->close();
                     
                             // Reinderizzo l'utente alla pagina di invio della mail di conferma
-                            header("Location: http://gruppo6.altervista.org/ProjectWork/php/invioMailConferma.php?email=$email&token=$token");
+                            header("Location: https://gruppo6.altervista.org/ProjectWork/php/invioMailConferma.php?email=$email&token=$token");
                         } else {
                             echo ("<h2>Cognome titolare non valido</h2>");
                         }

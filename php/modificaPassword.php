@@ -89,7 +89,7 @@
                     $conn->close();
 
                     // Reinderizzo alla pagina del profilo
-                    header("Location: http://gruppo6.altervista.org/ProjectWork/php/profiloUtente.php");
+                    header("Location: https://gruppo6.altervista.org/ProjectWork/php/profiloUtente.php");
                     
                 } else {
                     echo ("<h2>La conferma della nuova password non è valida</h2>");

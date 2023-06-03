@@ -49,7 +49,7 @@
             $conn->close();
 
             // Invio la mail
-            $msg = "Clicca <a href='http://gruppo6.altervista.org/ProjectWork/php/reimpostaPassword.php?token=$token'>qui</a> per reimpostare la tua password";   // Sostutuire con il proprio dominio di altervista
+            $msg = "Clicca <a href='https://gruppo6.altervista.org/ProjectWork/php/reimpostaPassword.php?token=$token'>qui</a> per reimpostare la tua password";   // Sostutuire con il proprio dominio di altervista
             $msg = wordwrap($msg,70);   // Necessario sopra i 50 caratteri
             $specificheHtml = "MIME-Version: 1.0" . "\r\n" . "Content-type:text/html;charset=UTF-8" . "\r\n";
             mail("$email", "Reimposta Password - Project Work", $msg, $specificheHtml);
