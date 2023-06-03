@@ -200,8 +200,7 @@
                 }
 
                 // Calcolo l'hash della password
-                $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
-                $passwordCriptata = crypt($password, $salt);
+                $passwordCriptata = hash("sha512", $password);
 
                 // Controllo quanti tentativi di login ha fatto e li salvo
                 $SQL = "SELECT ContoCorrenteID, NumeroTentativiLogin FROM tconticorrenti WHERE Email = ? AND Password = ? LIMIT 1";

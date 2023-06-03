@@ -36,8 +36,7 @@
                     }
 
                         // Controllo che la passwordCorrente coincida con quella salvata nel db
-                    $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
-                    $passwordCorrenteCriptata = crypt($passwordCorrente, $salt);
+                        $passwordCriptata = hash("sha512", $password);
 
                     // Creo la query di confronto
                     $SQL = "SELECT ContoCorrenteID FROM tconticorrenti WHERE Email = ? AND Password = ? LIMIT 1";
@@ -69,7 +68,7 @@
                     }
 
                     // Hasho la nuova password
-                    $passwordNuovaCriptata = crypt($passwordNuova, $salt);
+                    $passwordNuovaCriptata = hash("sha512", $password);
 
                     // Procedo alla modifica della password
                     $SQL = "UPDATE tconticorrenti SET Password = ? WHERE tconticorrenti.ContoCorrenteID = $id";

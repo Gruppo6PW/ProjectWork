@@ -123,8 +123,7 @@
                             }
     
                                 // La mail non esiste. Calcolo l'hash della password
-                            $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
-                            $passwordCriptata = crypt($password, $salt);
+                            $passwordCriptata = hash("sha512", $password);
     
                             // Genero il token per la conferma della mail
                             $testoRandom = md5($email.$password.$nomeTitolare.$cognomeTitolare);    // Genero un hash MD5 concatenando le informazioni personali dell'utente, per renderlo univoco

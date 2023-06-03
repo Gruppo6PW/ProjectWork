@@ -60,8 +60,7 @@
                 }
 
                     // Hasho la nuova password
-                $salt = "sdfsd89fysd89fhjsr23rfjvsdv";
-                $nuovaPasswordCriptata = crypt($nuovaPassword, $salt);
+                $nuovaPasswordCriptata = hash("sha512", $password);
 
                 // Creo la query di update
                 $SQL = "UPDATE tconticorrenti SET Password = ? WHERE tconticorrenti.ContoCorrenteID = ?";
