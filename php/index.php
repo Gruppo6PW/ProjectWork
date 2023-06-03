@@ -15,7 +15,6 @@
   }
 
   if($_SESSION["accessoEseguito"]){
-    echo ("Prima query");
     //Ricavo i dati dell'utente (nome, data apertura conto)
     try{
       $SQL = "SELECT NomeTitolare, DataApertura FROM tconticorrenti WHERE ContoCorrenteID = ? LIMIT 1";
