@@ -15,6 +15,7 @@
   }
 
   if($_SESSION["accessoEseguito"]){
+    echo ("Prima query");
     //Ricavo i dati dell'utente (nome, data apertura conto)
     try{
       $SQL = "SELECT NomeTitolare, DataApertura FROM tconticorrenti WHERE ContoCorrenteID = ? LIMIT 1";
@@ -123,6 +124,9 @@
             // Accesso ancora valido, creo la sessione
             $_SESSION["accessoEseguito"] = "true";
             $_SESSION["contoCorrenteID"] = $contoCorrenteID;
+
+            // Rimando a index.php con sessione impostata
+            header("Location: https://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=$contoCorrenteID");
           } else{
             // Troppo tempo dall'ultimo accesso. Lo mando al login
             header("Location: https://gruppo6.altervista.org/ProjectWork/php/login.php");
