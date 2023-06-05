@@ -1,64 +1,16 @@
 <?php
-// Connessione database
-//$conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
+    // Avvio la sessione
+    session_start();
 
-$conn=new mysqli("localhost", "root", "", "my_gruppo6");
-// Verifica della connessione
-if ($conn->connect_error) {
-    die("Connessione al database fallita: " . $conn->connect_error);
-}
+    // Prendo l'id del conto corrente nell'URL
+    $contoCorrenteID = $_GET["contoCorrenteID"];
 
-//IMPLEMENTARE SESSION
-$contoCorrenteID = 1;
-try{
-    //query per ottere l'ultimo saldo disponibile, necessario per la query insert
-    $query = $conn->prepare("SELECT Saldo FROM tmovimenticontocorrente WHERE ContoCorrenteID = ? ORDER BY Data DESC LIMIT 1");
-    $query->bind_param("i", $contoCorrenteID);
-    $query->execute();
-    $query->bind_result($saldo);
-    $query->fetch();
-    $query->close();
-} catch(Exception $e){
-    echo "Qualcosa è andato storto nella richiesta del saldo al db..";
-}
+    // Connessione database
+    $conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
 
-if(isset($_POST['invia'])){
-    // controllo che vengano passati tutti i valori
-    $beneficiario = isset($_POST['nomeBeneficiario']) ? $_POST['nomeBeneficiario'] : '';
-    $iban = isset($_POST['ibanBeneficiario']) ? $_POST['ibanBeneficiario'] : '';
-    $importo = isset($_POST['importo']) ? $_POST['importo'] : '';
-    $causale = isset($_POST['causale']) ? $_POST['causale'] : '';
-
-    if($beneficiario!=''&&$iban!=''&&$importo!=''&&$causale!=''){
-        try{
-            $data = date("Y-m-d-G-i-s");
-            $descrizione = "Bonifico a favore di $beneficiario. $importo € inviati a $iban. Causale: $causale";
-            $nuovoSaldo = (float)$saldo - (float)$importo;
-            if($nuovoSaldo<0){
-                throw new Exception("", 1);
-            }
-             $queryInsert = $conn->prepare("INSERT INTO tmovimenticontocorrente (ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa)
-              VALUES (?, ?, ?, ?, 2, ?)");
-            $queryInsert->bind_param("isdss", $contoCorrenteID, $data, $importo, $nuovoSaldo, $descrizione);
-            $queryInsert->execute();
-            $risultato = $queryInsert->get_result();
-            $queryInsert->close();
-
-            $html = "<h2>Bonifico effettuato correttamente.<br>€ $importo a favore di $beneficiario</h2>";
-        } catch(Exception $e){
-            $codErrore = $e->getCode();
-            if($codErrore===1){
-                echo "<h2>Qualcosa è andato storto. Controllare il saldo e riprovare.</h2>";
-            } else{
-                echo "<h2>Qualcosa non ha funzionato. Ricarica la pagina e riprova.</h2>";
-            }
-            $html='';
-        }
-    } else {
-        echo "<h2>Inserisci tutti i dati correttamente e riprova.</h2>";
-    }
-    } else{
-        $html='';
+    // Verifica della connessione
+    if ($conn->connect_error) {
+        die("Connessione al database fallita: " . $conn->connect_error);
     }
 ?>
 
@@ -148,8 +100,11 @@ if(isset($_POST['invia'])){
                                         </div>
                                         <div class="row">
                                             <div class="col text-center">
-                                                <input type="submit" class="btn btn-primary" value="Effettua bonifico" >
+                                                <input type="submit" class="btn btn-primary" innerHTML="Effettua bonifico" name="Invia">
                                             </div>
+                                        </div>
+                                        <div class="row">
+                                            <p id="esitoBonificoID"></p>
                                         </div>
                                     </form>
                                 </div>   
@@ -164,6 +119,117 @@ if(isset($_POST['invia'])){
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+        <!-- PHP -->
+        <?php
+            if(session_status() === PHP_SESSION_ACTIVE){
+                if($_SESSION["accessoEseguito"] && $_SESSION["contoCorrenteID"] == $contoCorrenteID){
+                    if(isset($_POST['Invia'])){
+                        try{
+                            // Prendo l'ultimo saldo disponibile
+                            $SQL = "SELECT Saldo FROM tmovimenticontocorrente WHERE ContoCorrenteID = ? ORDER BY Data DESC LIMIT 1";
+                            if($statement = $conn -> prepare($SQL)){
+                                $statement -> bind_param("i", $contoCorrenteID);
+                                $statement -> execute();
+                                
+                                // Prendo il risultato della query
+                                $result = $statement->get_result();
+        
+                                // C'è una tupla
+                                if ($result->num_rows != 0) {
+                                    // Salvo il contenuto del result
+                                    while ($row = $result->fetch_assoc()) {
+                                        $saldo = $row["Saldo"];
+                                    }
+                                }
+                        
+                                // Chiudo lo statement
+                                $statement->close();
+                            } else{
+                                // C'è stato un errore, lo stampo
+                                $errore = $mysqli->errno . ' ' . $mysqli->error;
+                                echo $errore;
+                                return;
+                            }
+                        } catch(Exception $e){
+                            echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
+                        }
+        
+                        // Controllo che vengano passati tutti i valori
+                        $beneficiario = isset($_POST['nomeBeneficiario']) ? $_POST['nomeBeneficiario'] : '';    // Se settato prendo il valore, altrimenti lascio vuoto
+                        $iban = isset($_POST['ibanBeneficiario']) ? $_POST['ibanBeneficiario'] : '';
+                        $importo = isset($_POST['importo']) ? $_POST['importo'] : '';
+                        $causale = isset($_POST['causale']) ? $_POST['causale'] : '';
+        
+                        if($beneficiario != '' && $iban != '' && $importo != '' && $causale != ''){
+                            try{
+                                $data = date("Y-m-d-G-i-s");
+                                $descrizione = "Bonifico a favore di $beneficiario. $importo € inviati a $iban. Causale: $causale";
+                                $nuovoSaldo = (float)$saldo - (float)$importo;
+                                if($nuovoSaldo < 0){
+                                    throw new Exception("", 1);
+                                }
+        
+                                // Inserisco il bonifico nel db
+                                $SQL = "INSERT INTO tmovimenticontocorrente (ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa) VALUES (?, ?, ?, ?, 2, ?)";
+                                if($statement = $conn -> prepare($SQL)){
+                                    $statement -> bind_param("isdss", $contoCorrenteID, $data, $importo, $nuovoSaldo, $descrizione);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
+                                    $statement -> execute();
+                                    
+                                    // Prendo il risultato della query
+                                    $result = $statement->get_result();
+        
+                                    // Chiudo lo statement
+                                    $statement->close();
+                                } else{
+                                    // C'è stato un errore, lo stampo
+                                    $errore = $mysqli->errno . ' ' . $mysqli->error;
+                                    echo $errore;
+                                }
+                                
+                                echo "
+                                <script> \n
+                                document.getElementById('esitoBonificoID').style.innerHTML = 'Bonifico effettuato correttamente.<br>€ $importo a favore di $beneficiario';
+                                document.getElementById('esitoBonificoID').style.color = 'green';
+                                    document.getElementById('esitoBonificoID').style.visibility = 'visible';
+                                </script> \n
+                                ";
+                            } catch(Exception $e){
+                                $codErrore = $e->getCode();
+                                if($codErrore === 1){
+                                    echo "
+                                    <script> \n
+                                    document.getElementById('esitoBonificoID').style.innerHTML = 'Qualcosa è andato storto. Controllare il saldo e riprovare.';
+                                    document.getElementById('esitoBonificoID').style.color = 'red';
+                                        document.getElementById('esitoBonificoID').style.visibility = 'visible';
+                                    </script> \n
+                                    ";
+                                } else{
+                                    echo "
+                                    <script> \n
+                                    document.getElementById('esitoBonificoID').style.innerHTML = 'Qualcosa non ha funzionato. Ricaricare la pagina e riprovare.';
+                                    document.getElementById('esitoBonificoID').style.color = 'red';
+                                    document.getElementById('esitoBonificoID').style.visibility = 'visible';
+                                    </script> \n
+                                    ";
+                                }
+                                $html='';
+                            }
+                        } else {
+                            echo "
+                            <script> \n
+                                document.getElementById('esitoBonificoID').style.visibility = 'visible';
+                                document.getElementById('esitoBonificoID').style.color = 'red';
+                                document.getElementById('esitoBonificoID').style.innerHTML = 'Inserisci tutti i dati correttamente e riprova.';
+                            </script> \n
+                            ";
+                            
+                        }
+                    } else{
+                        $html='';
+                    }
+                }
+            }
+        ?>
     </body>
 </html>
-
