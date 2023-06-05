@@ -179,9 +179,7 @@
             <a class="nav-link" href="http://gruppo6.altervista.org/ProjectWork/php/profilo.php">Profilo <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item dropdown active ">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLink" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-              Operazioni
-            </a>
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLink" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Operazioni</a>
             <div class="dropdown-menu rounded bg-light"  aria-labelledby="navbarDropdownLink">
               <a class="dropdown-item " href="LINK ALLA PAGINA DEL BONIFICO">Bonifico</a>
               <a class="dropdown-item" href="LINK ALLA PAGINA DELLA RICARICA TELEFONICA">Ricarica telefonica</a>
@@ -190,9 +188,7 @@
             </div>
           </li>
           <li class="nav-item dropdown active">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDisabled" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
-              Movimenti
-            </a>
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDisabled" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Movimenti</a>
             <div class="dropdown-menu rounded bg-light " aria-labelledby="navbarDropdownDisabled">
               <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti1.php">Ultimi movimenti</a>
               <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti2.php">Cerca per categoria</a>
@@ -203,6 +199,11 @@
               <a class="nav-link" href="http://gruppo6.altervista.org/ProjectWork/php/logOut.php">LogOut</a>
           </li>
         </ul>
+
+        <!-- Logout -->
+        <div class="nav-item dropdown bg-danger ml-auto ">
+            <a class="nav-link active" href="http://gruppo6.altervista.org/ProjectWork/php/logOut.php" style="color: white ">LogOut</a>
+        </div>
       </div>
     </nav>
 
