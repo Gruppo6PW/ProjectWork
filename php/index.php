@@ -14,139 +14,142 @@
     die("Connessione al database fallita: " . $conn->connect_error);
   }
 
+  // Controllo se c'è una sessione attiva
   if(session_status() === PHP_SESSION_ACTIVE){
-    //Ricavo i dati dell'utente (nome, data apertura conto)
-    try{
-      $SQL = "SELECT NomeTitolare, DataApertura FROM tconticorrenti WHERE ContoCorrenteID = ? LIMIT 1";
-      if($statement = $conn -> prepare($SQL)){
-          $statement -> bind_param("i", $contoCorrenteID);
-          $statement -> execute();
-  
-          // Prendo il risultato della query
-          $result = $statement->get_result();
-  
-          // C'è una tupla
-          if ($result->num_rows != 0) {
-            // Salvo il contenuto del result
-            while ($row = $result->fetch_assoc()) {
-                // Prendo l'AccessoValido
-                $nomeUtente = $datiUtente["NomeTitolare"];
-                $dataApertura = $datiUtente["DataApertura"];
+    if($_SESSION["accessoEseguito"]){
+      //Ricavo i dati dell'utente (nome, data apertura conto)
+      try{
+        $SQL = "SELECT NomeTitolare, DataApertura FROM tconticorrenti WHERE ContoCorrenteID = ? LIMIT 1";
+        if($statement = $conn -> prepare($SQL)){
+            $statement -> bind_param("i", $contoCorrenteID);
+            $statement -> execute();
+    
+            // Prendo il risultato della query
+            $result = $statement->get_result();
+    
+            // C'è una tupla
+            if ($result->num_rows != 0) {
+              // Salvo il contenuto del result
+              while ($row = $result->fetch_assoc()) {
+                  // Prendo l'AccessoValido
+                  $nomeUtente = $datiUtente["NomeTitolare"];
+                  $dataApertura = $datiUtente["DataApertura"];
+              }
             }
-          }
-  
-          // Chiudo lo statement
-          $statement->close();
-      } else{
-          // C'è stato un errore, lo stampo
-          $errore = $mysqli->errno . ' ' . $mysqli->error;
-          echo $errore;
-          return;
-      }
-    } catch(Exception $e){
-        echo "Qualcosa è andato storto nella richiesta dei dati dell'utente al db.";
-    }
-  
-    try{
-      // Ricavo le ultime 5 operazioni
-      $SQL = "SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria 
-      FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID 
-      WHERE movimenti.ContoCorrenteID = ? 
-      ORDER BY movimenti.Data DESC 
-      LIMIT 5";
-      if($statement = $conn -> prepare($SQL)){
-          $statement -> bind_param("i", $contoCorrenteID);
-          $statement -> execute();
-  
-          // Prendo il risultato della query
-          $result = $statement->get_result();
-  
-          // C'è una tupla
-          if ($result->num_rows != 0) {
-            // Salvo il contenuto del result
-            $ultimeOperazioni = array();
-            while ($row = $result->fetch_assoc()) {
-                $ultimeOperazioni[] = $row;
-            }
-
-            // Prendo il saldo
-            $saldo = $ultimeOperazioni[0]['Saldo'];
-          }
-  
-          // Chiudo lo statement
-          $statement->close();
-      } else{
-          // C'è stato un errore, lo stampo
-          $errore = $mysqli->errno . ' ' . $mysqli->error;
-          echo $errore;
-          return;
-      }
-    } catch(Exception $e){
-        echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
-    }  
-  } else{
-      // Controllo nel db se l'accesso valido è true e la data dell'ultimo accesso. In quel caso gli creo la sessione, altrimenti lo mando al login
-      $SQL = "SELECT AccessoValido, Data FROM taccessi WHERE ContoCorrenteID = ? ORDER BY Data DESC LIMIT 1";
-      if ($statement = $conn->prepare($SQL)) {
-        $statement->bind_param("i", $contoCorrenteID);
-        $statement->execute();
-
-        // Prendo il risultato della query
-        $result = $statement->get_result();
-
-        // Imposto inizialmente l'AccessoValido a 0. Se poi l'utente si è effettivamente registrato allora lo imposto a 1
-        $accessoValido = 0;
-
-        // C'è una tupla
-        if ($result->num_rows != 0) {
-            // Salvo il contenuto del result
-            while ($row = $result->fetch_assoc()) {
-                // Prendo l'AccessoValido
-                $accessoValido = $row["AccessoValido"];
-                $dataUltimoAccesso = $row["Data"];
-            }
+    
+            // Chiudo lo statement
+            $statement->close();
+        } else{
+            // C'è stato un errore, lo stampo
+            $errore = $mysqli->errno . ' ' . $mysqli->error;
+            echo $errore;
+            return;
         }
-
-        // Controllo se è variato il valore di accessoValido
-        if($accessoValido == 1){
-          $dataCorrenteString = date("Y-m-d") . " " . date("h:i:s");
-          $dataCorrente = date_create($dataCorrenteString);
-
-          // Converto la data letta dal db in oggetto Date di php
-          $dataDB = date_create($dataUltimoAccesso);
-
-          // Calcolo la differenza di tempo
-          $differenza = date_diff($dataCorrente, $dataDB);
-
-          // Controllo se son passate meno di 24 dall'ultimo login valido
-          if($differenza -> days == 0 && $differenza -> h < 24){
-            // Accesso ancora valido, creo la sessione
-            $_SESSION["accessoEseguito"] = "true";
-            $_SESSION["contoCorrenteID"] = $contoCorrenteID;
-
-            // Rimando a index.php con sessione impostata
-            header("Location: https://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=$contoCorrenteID");
+      } catch(Exception $e){
+          echo "Qualcosa è andato storto nella richiesta dei dati dell'utente al db.";
+      }
+    
+      try{
+        // Ricavo le ultime 5 operazioni
+        $SQL = "SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria 
+        FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID 
+        WHERE movimenti.ContoCorrenteID = ? 
+        ORDER BY movimenti.Data DESC 
+        LIMIT 5";
+        if($statement = $conn -> prepare($SQL)){
+            $statement -> bind_param("i", $contoCorrenteID);
+            $statement -> execute();
+    
+            // Prendo il risultato della query
+            $result = $statement->get_result();
+    
+            // C'è una tupla
+            if ($result->num_rows != 0) {
+              // Salvo il contenuto del result
+              $ultimeOperazioni = array();
+              while ($row = $result->fetch_assoc()) {
+                  $ultimeOperazioni[] = $row;
+              }
+  
+              // Prendo il saldo
+              $saldo = $ultimeOperazioni[0]['Saldo'];
+            }
+    
+            // Chiudo lo statement
+            $statement->close();
+        } else{
+            // C'è stato un errore, lo stampo
+            $errore = $mysqli->errno . ' ' . $mysqli->error;
+            echo $errore;
+            return;
+        }
+      } catch(Exception $e){
+          echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
+      }  
+    } else{
+        // Controllo nel db se l'accesso valido è true (1) e la data dell'ultimo accesso. In quel caso gli creo la sessione, altrimenti lo mando al login
+        $SQL = "SELECT AccessoValido, Data FROM taccessi WHERE ContoCorrenteID = ? ORDER BY Data DESC LIMIT 1";
+        if ($statement = $conn->prepare($SQL)) {
+          $statement->bind_param("i", $contoCorrenteID);
+          $statement->execute();
+  
+          // Prendo il risultato della query
+          $result = $statement->get_result();
+  
+          // Imposto inizialmente l'AccessoValido a 0. Se poi l'utente si è effettivamente registrato allora lo imposto a 1
+          $accessoValido = 0;
+  
+          // C'è una tupla
+          if ($result->num_rows != 0) {
+              // Salvo il contenuto del result
+              while ($row = $result->fetch_assoc()) {
+                  // Prendo l'AccessoValido
+                  $accessoValido = $row["AccessoValido"];
+                  $dataUltimoAccesso = $row["Data"];
+              }
+          }
+  
+          // Controllo se è variato il valore di accessoValido
+          if($accessoValido == 1){
+            $dataCorrenteString = date("Y-m-d") . " " . date("h:i:s");
+            $dataCorrente = date_create($dataCorrenteString);
+  
+            // Converto la data letta dal db in oggetto Date di php
+            $dataDB = date_create($dataUltimoAccesso);
+  
+            // Calcolo la differenza di tempo
+            $differenza = date_diff($dataCorrente, $dataDB);
+  
+            // Controllo se son passate meno di 24 dall'ultimo login valido
+            if($differenza -> days == 0 && $differenza -> h < 24){
+              // Accesso ancora valido, creo la sessione
+              $_SESSION["accessoEseguito"] = "true";
+              $_SESSION["contoCorrenteID"] = $contoCorrenteID;
+  
+              // Rimando a index.php con sessione impostata
+              header("Location: https://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=$contoCorrenteID");
+            } else{
+              // Troppo tempo dall'ultimo accesso. Lo mando al login
+              header("Location: https://gruppo6.altervista.org/ProjectWork/php/login.php");
+            }
+  
           } else{
-            // Troppo tempo dall'ultimo accesso. Lo mando al login
+            // Chiudo la connessione al db
+            $conn->close();  
+    
+            // Non ha l'accesso, lo reinderizzo al login
             header("Location: https://gruppo6.altervista.org/ProjectWork/php/login.php");
           }
-
-        } else{
-          // Chiudo la connessione al db
-          $conn->close();  
-  
-          // Non ha l'accesso, lo reinderizzo al login
-          header("Location: https://gruppo6.altervista.org/ProjectWork/php/login.php");
+        } else {
+            // C'è stato un errore, lo stampo
+            $errore = $mysqli->errno . ' ' . $mysqli->error;
+            echo $errore;
         }
-      } else {
-          // C'è stato un errore, lo stampo
-          $errore = $mysqli->errno . ' ' . $mysqli->error;
-          echo $errore;
-      }
-
-    // Chiudo la connessione al db
-    $conn->close();  
+    }
   }
+  
+  // Chiudo la connessione al db
+  $conn->close();  
 ?>
 
 
