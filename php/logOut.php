@@ -13,7 +13,7 @@
     session_destroy();
 
     // Reinderizzo al login
-    header("Location: https://gruppo6.altervista.org/ProjectWork/php/login.php");
+    header("Location: https://gruppo6.altervista.org/ProjectWork/php/homepage.php");
 ?>
 
 <!DOCTYPE html>
