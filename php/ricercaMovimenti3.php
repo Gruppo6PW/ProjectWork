@@ -13,12 +13,27 @@
         die("Connessione al database fallita: " . $conn->connect_error);
     }
 
+    try{
+        $query = $conn->prepare("SELECT Saldo FROM tmovimenticontocorrente WHERE ContoCorrenteID = ? ORDER BY Data DESC Limit 1");
+        $query->bind_param('i', $contoCorrenteID);
+        $query->execute();
+        $risultato = $query->get_result();    
+        if ($risultato->num_rows > 0) {
+            $row = $risultato->fetch_assoc();
+            $saldo = $row['Saldo'];
+        } else {
+            $saldo = -1;
+        }
+    } catch(Exception $e){
+        echo "Qualcosa è andato storto nella richiesta del saldo al db.";
+    }
+
     // Prepared statement per ricavare le operazione avvenute nel periodo selezionato
     try{
         $query = $conn->prepare("SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, 
         categorie.NomeCategoria FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie 
         ON movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID WHERE movimenti.ContoCorrenteID = ? 
-        AND movimenti.Data BETWEEN ? AND ? ORDER BY movimenti.Data");
+        AND movimenti.Data BETWEEN ? AND ? ORDER BY movimenti.Data DESC");
         $query->bind_param("iss", $contoCorrenteID, $data_inizio, $data_fine);
         $query->execute();
         $risultato = $query->get_result();
@@ -53,6 +68,7 @@
             </div>
         </header>
 
+        <p>Saldo: <?php echo $saldo ?></p>
     <!-- Selezione del periodo attraverso datepicker (BOOTSTRAP) -->
     <h1>Seleziona un periodo:</h1>
     <form action="ricercaMovimenti3.php" method="POST">
