@@ -230,7 +230,7 @@
           <td><?php echo $movimento['CategoriaMovimentoID']; ?></td>
           <td><?php echo $movimento['Importo']; ?></td>
           <td><?php echo $movimento['Data']; ?></td>
-          <td><a href="http://gruppo6.altervista.org/ProjectWork/php/DettaglioMovimento.php?id=<?php echo $movimento['MovimentoID']; ?>"><img src="http://gruppo6.altervista.org/ProjectWork/css/Immagini/details.png" alt="Icona Dettagli" height="25" width="25"></a></td>
+          <td><a href="http://gruppo6.altervista.org/ProjectWork/php/DettaglioMovimento.php?id=<?php echo $movimento['MovimentoID']; ?>" target="_blank"><img src="http://gruppo6.altervista.org/ProjectWork/css/Immagini/details.png" alt="Icona Dettagli" height="25" width="25"></a></td>
         </tr>
       <?php endforeach; ?>
     </tbody>
