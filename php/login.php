@@ -392,56 +392,6 @@
 
                         // Invio il codice nella mail
                         $msg = "Il tuo codice OTP è <h2>echo $OTP</h2>";
-                        // Tentativo di email bella, viene visualizzata male
-                        /*$msg = "
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <title>Codice di verifica</title>
-                            <style>
-                                body {
-                                    margin: 0;
-                                    padding: 0;
-                                    font-family: Arial, sans-serif;
-                                    background-color: #f2f2f2;
-                                }
-                                
-                                .container {
-                                    max-width: 600px;
-                                    margin: 0 auto;
-                                    padding: 20px;
-                                    background-color: #ffffff;
-                                    border: 1px solid #e6e6e6;
-                                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                                }
-                                
-                                h2 {
-                                    color: #333333;
-                                    font-size: 24px;
-                                    text-align: center;
-                                    margin-top: 0;
-                                }
-                                
-                                h1 {
-                                    color: #333333;
-                                    font-size: 36px;
-                                    text-align: center;
-                                    margin: 30px 0;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <div class='container'>
-                                <h2>Ecco il tuo codice di verifica</h2>
-                                <h1>
-                                    <?php
-                                        echo $OTP;
-                                    ?>
-                                </h1>
-                            </div>
-                        </body>
-                        </html>
-                        ";*/
 
                         $conn->close();
 
