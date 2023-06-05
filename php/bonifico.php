@@ -81,7 +81,7 @@ if(isset($_POST['invia'])){
   <main>
     <h2>Bonifico Bancario</h2>
 
-    <form method="post" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
+    <form method="post" action="">
         <label for="nomeBeneficiario">Beneficiario:</label>
         <input type="text" name="nomeBeneficiario" id="nomeBeneficiario" placeholder="Nome Cognome" required>
         <label for="ibanBeneficiario">IBAN:</label>
