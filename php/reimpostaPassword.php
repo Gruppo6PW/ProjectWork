@@ -94,83 +94,105 @@
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reimposta Password</title>
-</head>
-<body>
-    <!-- JS -->
-    <script>
-        function controllaInput() {
-            // Prendo i valori
-            passwordNuova = formPasswordDimenticata.passwordNuovaID.value;
-            confermaPasswordNuova = formPasswordDimenticata.confermaPasswordNuovaID.value;
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Reimposta Password</title>
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="styleNoSocial.css">
+    </head>
+    <body>
+        <!-- JS -->
+        <script>
+            function controllaInput() {
+                // Prendo i valori
+                passwordNuova = formPasswordDimenticata.passwordNuovaID.value;
+                confermaPasswordNuova = formPasswordDimenticata.confermaPasswordNuovaID.value;
 
-            // Controllo che la passwordCorrente non sia vuota e sia string
-            if ((!passwordNuova.isEmpty() && (typeof passwordNuova === 'string' || passwordNuova instanceof String) && controllaRequisitiPassword(passwordNuova))) {
-                // Non vuota e stringa
-
-                // Controllo che password non sia vuota e sia string
-                if ((!confermaPasswordNuova.isEmpty() && (typeof confermaPasswordNuova === 'string' || confermaPasswordNuova instanceof String) && controllaRequisitiPassword(confermaPasswordNuova))) {
+                // Controllo che la passwordCorrente non sia vuota e sia string
+                if ((!passwordNuova.isEmpty() && (typeof passwordNuova === 'string' || passwordNuova instanceof String) && controllaRequisitiPassword(passwordNuova))) {
                     // Non vuota e stringa
 
-                    // Controllo se le password sono uguali
-                    if (passwordNuova == confermaPasswordNuova) {
-                        // Uguali
+                    // Controllo che password non sia vuota e sia string
+                    if ((!confermaPasswordNuova.isEmpty() && (typeof confermaPasswordNuova === 'string' || confermaPasswordNuova instanceof String) && controllaRequisitiPassword(confermaPasswordNuova))) {
+                        // Non vuota e stringa
 
-                        // Tutto ok, invio
-                        formPasswordDimenticata.submit(); // Invio il submit
+                        // Controllo se le password sono uguali
+                        if (passwordNuova == confermaPasswordNuova) {
+                            // Uguali
+
+                            // Tutto ok, invio
+                            formPasswordDimenticata.submit(); // Invio il submit
+                        } else {
+                            alert("Le password non corrispondono");
+
+                            // Cancello gli input
+                            document.getElementById('passwordNuovaID').value = '';
+                            document.getElementById('confermaPasswordNuovaID').value = '';
+                            return false;
+                        }
                     } else {
-                        alert("Le password non corrispondono");
+                        alert("La password nuova deve valida");
 
-                        // Cancello gli input
+                        // Cancello l'input
                         document.getElementById('passwordNuovaID').value = '';
-                        document.getElementById('confermaPasswordNuovaID').value = '';
                         return false;
                     }
                 } else {
-                    alert("La password nuova deve valida");
+                    alert("La conferma della nuova password deve valida");
 
                     // Cancello l'input
-                    document.getElementById('passwordNuovaID').value = '';
+                    document.getElementById('confermaPasswordNuovaID').value = '';
                     return false;
                 }
-            } else {
-                alert("La conferma della nuova password deve valida");
-
-                // Cancello l'input
-                document.getElementById('confermaPasswordNuovaID').value = '';
-                return false;
             }
-        }
 
-        // Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
-        function controllaRequisitiPassword(stringaDaControllare) {
-            passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d\s:])([^\s]){8,}$/;
-            // Controllo se la password rispetta questi parametri
-            if (passwordRegex.test(stringaDaControllare)) {
-                return true;
-            } else {
-                return false;
+            // Controllo se la password contiene almeno 1 maiuscola, 1 minuscola, 1 numero, 1 carattere speciale e se è lunga almeno 8 caratteri
+            function controllaRequisitiPassword(stringaDaControllare) {
+                passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^\w\d\s:])([^\s]){8,}$/;
+                // Controllo se la password rispetta questi parametri
+                if (passwordRegex.test(stringaDaControllare)) {
+                    return true;
+                } else {
+                    return false;
+                }
             }
-        }
-    </script>
+        </script>
 
-    <!-- HTML -->
-    <form action="" name="formPasswordDimenticata" method="POST">
-        <label for="passwordNuovaID">Nuova password:</label>
-        <input type="password" name="passwordNuova" id="passwordNuovaID" required>
+        <!-- HTML -->
+        <div class="registration-form">
+            <form name="loginForm" method="POST">
+                <div class="form-icon">
+                    <span>
+                        <svg xmlns="http://www.w3.org/2000/svg" height="70" width="70" fill="#dee9ff" class="bi bi-key-fill" viewBox="-1 0 17 9 ">
+                            <path d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                        </svg>
+                    </span>
+                </div>
 
-        <br>
+                <div class="form-group">
+                    <input type="password" class="form-control item" name="passwordNuova" id="passwordNuovaID" placeholder="Nuova password">
+                </div>
 
-        <label for="confermaPasswordNuovaID">Conferma nuova password:</label>
-        <input type="password" name="confermaPasswordNuova" id="confermaPasswordNuovaID" required>
+                <div class="form-group">
+                    <input type="password" class="form-control item" name="confermaPasswordNuova" id="confermaPasswordNuovaID"
+                        placeholder="Conferma password">
+                </div>
 
-        <br>
+                <div class="text-center">
+                    <div class="g-recaptcha" data-sitekey="6Lc0L0wmAAAAAHIusv0dCKOV9a4msMJLD516RB1r"></div>
+                </div>
 
-        <input type="submit" value="Imposta" name="Imposta" onclick="controllaInput()">
-    </form>
-</body>
+                <div class="form-group">
+                    <button type="submit" name="Imposta" class="btn btn-block create-account" onclick=tentativiInserimentoCredenziali()>Imposta nuova password</button>
+                </div>
+            </form>
+        </div>
+    
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.mask/1.14.15/jquery.mask.min.js"></script>
+        <script src="assets/js/script.js"></script>
+    </body>
 </html>
