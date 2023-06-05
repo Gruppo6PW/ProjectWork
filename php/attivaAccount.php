@@ -91,7 +91,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attiva Account</title>
+    <title>Attivazione Account</title>
 </head>
 <body>
     <h2>Attivazione account in corso...</h2>
