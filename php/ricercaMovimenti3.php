@@ -31,7 +31,7 @@
         echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
     }
     $conn->close();
-    ?>
+?>
 
 <!DOCTYPE html>
 <html>
@@ -45,65 +45,97 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-datepicker@1.9.0/dist/css/bootstrap-datepicker.min.css">
     </head>
     <body>
-        <header>
-            <div>
-            <img src="Media/searchIcon.png" alt="Icona Ricerca" width=200>
-            <a href="profiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente" width=200> </a>
-            <img src="Media/transactionIcon.png" alt="Icona Operazioni" width=200>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary ">
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="http://gruppo6.altervista.org/ProjectWork/php/index.php">Home</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="http://gruppo6.altervista.org/ProjectWork/php/profilo.php">Profilo <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item dropdown active ">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLink" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Operazioni</a>
+                        <div class="dropdown-menu rounded bg-light"  aria-labelledby="navbarDropdownLink">
+                            <a class="dropdown-item " href="http://gruppo6.altervista.org/ProjectWork/php/bonifico.php">Bonifico</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricarica.php">Ricarica telefonica</a>
+                            <!-- <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Something else here</a> -->
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown active">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDisabled" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Movimenti</a>
+                        <div class="dropdown-menu rounded bg-light " aria-labelledby="navbarDropdownDisabled">
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti1.php">Ultimi movimenti</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti2.php">Cerca per categoria</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti3.php">Cerca per data</a>
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- Logout -->
+                <div class="nav-item dropdown bg-danger ml-auto ">
+                    <a class="nav-link active" href="http://gruppo6.altervista.org/ProjectWork/php/logOut.php" style="color: white ">LogOut</a>
+                </div>
             </div>
-        </header>
+        </nav>
 
-    <!-- Selezione del periodo attraverso datepicker (BOOTSTRAP) -->
-    <h1>Seleziona un periodo:</h1>
-    <form action="ricercaMovimenti3.php" method="POST">
-        <div class="form-group">
-            <label for="data_inizio">Data di inizio:</label>
-            <input type="text" class="form-control datepicker" id="data_inizio" name="data_inizio">
-        </div>
 
-        <div class="form-group">
-            <label for="data_fine">Data di fine:</label>
-            <input type="text" class="form-control datepicker" id="data_fine" name="data_fine">
-        </div>
+        <!-- Selezione del periodo attraverso datepicker (BOOTSTRAP) -->
+        <h1>Seleziona un periodo:</h1>
 
-        <button type="submit" class="btn btn-primary">Invia</button>
-    </form>
+        <form action="ricercaMovimenti3.php" method="POST">
+            <div class="md-form md-outline input-with-post-icon datepicker">
+                <input type="date" placeholder="Select date"   class="form-control datepicker" id="data_inizio" name="data_inizio">
+                <label for="data_inizio">Data di inizio:</label>
+            </div>
 
-    <script>
-        $(document).ready(function() {
-            $('.datepicker').datepicker({
-                format: 'yyyy-mm-dd',
-                autoclose: true
+            <div class="form-group">
+                <label for="data_fine">Data di fine:</label>
+                <input type="text" class="form-control datepicker" id="data_fine" name="data_fine">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Invia</button>
+        </form>
+
+        <script>
+            $(document).ready(function() {
+                $('.datepicker').datepicker({
+                    format: 'yyyy-mm-dd',
+                    autoclose: true
+                });
             });
-        });
-    </script>
+        </script>
 
         <?php if ($operazioni != null): ?> <!-- Verifica se è stata selezionata una categoria valida -->
-        <h2>Storico operazioni:</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Tipo Operazione</th>
-                    <th>Importo</th>
-                    <th>Data</th>
-                    <th></th>
-                </tr>
-            </thead>
-        <tbody>
-           <?php
-                foreach ($operazioni as $operazione): ?>
+            <h2>Storico operazioni:</h2>
+            <table>
+                <thead>
                     <tr>
-                        <td><?php echo $operazione['NomeCategoria']; ?></td>
-                        <td><?php echo $operazione['Importo']; ?>€</td>
-                        <td><?php echo $operazione['Data']; ?></td>
-                        <td><a href="DettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>">
-                        <img src="Media/details.png" alt="Icona Dettagli" width="25"></a></td>
+                        <th>Tipo Operazione</th>
+                        <th>Importo</th>
+                        <th>Data</th>
+                        <th>Dettagli</th>
                     </tr>
-            <?php endforeach;
-            ?>
-        </tbody>
-    </table>
-    <?php endif ?>
+                </thead>
+                <tbody>
+                    <?php
+                        foreach ($operazioni as $operazione): ?>
+                            <tr>
+                                <td><?php echo $operazione['NomeCategoria']; ?></td>
+                                <td><?php echo $operazione['Importo']; ?>€</td>
+                                <td><?php echo $operazione['Data']; ?></td>
+                                <td><a href="http://gruppo6.altervista.org/ProjectWork/php/dettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>">
+                                <img src="Media/details.png" alt="Icona Dettagli" width="25"></a></td>
+                            </tr>
+                        <?php endforeach;
+                    ?>
+                </tbody>
+            </table>
+        <?php endif ?>
 
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </body>
 </html>
