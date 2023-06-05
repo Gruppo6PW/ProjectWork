@@ -73,6 +73,7 @@
             ";
 
         } else {
+            // Form mail non valida
             $html = "
             <div class='registration-form'>
                 <form action='' name='formPasswordDimenticata' method='POST' >
