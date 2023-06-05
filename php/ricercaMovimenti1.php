@@ -1,32 +1,75 @@
 <?php
-    //!!!DA FIXARE CON LA SESSION UTENTE!!!
-    $contoCorrenteID = 1;
+    // Avvio la sessione
+    session_start();
+
+    // Prendo l'id del conto corrente nell'URL
+    $contoCorrenteID = $_GET["contoCorrenteID"];
+
     // Connessione database
-    //$conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
-    $conn=new mysqli("localhost", "root", "", "my_gruppo6");
+    $conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
+
     // Verifica degli errori di connessione
     if ($conn->connect_error) {
         die("Connessione al database fallita: " . $conn->connect_error);
     }
-    // Ottenimento del numero di righe dalla richiesta GET
-    $numeroRighe = isset($_GET['numeroRighe']) ? $_GET['numeroRighe'] : 0;
-    // Prepared statement per ricavare le ultime n operazioni
-    try{
-        $query = $conn->prepare("SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria 
-        FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON 
-        movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID WHERE movimenti.ContoCorrenteID = ? ORDER BY movimenti.Data 
-        DESC LIMIT ?");
-        $query->bind_param("ii", $contoCorrenteID, $numeroRighe);
-        $query->execute();
-        $risultato = $query->get_result();
-        $operazioni = array();
-        while($row = $risultato->fetch_assoc()){
-            $operazioni[] = $row;
+
+    if(session_status() === PHP_SESSION_ACTIVE){
+        if($_SESSION["accessoEseguito"] && $_SESSION["contoCorrenteID"] == $contoCorrenteID){
+            // Prendo il numero di righe
+            if(isset($_POST["numeroRighe"])){
+                $numeroRighe = $_POST["numeroRighe"];
+
+                if($numeroRighe < 0){
+                    // Negativo, rendo positivo il numero
+                    $numeroRighe = $numeroRighe * -1;
+                }
+
+                // Controllo che sia positivo
+                if($numeroRighe > 0){
+                    // Ricavo le ultime n operazioni
+                    try{
+                        $SQL = "SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria 
+                        FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID 
+                        WHERE movimenti.ContoCorrenteID = ? 
+                        ORDER BY movimenti.Data DESC 
+                        LIMIT ?";
+                        if($statement = $conn -> prepare($SQL)){
+                            $statement -> bind_param("ii", $contoCorrenteID, $numeroRighe);
+                            $statement -> execute();
+                            
+                            // Prendo il risultato della query
+                            $result = $statement->get_result();
+        
+                            $operazioni = array();
+        
+                            // C'è una tupla
+                            if ($result->num_rows != 0) {
+                                // Salvo il contenuto del result
+                                while ($row = $result->fetch_assoc()) {
+                                    $operazioni[] = $row;
+                                }
+                            }
+                    
+                            // Chiudo lo statement
+                            $statement->close();
+                            } else{
+                                // C'è stato un errore, lo stampo
+                                $errore = $mysqli->errno . ' ' . $mysqli->error;
+                                echo $errore;
+                                return;
+                            }
+                    } catch(Exception $e){
+                        echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
+                    }
+                } else {
+                    // $numeroRighe == 0 --> Gli dico nessun dato presente
+                    $esito = "<h2 id='centrata' style='color: #E00000;'>Nessun dato presente</h2>";
+                }
+            }
         }
-        $query->close();
-    } catch(Exception $e){
-        echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
     }
+
+    // Chiudo la connessione
     $conn->close();
 ?>
 
@@ -39,10 +82,10 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
             body {
-            background-color: #f8f9fa;
+                background-color: #f8f9fa;
             }
             #centrata{
-            text-align:center;
+                text-align:center;
             }
         </style>
     </head>
@@ -89,9 +132,9 @@
             
             <h1 class="mb-4" id="centrata">Inserisci il numero di righe da visualizzare:</h1>
                 
-            <form action="ricercaMovimenti1.php" method="GET" class="mb-4" id="centrata">
-                    <input type="number" name="numeroRighe" min="0">
-                    <button type="submit">Mostra</button>
+            <form action="" method="POST" class="mb-4" id="centrata">
+                <input type="number" name="numeroRighe" min="0">
+                <input type="submit" value="Mostra" name="Mostra">
             </form>
 
             <?php if ($numeroRighe > 0): ?> <!-- Verifica se è stata selezionata una categoria valida -->
@@ -106,19 +149,21 @@
                         </tr>
                     </thead>
                     <tbody>
-                    <?php
-                        foreach ($operazioni as $operazione): ?>
-                            <tr>
-                                <td><?php echo $operazione['NomeCategoria']; ?></td>
-                                <td><?php echo $operazione['Importo']; ?>€</td>
-                                <td><?php echo $operazione['Data']; ?></td>
-                                <td><a href="http://gruppo6.altervista.org/ProjectWork/php/dettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>" target="_blank">
-                                <img src="http://gruppo6.altervista.org/ProjectWork/css/Immagini/details.png" alt="Icona Dettagli" width="25" height="25"></a></td>
-                            </tr>
-                        <?php endforeach;
-                        ?>
+                        <?php
+                            foreach ($operazioni as $operazione): ?>
+                                <tr>
+                                    <td><?php echo $operazione['NomeCategoria']; ?></td>
+                                    <td><?php echo $operazione['Importo']; ?>€</td>
+                                    <td><?php echo $operazione['Data']; ?></td>
+                                    <td><a href="http://gruppo6.altervista.org/ProjectWork/php/dettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>" target="_blank">
+                                    <img src="http://gruppo6.altervista.org/ProjectWork/css/Immagini/details.png" alt="Icona Dettagli" width="25" height="25"></a></td>
+                                </tr>
+                            <?php endforeach;
+                            ?>
                     </tbody>
                 </table>
+                <?php else: 
+                        echo $esito;?>
             <?php endif ?>
         </main>
 
