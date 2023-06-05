@@ -48,6 +48,9 @@
                                 while ($row = $result->fetch_assoc()) {
                                     $operazioni[] = $row;
                                 }
+                            } else{
+                                // Avviso che non ha dati
+                                $esito = "<h2 id='centrata' style='color: #E00000;'>Nessun dato presente</h2>";
                             }
                     
                             // Chiudo lo statement
