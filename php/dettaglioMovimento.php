@@ -26,43 +26,6 @@ try{
 
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Dettagli Operazione</title>
-  <link rel="stylesheet" href="/css/stylesIndex.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-</head>
-<body>
-  <header>
-    <div>
-    <img src="Media/searchIcon.png" alt="Icona Ricerca" width=200>
-    <a href="profiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente" width=200> </a>
-    <img src="Media/transactionIcon.png" alt="Icona Operazioni" width=200>
-    </div>
-  </header>
-
-    <h1>Tabella Dettagli Movimento</h1>
-    <table>
-        <tr>
-            <th>Categoria Movimento</th>
-            <td><?php echo $datiMovimento['NomeCategoria']; ?></td>
-        </tr>
-        <tr>
-            <th>Data</th>
-            <td><?php echo $datiMovimento['Data']; ?></td>
-        </tr>
-        <tr>
-            <th>Importo</th>
-            <td><?php echo $datiMovimento['Importo']; ?>€</td>
-        </tr>
-        <tr>
-            <th>DescrizioneEstesa</th>
-            <td><?php echo $datiMovimento['DescrizioneEstesa']; ?></td>
-        </tr>
-    </table>
-</body>
-
-<!DOCTYPE html>
-<html>
     <head>
         <title>Dettagli Operazione</title>
         <link rel="stylesheet" href="/css/stylesIndex.css">
