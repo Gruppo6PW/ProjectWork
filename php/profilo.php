@@ -1,53 +1,58 @@
 <?php
-// Connessione database
-//$conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
-$conn=new mysqli("localhost", "root", "", "my_gruppo6");
-// Verifica della connessione
-if ($conn->connect_error) {
-    die("Connessione al database fallita: " . $conn->connect_error);
-}
+    // Avvio la sessione
+    session_start();
 
-//Da sistemare con session utente
-$contoCorrenteID = 1;
+    // Prendo l'id del conto corrente nell'URL
+    $contoCorrenteID = $_GET["contoCorrenteID"];
 
-// Prepared statement per ricavare i dati utente (nome, data apertura conto)
-try{
-    $SQL = "SELECT NomeTitolare, CognomeTitolare, DataApertura, Email, Iban FROM tconticorrenti WHERE ContoCorrenteID = ? LIMIT 1";
-    if($statement = $conn -> prepare($SQL)){
-        $statement -> bind_param("i", $contoCorrenteID);
-        $statement -> execute();
-        
-        // Prendo il risultato della query
-        $result = $statement->get_result();
+    // Connessione database
+    $conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
 
-        // C'è una tupla
-        if ($result->num_rows != 0) {
-        // Salvo il contenuto del result
-        while ($row = $result->fetch_assoc()) {
-            // Prendo i dati
-            $nomeUtente = $row['NomeTitolare'];
-            $cognomeUtente = $row['CognomeTitolare'];
-            $dataAperturaDB = $row['DataApertura'];
-            $email = $row['Email'];
-            $iban = $row['Iban'];
-
-            // Converto nel formato che mi serve
-            $dataApertura = date("d/m/Y", strtotime($dataAperturaDB));
-        }
-        }
-
-        // Chiudo lo statement
-        $statement->close();
-    } else{
-        // C'è stato un errore, lo stampo
-        $errore = $mysqli->errno . ' ' . $mysqli->error;
-        echo $errore;
-        return;
+    // Verifica della connessione
+    if ($conn->connect_error) {
+        die("Connessione al database fallita: " . $conn->connect_error);
     }
-} catch(Exception $e){
-    echo "Qualcosa è andato storto nella richiesta dei dati dell'utente al db.";
-}
-$conn->close();
+
+    // Prepared statement per ricavare i dati utente (nome, data apertura conto)
+    try{
+        $SQL = "SELECT NomeTitolare, CognomeTitolare, DataApertura, Email, Iban FROM tconticorrenti WHERE ContoCorrenteID = ? LIMIT 1";
+        if($statement = $conn -> prepare($SQL)){
+            $statement -> bind_param("i", $contoCorrenteID);
+            $statement -> execute();
+            
+            // Prendo il risultato della query
+            $result = $statement->get_result();
+
+            // C'è una tupla
+            if ($result->num_rows != 0) {
+                // Salvo il contenuto del result
+                while ($row = $result->fetch_assoc()) {
+                    // Prendo i dati
+                    $nomeUtente = $row['NomeTitolare'];
+                    $cognomeUtente = $row['CognomeTitolare'];
+                    $dataAperturaDB = $row['DataApertura'];
+                    $email = $row['Email'];
+                    $iban = $row['Iban'];
+
+                    // Converto nel formato che mi serve
+                    $dataApertura = date("d/m/Y", strtotime($dataAperturaDB));
+                }
+            }
+
+            // Chiudo lo statement
+            $statement->close();
+        } else{
+            // C'è stato un errore, lo stampo
+            $errore = $mysqli->errno . ' ' . $mysqli->error;
+            echo $errore;
+            return;
+        }
+    } catch(Exception $e){
+        echo "Qualcosa è andato storto nella richiesta dei dati dell'utente al db.";
+    }
+
+    // Chiudo la connessione
+    $conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -79,8 +84,8 @@ $conn->close();
                     <li class="nav-item dropdown active ">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLink" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Operazioni</a>
                         <div class="dropdown-menu rounded bg-light"  aria-labelledby="navbarDropdownLink">
-                            <a class="dropdown-item " href="http://gruppo6.altervista.org/ProjectWork/php/bonifico.php">Bonifico</a>
-                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricarica.php">Ricarica telefonica</a>
+                            <a class="dropdown-item " href="http://gruppo6.altervista.org/ProjectWork/php/bonifico.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Bonifico</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricarica.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Ricarica telefonica</a>
                             <!-- <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#">Something else here</a> -->
                         </div>
@@ -88,9 +93,9 @@ $conn->close();
                     <li class="nav-item dropdown active">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDisabled" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Movimenti</a>
                         <div class="dropdown-menu rounded bg-light " aria-labelledby="navbarDropdownDisabled">
-                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti1.php">Ultimi movimenti</a>
-                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti2.php">Cerca per categoria</a>
-                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti3.php">Cerca per data</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti1.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Ultimi movimenti</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti2.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Cerca per categoria</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti3.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Cerca per data</a>
                         </div>
                     </li>
                 </ul>
@@ -189,8 +194,8 @@ $conn->close();
         </main>
 
             
-            <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-            <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     </body>
 </html>
