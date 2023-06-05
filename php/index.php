@@ -14,7 +14,7 @@
     die("Connessione al database fallita: " . $conn->connect_error);
   }
 
-  if($_SESSION["accessoEseguito"]){
+  if(session_status() === PHP_SESSION_ACTIVE){
     //Ricavo i dati dell'utente (nome, data apertura conto)
     try{
       $SQL = "SELECT NomeTitolare, DataApertura FROM tconticorrenti WHERE ContoCorrenteID = ? LIMIT 1";
@@ -156,7 +156,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HomePage</title>
+  <title>Home</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <style>
     body {
@@ -194,9 +194,6 @@
               <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti2.php">Cerca per categoria</a>
               <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti3.php">Cerca per data</a>
             </div>
-          </li>
-          <li class="nav-item active">
-              <a class="nav-link" href="http://gruppo6.altervista.org/ProjectWork/php/logOut.php">LogOut</a>
           </li>
         </ul>
 
