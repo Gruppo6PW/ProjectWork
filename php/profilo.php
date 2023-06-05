@@ -12,17 +12,38 @@ $contoCorrenteID = 1;
 
 // Prepared statement per ricavare i dati utente (nome, data apertura conto)
 try{
-    $query1 = $conn->prepare("SELECT NomeTitolare, CognomeTitolare, DataApertura, Email, Iban FROM tconticorrenti WHERE ContoCorrenteID = ?");
-    $query1->bind_param("i", $contoCorrenteID);
-    $query1->execute();
-    $risultato1 = $query1->get_result();
-    $datiUtente = $risultato1->fetch_assoc();
-    $nomeUtente = $datiUtente['NomeTitolare'];
-    $cognomeUtente = $datiUtente['CognomeTitolare'];
-    $dataApertura = $datiUtente['DataApertura'];
-    $email = $datiUtente['Email'];
-    $iban = $datiUtente['Iban'];
-    $query1->close();
+    $SQL = "SELECT NomeTitolare, CognomeTitolare, DataApertura, Email, Iban FROM tconticorrenti WHERE ContoCorrenteID = ? LIMIT 1";
+    if($statement = $conn -> prepare($SQL)){
+        $statement -> bind_param("i", $contoCorrenteID);
+        $statement -> execute();
+        
+        // Prendo il risultato della query
+        $result = $statement->get_result();
+
+        // C'è una tupla
+        if ($result->num_rows != 0) {
+        // Salvo il contenuto del result
+        while ($row = $result->fetch_assoc()) {
+            // Prendo i dati
+            $nomeUtente = $row['NomeTitolare'];
+            $cognomeUtente = $row['CognomeTitolare'];
+            $dataAperturaDB = $row['DataApertura'];
+            $email = $row['Email'];
+            $iban = $row['Iban'];
+
+            // Converto nel formato che mi serve
+            $dataApertura = date("d/m/Y", strtotime($dataAperturaDB));
+        }
+        }
+
+        // Chiudo lo statement
+        $statement->close();
+    } else{
+        // C'è stato un errore, lo stampo
+        $errore = $mysqli->errno . ' ' . $mysqli->error;
+        echo $errore;
+        return;
+    }
 } catch(Exception $e){
     echo "Qualcosa è andato storto nella richiesta dei dati dell'utente al db.";
 }
@@ -103,61 +124,61 @@ $conn->close();
                                 </div>
                             </div>
                         </div>
-                    </div>
                     
-                    <div class="col-lg-8">
-                        <div class="card mb-4 shadow p-3 mb-5 bg-body rounded">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <p class="mb-0">Nome </p>
+                        <div class="col-lg-8">
+                            <div class="card mb-4 shadow p-3 mb-5 bg-body rounded">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0">Nome </p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0"><?php echo $nomeUtente ?> </p>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-9">
-                                        <p class="text-muted mb-0"><?php echo $nomeUtente ?> </p>
-                                    </div>
-                                </div>
 
-                                <hr>
+                                    <hr>
 
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <p class="mb-0">Cognome</p>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0">Cognome</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0"><?php echo $cognomeUtente ?></p>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-9">
-                                        <p class="text-muted mb-0"><?php echo $cognomeUtente ?></p>
-                                    </div>
-                                </div>
 
-                                <hr>
+                                    <hr>
 
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <p class="mb-0">Email</p>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0">Email</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0"><?php echo $email ?></p>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-9">
-                                        <p class="text-muted mb-0"><?php echo $email ?></p>
-                                    </div>
-                                </div>
 
-                                <hr>
+                                    <hr>
 
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <p class="mb-0">Data di apertura</p>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0">Data di apertura</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0"><?php echo $dataApertura ?></p>
+                                        </div>
                                     </div>
-                                    <div class="col-sm-9">
-                                        <p class="text-muted mb-0"><?php echo $dataApertura ?></p>
-                                    </div>
-                                </div>
 
-                                <hr>
+                                    <hr>
 
-                                <div class="row">
-                                    <div class="col-sm-3">
-                                        <p class="mb-0">IBAN</p>
-                                    </div>
-                                    <div class="col-sm-9">
-                                        <p class="text-muted mb-0"><?php echo $iban ?></p>
+                                    <div class="row">
+                                        <div class="col-sm-3">
+                                            <p class="mb-0">IBAN</p>
+                                        </div>
+                                        <div class="col-sm-9">
+                                            <p class="text-muted mb-0"><?php echo $iban ?></p>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
