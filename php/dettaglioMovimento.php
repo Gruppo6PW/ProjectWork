@@ -139,7 +139,7 @@ try{
                 </tbody>
             </table>
                         
-            <button style="font-size: 20px; background: #007bff; color:#ffffff; font-family: " type='button' class='btn btn-block create-account ' name='Indietro' onclick='functionIndietro()'>Indietro</button>
+            <button style="font-size: 20px; background: #007bff; color:#ffffff;" type='button' class='btn btn-block create-account ' name='Indietro' onclick='functionIndietro()'>Indietro</button>
                         
             <script>
                 function functionIndietro()
