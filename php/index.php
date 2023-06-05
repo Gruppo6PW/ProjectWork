@@ -233,7 +233,7 @@
               <td><?php echo $operazione['CategoriaMovimentoID']; ?></td>
               <td><?php echo $operazione['Importo']; ?></td>
               <td><?php echo $operazione['Data']; ?></td>
-              <td><a href="http://gruppo6.altervista.org/ProjectWork/php/DettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>" target="_blank"><img src="http://gruppo6.altervista.org/ProjectWork/css/Immagini/details.png" alt="Icona Dettagli" height="25" width="25"></a></td>
+              <td><a href="http://gruppo6.altervista.org/ProjectWork/php/dettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>" target="_blank"><img src="http://gruppo6.altervista.org/ProjectWork/css/Immagini/details.png" alt="Icona Dettagli" height="25" width="25"></a></td>
             </tr>
           <?php endforeach; ?>
         </tbody>
