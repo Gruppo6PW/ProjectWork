@@ -140,7 +140,7 @@
                 <input type="submit" value="Mostra" name="Mostra">
             </form>
 
-            <?php if ($numeroRighe > 0): ?> <!-- Verifica se è stata selezionata una categoria valida -->
+            <?php if ($numeroRighe > 0): ?> <!-- Verifica il numero di righe -->
                 <h2 class="mb-4" id="centrata">Storico operazioni:</h2>
                 <table class="table table-bordered mt-4 table-hover">
                     <thead>
