@@ -1,47 +1,158 @@
 <?php
-    //!!!DA FIXARE CON LA SESSION UTENTE!!!
-    $contoCorrenteID = 1;
+    // Avvio la sessione
+    session_start();
+
+    // Prendo l'id del conto corrente nell'URL
+    $contoCorrenteID = $_GET["contoCorrenteID"];
+
+    // Prendo l'id della categoria
     $categoriaID = isset($_GET['categoria']) ? $_GET['categoria'] : 0;
+
     // Connessione database
-    //$conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
-    $conn=new mysqli("localhost", "root", "", "my_gruppo6");
+    $conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
+    
     // Verifica degli errori di connessione
     if ($conn->connect_error) {
         die("Connessione al database fallita: " . $conn->connect_error);
     }
 
-    // Ottenimento del numero di righe dalla richiesta GET
-    $numeroRighe = isset($_GET['numeroRighe']) ? $_GET['numeroRighe'] : 0;
-    // Prepared statement per ricavare le ultime n operazioni
-    try{
-        $query1 = $conn->prepare("SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria 
-        FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON 
-        movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID WHERE movimenti.ContoCorrenteID = ? AND movimenti.CategoriaMovimentoID = ? ORDER BY movimenti.Data");
-        $query1->bind_param("ii", $contoCorrenteID, $categoriaID);
-        $query1->execute();
-        $risultato1 = $query1->get_result();
-        $operazioni = array();
-        while($row = $risultato1->fetch_assoc()){
-            $operazioni[] = $row;
+    if(session_status() === PHP_SESSION_ACTIVE){
+        if($_SESSION["accessoEseguito"] && $_SESSION["contoCorrenteID"] == $contoCorrenteID){
+            // Ottenimento del numero di righe dalla richiesta GET
+            $numeroRighe = isset($_GET['numeroRighe']) ? $_GET['numeroRighe'] : 0;
+
+            // Prepared statement per ricavare le ultime n operazioni
+            try{
+                $SQL = "SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria 
+                FROM tmovimenticontocorrente AS movimenti JOIN tcategoriemovimenti AS categorie ON movimenti.CategoriaMovimentoID = categorie.CategoriaMovimentoID 
+                WHERE movimenti.ContoCorrenteID = ? AND movimenti.CategoriaMovimentoID = ? 
+                ORDER BY movimenti.Data";
+                if($statement = $conn -> prepare($SQL)){
+                    $statement -> bind_param("ii", $contoCorrenteID, $categoriaID);
+                    $statement -> execute();
+                    
+                    // Prendo il risultato della query
+                    $result = $statement->get_result();
+
+                    $operazioni = array();
+
+                    // C'è una tupla
+                    if ($result->num_rows != 0) {
+                        $hasTuple = true;
+                        // Salvo il contenuto del result
+                        while ($row = $result->fetch_assoc()) {
+                            $operazioni[] = $row;
+                        }
+                    } else{
+                        // Avviso che non ha dati
+                        $esito = "<h2 id='centrata' style='color: #E00000;'>Nessun dato presente</h2>";
+                    }
+            
+                    // Chiudo lo statement
+                    $statement->close();
+                } else{
+                    // C'è stato un errore, lo stampo
+                    $errore = $mysqli->errno . ' ' . $mysqli->error;
+                    echo $errore;
+                    return;
+                }
+            } catch(Exception $e){
+                echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
+            }
+
+            // Ottengo le categorie
+            try{
+                $SQL = "SELECT CategoriaMovimentoID, NomeCategoria FROM tcategoriemovimenti WHERE CategoriaMovimentoID BETWEEN 1 AND 7";
+                if($statement = $conn -> prepare($SQL)){
+                    $statement -> execute();
+                    
+                    // Prendo il risultato della query
+                    $result = $statement->get_result();
+
+                    $categorie = array();
+
+                    // C'è una tupla
+                    if ($result->num_rows != 0) {
+                        // Salvo il contenuto del result
+                        while ($row = $result->fetch_assoc()) {
+                            $categorie[] = $row;
+                        }
+                    }
+            
+                    // Chiudo lo statement
+                    $statement->close();
+                } else{
+                    // C'è stato un errore, lo stampo
+                    $errore = $mysqli->errno . ' ' . $mysqli->error;
+                    echo $errore;
+                    return;
+                }
+            } catch(Exception $e){
+                echo "Qualcosa è andato storto nella richiesta delle operazioni al db2.";
+            }
+        } else{
+            // Controllo nel db se l'accesso valido è true (1) e la data dell'ultimo accesso. In quel caso gli creo la sessione, altrimenti lo mando al login
+            $SQL = "SELECT AccessoValido, Data FROM taccessi WHERE ContoCorrenteID = ? ORDER BY Data DESC LIMIT 1";
+            if ($statement = $conn->prepare($SQL)) {
+              $statement->bind_param("i", $contoCorrenteID);
+              $statement->execute();
+      
+              // Prendo il risultato della query
+              $result = $statement->get_result();
+      
+              // Imposto inizialmente l'AccessoValido a 0. Se poi l'utente si è effettivamente registrato allora lo imposto a 1
+              $accessoValido = 0;
+      
+              // C'è una tupla
+              if ($result->num_rows != 0) {
+                  // Salvo il contenuto del result
+                  while ($row = $result->fetch_assoc()) {
+                      // Prendo l'AccessoValido
+                      $accessoValido = $row["AccessoValido"];
+                      $dataUltimoAccesso = $row["Data"];
+                  }
+              }
+      
+              // Controllo se è variato il valore di accessoValido
+              if($accessoValido == 1){
+                $dataCorrenteString = date("Y-m-d") . " " . date("h:i:s");
+                $dataCorrente = date_create($dataCorrenteString);
+      
+                // Converto la data letta dal db in oggetto Date di php
+                $dataDB = date_create($dataUltimoAccesso);
+      
+                // Calcolo la differenza di tempo
+                $differenza = date_diff($dataCorrente, $dataDB);
+      
+                // Controllo se son passate meno di 24 dall'ultimo login valido
+                if($differenza -> days == 0 && $differenza -> h < 24){
+                  // Accesso ancora valido, creo la sessione
+                  $_SESSION["accessoEseguito"] = "true";
+                  $_SESSION["contoCorrenteID"] = $contoCorrenteID;
+      
+                  // Rimando a ricercaMovimenti2.php con sessione impostata
+                  header("Location: https://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti2.php?contoCorrenteID=$contoCorrenteID");
+                } else{
+                  // Troppo tempo dall'ultimo accesso. Lo mando al login
+                  header("Location: https://gruppo6.altervista.org/ProjectWork/php/login.php");
+                }
+      
+              } else{
+                // Chiudo la connessione al db
+                $conn->close();  
+        
+                // Non ha l'accesso, lo reinderizzo al login
+                header("Location: https://gruppo6.altervista.org/ProjectWork/php/login.php");
+              }
+            } else {
+                // C'è stato un errore, lo stampo
+                $errore = $mysqli->errno . ' ' . $mysqli->error;
+                echo $errore;
+            }
         }
-        $query1->close();
-    } catch(Exception $e){
-        echo "Qualcosa è andato storto nella richiesta delle operazioni al db1.";
     }
-    //prepared statement per ottenere le categorie
-    try{
-        $query2 = $conn->prepare("SELECT CategoriaMovimentoID, NomeCategoria FROM tcategoriemovimenti WHERE 
-        CategoriaMovimentoID BETWEEN 1 AND 7");
-        $query2->execute();
-        $risultato2 = $query2->get_result();
-        $categorie = array();
-        while($row = $risultato2->fetch_assoc()){
-            $categorie[] = $row;
-        }
-        $query2->close();
-    } catch(Exception $e){
-        echo "Qualcosa è andato storto nella richiesta delle operazioni al db2.";
-    }
+
+    // Chiusura connessione
     $conn->close();
 ?>
 
@@ -54,10 +165,10 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
             body {
-            background-color: #f8f9fa;
+                background-color: #f8f9fa;
             }
             #centrata{
-            text-align:center;
+                text-align:center;
             }
         </style>
     </head>
@@ -102,7 +213,7 @@
             <br>
 
             <h1 class="mb-4" id="centrata">Scegli la categoria da visualizzare:</h1>
-            <form action="ricercaMovimenti2.php" method="GET" id="centrata">
+            <form action="" method="GET" id="centrata">
                 <select name="categoria" onchange="this.form.submit()">
                     <option value="" selected="selected" disabled >Seleziona una categoria</option> <!-- Opzione vuota di default -->
                     <?php foreach ($categorie as $categoria): ?>
@@ -111,9 +222,12 @@
                         </option>
                     <?php endforeach ?>
                 </select>
+
+                <!-- Input hidden per mantenere il contoCorrenteID -->
+                <input type="hidden" name="contoCorrenteID" value="<?php echo $contoCorrenteID; ?>">
             </form>
                 
-            <?php if ($categoriaID > 0): ?> <!-- Verifica se è stata selezionata una categoria valida -->
+            <?php if ($categoriaID > 0 && $hasTuple): ?> <!-- Verifica se è stata selezionata una categoria valida -->
                 <br>
 
                 <h2 id="centrata">Storico operazioni:</h2>
@@ -138,6 +252,8 @@
                             <?php endforeach;?>
                         </tbody>
                     </table>
+                    <?php else: 
+                        echo $esito;?>
             <?php endif ?>
         </main>
 
