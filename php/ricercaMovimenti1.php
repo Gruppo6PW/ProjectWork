@@ -112,7 +112,7 @@
                                 <td><?php echo $operazione['NomeCategoria']; ?></td>
                                 <td><?php echo $operazione['Importo']; ?>€</td>
                                 <td><?php echo $operazione['Data']; ?></td>
-                                <td><a href="http://gruppo6.altervista.org/ProjectWork/php/dettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>">
+                                <td><a href="http://gruppo6.altervista.org/ProjectWork/php/dettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>" target="_blank">
                                 <img src="http://gruppo6.altervista.org/ProjectWork/css/Immagini/details.png" alt="Icona Dettagli" width="25" height="25"></a></td>
                             </tr>
                         <?php endforeach;
