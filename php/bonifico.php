@@ -106,6 +106,11 @@ if(isset($_POST['invia'])){
                         </div>
                     </li>
                 </ul>
+
+                <!-- Logout -->
+                <div class="nav-item dropdown bg-danger ml-auto ">
+                    <a class="nav-link active" href="http://gruppo6.altervista.org/ProjectWork/php/logOut.php" style="color: white ">LogOut</a>
+                </div>
             </div>
         </nav>
 
