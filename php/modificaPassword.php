@@ -6,7 +6,6 @@
         if (preg_match($passwordRegex, $stringaDaControllare) == 1) {
             return true;
         } else{
-            echo ("<a href='http://gruppo6.altervista.org/ProjectWork/modificaPassword.php'>Torna alla pagina di modifica della password</a>");
             return false;
         }
     }
@@ -35,7 +34,7 @@
                         die("Connessione fallita: " . $conn->connect_error);
                     }
 
-                        // Controllo che la passwordCorrente coincida con quella salvata nel db
+                        // Controllo che la passwordCorrente coinccontoCorrenteIDa con quella salvata nel db
                         $passwordCriptata = hash("sha512", $password);
 
                     // Creo la query di confronto
@@ -48,15 +47,15 @@
                         $result = $statement->get_result();
 
                         if ($result->num_rows == 0) {
-                            // C'è una tupla. Password valida
+                            // C'è una tupla. Password valcontoCorrenteIDa
                             echo("<h2>Password attuale errata</h2>");
                             return;
                         }
 
                         // Salvo il contenuto del result
                         while ($row = $result->fetch_assoc()) {
-                            // Prendo l'id (è gia int)
-                            $id = $row["ContoCorrenteID"];
+                            // Prendo l'contoCorrenteID (è gia int)
+                            $contoCorrenteID = $row["ContoCorrenteID"];
                         }
 
                         // Chiudo lo statement
@@ -71,7 +70,7 @@
                     $passwordNuovaCriptata = hash("sha512", $password);
 
                     // Procedo alla modifica della password
-                    $SQL = "UPDATE tconticorrenti SET Password = ? WHERE tconticorrenti.ContoCorrenteID = $id";
+                    $SQL = "UPDATE tconticorrenti SET Password = ? WHERE tconticorrenti.ContoCorrenteID = $contoCorrenteID";
                     if($statement = $conn -> prepare($SQL)){
                         $statement -> bind_param("s", $passwordNuovaCriptata);
                         $statement -> execute();
@@ -88,18 +87,18 @@
                     $conn->close();
 
                     // Reinderizzo alla pagina del profilo
-                    header("Location: https://gruppo6.altervista.org/ProjectWork/php/profiloUtente.php");
+                    header("Location: https://gruppo6.altervista.org/ProjectWork/php/profilo.php?contoCorrenteID?<?php echo $contoCorrenteID ?>");
                     
                 } else {
-                    echo ("<h2>La conferma della nuova password non è valida</h2>");
+                    echo ("<h2>La conferma della nuova password non è valcontoCorrenteIDa</h2>");
                     return;
                 }
             } else {
-                echo ("<h2>La nuova password non è valida</h2>");
+                echo ("<h2>La nuova password non è valcontoCorrenteIDa</h2>");
                 return;
             }
         } else {
-            echo ("<h2>La password corrente non è valida</h2>");
+            echo ("<h2>La password corrente non è valcontoCorrenteIDa</h2>");
             return;
         }
     }
@@ -111,7 +110,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="wcontoCorrenteIDth=device-wcontoCorrenteIDth, initial-scale=1">
         <title>Modifica Password</title>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.4.1/css/simple-line-icons.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
@@ -153,21 +152,21 @@
                                 return false;
                             }
                         } else {
-                            alert("La  conferma password deve essere valida");
+                            alert("La  conferma password deve essere valcontoCorrenteIDa");
 
                             // Cancello l'input
                             document.getElementById('confermaPasswordNuovaID').value = '';
                             return false;
                         }
                     } else {
-                        alert("La password nuova deve valida");
+                        alert("La password nuova deve valcontoCorrenteIDa");
 
                         // Cancello l'input
                         document.getElementById('passwordNuovaID').value = '';
                         return false;
                     }
                 } else {
-                    alert("La password attuale deve essere valida");
+                    alert("La password attuale deve essere valcontoCorrenteIDa");
 
                     // Cancello l'input
                     document.getElementById('passwordCorrenteID').value = '';
@@ -193,19 +192,19 @@
                 <div class="form-icon">
                     <!-- Codice per l'icona SVG  -->
                     <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="70" width="70" fill="#dee9ff" class="bi bi-key-fill" viewBox="-1 0 17 9 ">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="70" wcontoCorrenteIDth="70" fill="#dee9ff" class="bi bi-key-fill" viewBox="-1 0 17 9 ">
                             <path d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
                         </svg>
                     </span>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control item" id="passwordCorrenteID" name="passwordCorrente" placeholder="Password corrente" required>
+                    <input type="password" class="form-control item" contoCorrenteID="passwordCorrenteID" name="passwordCorrente" placeholder="Password corrente" required>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control item" id="passwordNuovaID" name="passwordNuova" placeholder="Nuova password" required>
+                    <input type="password" class="form-control item" contoCorrenteID="passwordNuovaID" name="passwordNuova" placeholder="Nuova password" required>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control item" id="confermaPasswordNuovaID" name="confermaPasswordNuova" placeholder="Conferma password" required>
+                    <input type="password" class="form-control item" contoCorrenteID="confermaPasswordNuovaID" name="confermaPasswordNuova" placeholder="Conferma password" required>
                 </div>
                 <div class="form-group">
                     <button type="button" class="btn btn-block create-account" name="Modifica" onclick="controllaInput()">Modifica password</button>
@@ -213,7 +212,7 @@
             </form>
 
             <div class="social-media">
-                <a href="http://gruppo6.altervista.org/ProjectWork/php/profilo.php">Cliccato per errore? Torna alla pagina del profilo senza fare modifiche</a>
+                <a href="http://gruppo6.altervista.org/ProjectWork/php/profilo.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Cliccato per errore? Torna alla pagina del profilo senza fare modifiche</a>
             </div>
         </div>
                     
