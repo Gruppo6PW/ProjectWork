@@ -64,44 +64,6 @@ if(isset($_POST['invia'])){
 
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Bonifico</title>
-    <link rel="stylesheet" href="/css/stylesIndex.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-</head>
-<body>
-  <header>
-    <div>
-        <img src="Media/searchIcon.png" alt="Icona Ricerca" width=200>
-        <a href="profiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente" width=200> </a>
-        <img src="Media/transactionIcon.png" alt="Icona Operazioni" width=200>
-    </div>
-  </header>
-
-  <main>
-    <h2>Bonifico Bancario</h2>
-
-    <form method="post" action="">
-        <label for="nomeBeneficiario">Beneficiario:</label>
-        <input type="text" name="nomeBeneficiario" id="nomeBeneficiario" placeholder="Nome Cognome" required>
-        <label for="ibanBeneficiario">IBAN:</label>
-        <input type="text" name="ibanBeneficiario" id="ibanBeneficiario" placeholder="" minlength="27" maxlength="27" required>
-        <label for="importo">Importo:</label>
-        <input type="number" name="importo" id="importo" placeholder="" min="0" step="0.01" required>
-        <label for="causale">Causale:</label>
-        <input type="text" name="causale" id="causale" placeholder="" required>
-
-        <input type="submit" name="invia" value="Effettua bonifico">
-        <input type="reset" name="cancella" value="Cancella"> 
-    </form>
-    <?php echo $html; ?>
-  </main>
-  <a class="button" href="index.php">Torna all'Homepage</a>
-</body>
-</html>
-
-<!DOCTYPE html>
-<html>
     <head>
         <title>Bonifico</title>
         <link rel="stylesheet" href="/css/stylesIndex.css">
