@@ -15,37 +15,100 @@
 
     // Prepared statement per ricavare i dati utente (nome, data apertura conto)
     try{
-        $SQL = "SELECT NomeTitolare, CognomeTitolare, DataApertura, Email, Iban FROM tconticorrenti WHERE ContoCorrenteID = ? LIMIT 1";
-        if($statement = $conn -> prepare($SQL)){
-            $statement -> bind_param("i", $contoCorrenteID);
-            $statement -> execute();
+        if(session_status() === PHP_SESSION_ACTIVE){
+            if($_SESSION["accessoEseguito"] && $_SESSION["contoCorrenteID"] == $contoCorrenteID){
+                $SQL = "SELECT NomeTitolare, CognomeTitolare, DataApertura, Email, Iban FROM tconticorrenti WHERE ContoCorrenteID = ? LIMIT 1";
+                if($statement = $conn -> prepare($SQL)){
+                    $statement -> bind_param("i", $contoCorrenteID);
+                    $statement -> execute();
+                    
+                    // Prendo il risultato della query
+                    $result = $statement->get_result();
+
+                    // C'è una tupla
+                    if ($result->num_rows != 0) {
+                        // Salvo il contenuto del result
+                        while ($row = $result->fetch_assoc()) {
+                            // Prendo i dati
+                            $nomeUtente = $row['NomeTitolare'];
+                            $cognomeUtente = $row['CognomeTitolare'];
+                            $dataAperturaDB = $row['DataApertura'];
+                            $email = $row['Email'];
+                            $iban = $row['Iban'];
+
+                            // Converto nel formato che mi serve
+                            $dataApertura = date("d/m/Y", strtotime($dataAperturaDB));
+                        }
+                    }
+
+                    // Chiudo lo statement
+                    $statement->close();
+                } else{
+                    // C'è stato un errore, lo stampo
+                    $errore = $mysqli->errno . ' ' . $mysqli->error;
+                    echo $errore;
+                    return;
+                }
+            } else{
+                // Controllo nel db se l'accesso valido è true (1) e la data dell'ultimo accesso. In quel caso gli creo la sessione, altrimenti lo mando al login
+                $SQL = "SELECT AccessoValido, Data FROM taccessi WHERE ContoCorrenteID = ? ORDER BY Data DESC LIMIT 1";
+                if ($statement = $conn->prepare($SQL)) {
+                  $statement->bind_param("i", $contoCorrenteID);
+                  $statement->execute();
+          
+                  // Prendo il risultato della query
+                  $result = $statement->get_result();
+          
+                  // Imposto inizialmente l'AccessoValido a 0. Se poi l'utente si è effettivamente registrato allora lo imposto a 1
+                  $accessoValido = 0;
+          
+                  // C'è una tupla
+                  if ($result->num_rows != 0) {
+                      // Salvo il contenuto del result
+                      while ($row = $result->fetch_assoc()) {
+                          // Prendo l'AccessoValido
+                          $accessoValido = $row["AccessoValido"];
+                          $dataUltimoAccesso = $row["Data"];
+                      }
+                  }
+          
+                  // Controllo se è variato il valore di accessoValido
+                  if($accessoValido == 1){
+                    $dataCorrenteString = date("Y-m-d") . " " . date("h:i:s");
+                    $dataCorrente = date_create($dataCorrenteString);
+          
+                    // Converto la data letta dal db in oggetto Date di php
+                    $dataDB = date_create($dataUltimoAccesso);
+          
+                    // Calcolo la differenza di tempo
+                    $differenza = date_diff($dataCorrente, $dataDB);
+          
+                    // Controllo se son passate meno di 24 dall'ultimo login valido
+                    if($differenza -> days == 0 && $differenza -> h < 24){
+                      // Accesso ancora valido, creo la sessione
+                      $_SESSION["accessoEseguito"] = "true";
+                      $_SESSION["contoCorrenteID"] = $contoCorrenteID;
+          
+                      // Rimando a profilo.php con sessione impostata
+                      header("Location: https://gruppo6.altervista.org/ProjectWork/php/profilo.php?contoCorrenteID=$contoCorrenteID");
+                    } else{
+                      // Troppo tempo dall'ultimo accesso. Lo mando al login
+                      header("Location: https://gruppo6.altervista.org/ProjectWork/php/login.php");
+                    }
+          
+                  } else{
+                    // Chiudo la connessione al db
+                    $conn->close();  
             
-            // Prendo il risultato della query
-            $result = $statement->get_result();
-
-            // C'è una tupla
-            if ($result->num_rows != 0) {
-                // Salvo il contenuto del result
-                while ($row = $result->fetch_assoc()) {
-                    // Prendo i dati
-                    $nomeUtente = $row['NomeTitolare'];
-                    $cognomeUtente = $row['CognomeTitolare'];
-                    $dataAperturaDB = $row['DataApertura'];
-                    $email = $row['Email'];
-                    $iban = $row['Iban'];
-
-                    // Converto nel formato che mi serve
-                    $dataApertura = date("d/m/Y", strtotime($dataAperturaDB));
+                    // Non ha l'accesso, lo reinderizzo al login
+                    header("Location: https://gruppo6.altervista.org/ProjectWork/php/login.php");
+                  }
+                } else {
+                    // C'è stato un errore, lo stampo
+                    $errore = $mysqli->errno . ' ' . $mysqli->error;
+                    echo $errore;
                 }
             }
-
-            // Chiudo lo statement
-            $statement->close();
-        } else{
-            // C'è stato un errore, lo stampo
-            $errore = $mysqli->errno . ' ' . $mysqli->error;
-            echo $errore;
-            return;
         }
     } catch(Exception $e){
         echo "Qualcosa è andato storto nella richiesta dei dati dell'utente al db.";
