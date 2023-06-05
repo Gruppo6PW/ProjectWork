@@ -69,57 +69,125 @@ if(isset($_POST['invia'])){
 
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Ricarica telefonica</title>
-    <link rel="stylesheet" href="/css/stylesIndex.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-</head>
-<body>
-  <header>
-    <div>
-        <img src="Media/searchIcon.png" alt="Icona Ricerca" width=200>
-        <a href="profiloUtente.php"> <img src="Media/profileIcon.png" alt="Icona Profilo Utente" width=200> </a>
-        <img src="Media/transactionIcon.png" alt="Icona Operazioni" width=200>
-    </div>
-  </header>
+    <head>
+        <title>Ricarica telefonica</title>
+        <link rel="stylesheet" href="/css/stylesIndex.css">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+            body {
+            background-color: #f8f9fa;
+            }
+            #centrata{
+            text-align:center;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-primary">
+            <div class="collapse navbar-collapse" id="navbarCollapse">
+                <ul class="navbar-nav ">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="http://gruppo6.altervista.org/ProjectWork/php/index.php">Home</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="http://gruppo6.altervista.org/ProjectWork/php/profilo.php">Profilo <span class="sr-only">(current)</span></a>
+                    </li>
+                    <li class="nav-item dropdown active ">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLink" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Operazioni</a>
+                        <div class="dropdown-menu rounded bg-light"  aria-labelledby="navbarDropdownLink">
+                            <a class="dropdown-item " href="http://gruppo6.altervista.org/ProjectWork/php/bonifico.php">Bonifico</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricarica.php">Ricarica telefonica</a>
+                            <!-- <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Something else here</a> -->
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown active">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDisabled" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Movimenti</a>
+                        <div class="dropdown-menu rounded bg-light " aria-labelledby="navbarDropdownDisabled">
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti1.php">Ultimi movimenti</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti2.php">Cerca per categoria</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti3.php">Cerca per data</a>
+                        </div>
+                    </li>
+                </ul>
 
-  <main>
-    <h2>Ricarica telefonica</h2>
+                <!-- Logout -->
+                <div class="nav-item dropdown bg-danger ml-auto ">
+                    <a class="nav-link active" href="http://gruppo6.altervista.org/ProjectWork/php/logOut.php" style="color: white ">LogOut</a>
+                </div>
+            </div>
+        </nav>
 
-    <form method="post" action="<?php echo $_SERVER["PHP_SELF"]; ?>">
-        <select name="operatore" id="operatore" required>
-            <option value="">Seleziona un operatore</option>
-            <option value="Vodafone">Vodafone</option>
-            <option value="TIM">TIM</option>
-            <option value="WindTre">WindTre</option>
-            <option value="Illiad">Illiad</option>
-            <option value="Poste Mobile">Poste Mobile</option>
-            <option value="Coop Voce">Coop Voce</option>
-            <option value="Fastweb Mobile">Fastweb Mobile</option>
-            <option value="Ho Mobile">Ho Mobile</option>
-        </select>
-        <select name="importo" id="importo" required>
-            <option value="">Seleziona un importo</option>
-            <option value="5">5€</option>
-            <option value="10">10€</option>
-            <option value="15">15€</option>
-            <option value="20">20€</option>
-            <option value="25">25€</option>
-            <option value="30">30€</option>
-            <option value="50">50€</option>
-            <option value="100">100€</option>
-        </select>
-        <br><br>
-        <label for="numero_telefono">Numero di telefono:</label>
-        <input type="tel" name="numero_telefono" id="numero_telefono" placeholder="Numero di telefono" minlength="10" maxlength="10" required>
-        <br><br>
-        <input type="submit" name="invia" value="Effettua ricarica">
-        <input type="reset" name="cancella" value="Cancella"> 
-    </form>
-    <?php echo $html; ?>
 
-    <a class="button" href="index.php">Torna all'Homepage</a>
+        <main class="container my-5">
+            <br> 
+        
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div class="container py-5">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                            <h1 class="text-center">Ricarica</h1> <br>
+                            <div class="card mb-4 shadow p-3 bg-body rounded">
+                                <div class="card-body">
+                                    <form method="post" action="" >
+                                        <div class="row mb-3 ">
+                                            <div class="col" >
+                                                <span class="select-wrapper" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">     
+                                                    <select name="operatore" id="operatore" required style="width: 250px" >
+                                                        <option value="" disabled selected="selected">Seleziona un operatore</option>
+                                                        <option value="Vodafone">Vodafone</option>
+                                                        <option value="TIM">TIM</option>
+                                                        <option value="WindTre">WindTre</option>
+                                                        <option value="Illiad">Illiad</option>
+                                                        <option value="Poste Mobile">Poste Mobile</option>
+                                                        <option value="Coop Voce">Coop Voce</option>
+                                                        <option value="Fastweb Mobile">Fastweb Mobile</option>
+                                                        <option value="Ho Mobile">Ho Mobile</option>
+                                                    </select>      
+                                                </span>
+                                            </div>
+                                        </div>
 
-  </main>
-</body>
+                                        <div class="row mb-3 ">
+                                            <div class="col">
+                                                <span class="select-wrapper" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">          
+                                                    <select name="importo" id="importo" required style="width: 250px">
+                                                        <option disabled selected="selected" value="">Seleziona un importo</option>
+                                                        <option value="5">5€</option>
+                                                        <option value="10">10€</option>
+                                                        <option value="15">15€</option>
+                                                        <option value="20">20€</option>
+                                                        <option value="25">25€</option>
+                                                        <option value="30">30€</option>
+                                                        <option value="50">50€</option>
+                                                        <option value="100">100€</option>
+                                                    </select>
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mb-3 ">
+                                            <div class="col d-flex justify-content-center">
+                                                <input type="tel" class="form-control custom-input-width" min="10" max="10" style="width: 250px"placeholder="Numero di telefono" name="numero_telefono" id="numero_telefono" required >
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col text-center">
+                                                <input style="width: 250px" type="submit" class="btn btn-primary" value="Ricarica" >
+                                            </div>
+                                        </div>  
+                                    </form>
+                                </div>   
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> 
+        </main>
+        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </body>
 </html>
