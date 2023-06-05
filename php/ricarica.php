@@ -1,69 +1,16 @@
 <?php
-// Connessione database
-//$conn=new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
-$conn=new mysqli("localhost", "root", "", "my_gruppo6");
-// Verifica della connessione
-if ($conn->connect_error) {
-    die("Connessione al database fallita: " . $conn->connect_error);
-}
+    // Avvio la sessione
+    session_start();
 
-//IMPLEMENTARE SESSION
-$contoCorrenteID = 1;
-try{
-    //query per ottere l'ultimo saldo disponibile, necessario per la query insert
-    $query = $conn->prepare("SELECT Saldo FROM tmovimenticontocorrente WHERE ContoCorrenteID = ? ORDER BY Data DESC LIMIT 1");
-    $query->bind_param("i", $contoCorrenteID);
-    $query->execute();
-    $query->bind_result($saldo);
-    $query->fetch();
-    $query->close();
-} catch(Exception $e){
-    echo "Qualcosa è andato storto nella richiesta del saldo al db..";
-}
+    // Prendo l'id del conto corrente nell'URL
+    $contoCorrenteID = $_GET["contoCorrenteID"];
 
-// controllo che vengano passati tutti i valori
-$telefono = isset($_POST['numero_telefono']) ? $_POST['numero_telefono'] : 0;
-$operatore = isset($_POST['operatore']) ? $_POST['operatore'] : 0;
-$importo = isset($_POST['importo']) ? $_POST['importo'] : 0;
+    // Connessione database
+    $conn = new mysqli("localhost", "gruppo6", "ZQ5Z4Dzc6Ddd", "my_gruppo6");
 
-$pattern = '/^[0-9]{10}$/'; // Espressione regolare per un numero di telefono composto da 10 cifre
-if(isset($_POST['numero_telefono'])){
-}
-
-if(isset($_POST['invia'])){
-    if (preg_match($pattern, $telefono)) {
-        // Il numero di telefono è valido
-        //echo 'Ricarica effettuata correttamente.' , $telefono , $operatore;
-        try{
-            $data = date("Y-m-d-G-i-s");
-            $descrizione = "Ricarica telefonica $operatore, $importo € al num $telefono";
-            $nuovoSaldo = (float)$saldo - (float)$importo;
-            if($nuovoSaldo<0){
-                throw new Exception('', 1);
-            }
-            $queryInsert = $conn->prepare("INSERT INTO tmovimenticontocorrente (ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa)
-          VALUES (?, ?, ?, ?, 5, ?)");
-            $queryInsert->bind_param("isdss", $contoCorrenteID, $data, $importo, $nuovoSaldo, $descrizione);
-            $queryInsert->execute();
-            $risultato = $queryInsert->get_result();
-            $queryInsert->close();
-
-            $html="<h2>Ricarica effettuata correttamente.<br>€ $importo a favore di $telefono</h2>";
-        } catch(Exception $e){
-            $codErrore = $e->getCode();
-            if($codErrore===1){
-                echo "<h2>Qualcosa è andato storto. Controllare il saldo e riprovare.<h2>/";
-            } else{
-            echo "<h2>Qualcosa è andato storto. Rircaricare la pagina e riprovare.</h2>";
-            }
-        }
-        //insert query
-    } else {
-        // Il numero di telefono non è valido
-        echo 'Siamo spiacenti, abbiamo riscontrato un errore. Riprovare ricaricando la pagina e inserendo i dati corretti.';
-    }
-    } else{
-        $html='';
+    // Verifica della connessione
+    if ($conn->connect_error) {
+        die("Connessione al database fallita: " . $conn->connect_error);
     }
 ?>
 
@@ -96,8 +43,8 @@ if(isset($_POST['invia'])){
                     <li class="nav-item dropdown active ">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLink" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Operazioni</a>
                         <div class="dropdown-menu rounded bg-light"  aria-labelledby="navbarDropdownLink">
-                            <a class="dropdown-item " href="http://gruppo6.altervista.org/ProjectWork/php/bonifico.php">Bonifico</a>
-                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricarica.php">Ricarica telefonica</a>
+                            <a class="dropdown-item " href="http://gruppo6.altervista.org/ProjectWork/php/bonifico.php?contoCorrenteID?<?php echo $contoCorrenteID ?>"">Bonifico</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricarica.php?contoCorrenteID?<?php echo $contoCorrenteID ?>"">Ricarica telefonica</a>
                             <!-- <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#">Something else here</a> -->
                         </div>
@@ -177,7 +124,10 @@ if(isset($_POST['invia'])){
                                             <div class="col text-center">
                                                 <input style="width: 250px" type="submit" class="btn btn-primary" value="Ricarica" >
                                             </div>
-                                        </div>  
+                                        </div>
+                                        <div class="row">
+                                            <p id="esitoRicaricaID"></p>
+                                        </div>
                                     </form>
                                 </div>   
                             </div>
@@ -186,8 +136,185 @@ if(isset($_POST['invia'])){
                 </div>
             </div> 
         </main>
+
+        <!-- Bootstrap -->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+        <!-- PHP -->
+        <?php
+            if(session_status() === PHP_SESSION_ACTIVE){
+                if($_SESSION["accessoEseguito"] && $_SESSION["contoCorrenteID"] == $contoCorrenteID){
+                    try{
+                        $SQL = "SELECT Saldo FROM tmovimenticontocorrente WHERE ContoCorrenteID = ? ORDER BY Data DESC LIMIT 1";
+                        if($statement = $conn -> prepare($SQL)){
+                            $statement -> bind_param("i", $contoCorrenteID);
+                            $statement -> execute();
+                            
+                            // Prendo il risultato della query
+                            $result = $statement->get_result();
+        
+                            // C'è una tupla
+                            if ($result->num_rows != 0) {
+                                // Salvo il contenuto del result
+                                while ($row = $result->fetch_assoc()) {
+                                    // Prendo i dati
+                                    $saldo = $row['Saldo'];
+                                }
+                            }
+        
+                            // Chiudo lo statement
+                            $statement->close();
+                        } else{
+                            // C'è stato un errore, lo stampo
+                            $errore = $mysqli->errno . ' ' . $mysqli->error;
+                            echo $errore;
+                            return;
+                        }
+                    } catch(Exception $e){
+                        echo "Qualcosa è andato storto nella richiesta del saldo al db..";
+                    }
+                
+                    // Controllo che vengano passati tutti i valori
+                    $telefono = isset($_POST['numero_telefono']) ? $_POST['numero_telefono'] : 0;
+                    $operatore = isset($_POST['operatore']) ? $_POST['operatore'] : 0;
+                    $importo = isset($_POST['importo']) ? $_POST['importo'] : 0;
+                
+                    $pattern = '/^[0-9]{10}$/'; // Espressione regolare per un numero di telefono composto da 10 cifre
+                
+                    if(isset($_POST['Ricarica'])){
+                        if (preg_match($pattern, $telefono)) {
+                            // Il numero di telefono è valido
+                            try{
+                                $data = date("Y-m-d-G-i-s");
+                                $descrizione = "Ricarica telefonica $operatore, $importo € al num $telefono";
+                                $nuovoSaldo = (float)$saldo - (float)$importo;
+                                if($nuovoSaldo<0){
+                                    throw new Exception('', 1);
+                                }
+        
+                                $SQL = "INSERT INTO tmovimenticontocorrente (ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa) VALUES (?, ?, ?, ?, 5, ?)";
+                                if($statement = $conn -> prepare($SQL)){
+                                    $statement -> bind_param("isdss", $contoCorrenteID, $data, $importo, $nuovoSaldo, $descrizione);
+                                    $statement -> execute();
+                                    
+                                    // Prendo il risultato della query
+                                    $result = $statement->get_result();
+        
+                                    // Chiudo lo statement
+                                    $statement->close();
+                                } else{
+                                    // C'è stato un errore, lo stampo
+                                    $errore = $mysqli->errno . ' ' . $mysqli->error;
+                                    echo $errore;
+                                }
+
+                                echo "
+                                <script> \n
+                                    document.getElementById('esitoBonificoID').style.innerHTML = 'Ricarica effettuata correttamente.<br>€ $importo a favore di $telefono';
+                                    document.getElementById('esitoBonificoID').style.color = 'green';
+                                    document.getElementById('esitoBonificoID').style.visibility = 'visible';
+                                </script> \n
+                                ";
+                            } catch(Exception $e){
+                                $codErrore = $e->getCode();
+                                if($codErrore===1){
+                                    echo "
+                                    <script> \n
+                                        document.getElementById('esitoBonificoID').style.innerHTML = 'Qualcosa è andato storto. Controllare il saldo e riprovare.';
+                                        document.getElementById('esitoBonificoID').style.color = 'red';
+                                        document.getElementById('esitoBonificoID').style.visibility = 'visible';
+                                    </script> \n
+                                    ";
+                                } else{
+                                    echo "
+                                    <script> \n
+                                    document.getElementById('esitoBonificoID').style.innerHTML = 'Qualcosa non ha funzionato. Ricaricare la pagina e riprovare.';
+                                    document.getElementById('esitoBonificoID').style.color = 'red';
+                                    document.getElementById('esitoBonificoID').style.visibility = 'visible';
+                                    </script> \n
+                                    ";
+                                }
+                            }
+                            //insert query
+                        } else {
+                            // Il numero di telefono non è valido
+                            echo "
+                            <script> \n
+                                document.getElementById('esitoBonificoID').style.visibility = 'visible';
+                                document.getElementById('esitoBonificoID').style.color = 'red';
+                                document.getElementById('esitoBonificoID').style.innerHTML = 'Siamo spiacenti, abbiamo riscontrato un errore. Riprovare ricaricando la pagina e inserendo i dati corretti.';
+                            </script> \n
+                            ";
+                        }
+                    } else{
+                        $html='';
+                    }
+                } else{
+                    // Controllo nel db se l'accesso valido è true (1) e la data dell'ultimo accesso. In quel caso gli creo la sessione, altrimenti lo mando al login
+                    $SQL = "SELECT AccessoValido, Data FROM taccessi WHERE ContoCorrenteID = ? ORDER BY Data DESC LIMIT 1";
+                    if ($statement = $conn->prepare($SQL)) {
+                      $statement->bind_param("i", $contoCorrenteID);
+                      $statement->execute();
+              
+                      // Prendo il risultato della query
+                      $result = $statement->get_result();
+              
+                      // Imposto inizialmente l'AccessoValido a 0. Se poi l'utente si è effettivamente registrato allora lo imposto a 1
+                      $accessoValido = 0;
+              
+                      // C'è una tupla
+                      if ($result->num_rows != 0) {
+                          // Salvo il contenuto del result
+                          while ($row = $result->fetch_assoc()) {
+                              // Prendo l'AccessoValido
+                              $accessoValido = $row["AccessoValido"];
+                              $dataUltimoAccesso = $row["Data"];
+                          }
+                      }
+              
+                      // Controllo se è variato il valore di accessoValido
+                      if($accessoValido == 1){
+                        $dataCorrenteString = date("Y-m-d") . " " . date("h:i:s");
+                        $dataCorrente = date_create($dataCorrenteString);
+              
+                        // Converto la data letta dal db in oggetto Date di php
+                        $dataDB = date_create($dataUltimoAccesso);
+              
+                        // Calcolo la differenza di tempo
+                        $differenza = date_diff($dataCorrente, $dataDB);
+              
+                        // Controllo se son passate meno di 24 dall'ultimo login valido
+                        if($differenza -> days == 0 && $differenza -> h < 24){
+                          // Accesso ancora valido, creo la sessione
+                          $_SESSION["accessoEseguito"] = "true";
+                          $_SESSION["contoCorrenteID"] = $contoCorrenteID;
+              
+                          // Rimando a ricarica.php con sessione impostata
+                          header("Location: https://gruppo6.altervista.org/ProjectWork/php/ricarica.php?contoCorrenteID=$contoCorrenteID");
+                        } else{
+                          // Troppo tempo dall'ultimo accesso. Lo mando al login
+                          header("Location: https://gruppo6.altervista.org/ProjectWork/php/login.php");
+                        }
+              
+                      } else{
+                        // Chiudo la connessione al db
+                        $conn->close();  
+                
+                        // Non ha l'accesso, lo reinderizzo al login
+                        header("Location: https://gruppo6.altervista.org/ProjectWork/php/login.php");
+                      }
+                    } else {
+                        // C'è stato un errore, lo stampo
+                        $errore = $mysqli->errno . ' ' . $mysqli->error;
+                        echo $errore;
+                    }
+                }
+            }
+        
+            // Chiudo la connessione
+            $conn->close();
+        ?>
     </body>
 </html>
