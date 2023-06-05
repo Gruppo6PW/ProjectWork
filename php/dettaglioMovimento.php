@@ -139,15 +139,6 @@ try{
                 </tbody>
             </table>
                         
-            <button style="font-size: 20px; background: #007bff; color:#ffffff;" type='button' class='btn btn-block create-account ' name='Indietro' onclick='functionIndietro()'>Indietro</button>
-                        
-            <script>
-                function functionIndietro()
-                {
-                            
-                }
-            </script>
-                    
         </main>
 
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
