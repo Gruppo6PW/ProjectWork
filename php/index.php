@@ -185,8 +185,8 @@
               <li class="nav-item dropdown active ">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLink" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Operazioni</a>
                 <div class="dropdown-menu rounded bg-light"  aria-labelledby="navbarDropdownLink">
-                  <a class="dropdown-item " href="LINK ALLA PAGINA DEL BONIFICO">Bonifico</a>
-                  <a class="dropdown-item" href="LINK ALLA PAGINA DELLA RICARICA TELEFONICA">Ricarica telefonica</a>
+                  <a class="dropdown-item " href="https://gruppo6.altervista.org/ProjectWork/php/bonifico.php?contoCorrenteID=<?php echo $contoCorrenteID ?>">Bonifico</a>
+                  <a class="dropdown-item" href=https://gruppo6.altervista.org/ProjectWork/php/ricarica.php?contoCorrenteID=<?php echo $contoCorrenteID ?>">Ricarica telefonica</a>
                   <!-- <div class="dropdown-divider"></div>
                   <a class="dropdown-item" href="#">Something else here</a> -->
                 </div>
@@ -229,7 +229,7 @@
         <tbody>
           <?php foreach ($ultimeOperazioni as $operazione): ?>
             <tr>
-              <td><?php echo $operazione['CategoriaMovimentoID']; ?></td>
+              <td><?php echo $operazione['NomeCategoria']; ?></td>
               <td><?php echo $operazione['Importo']; ?></td>
               <td><?php echo $operazione['Data']; ?></td>
               <td><a href="http://gruppo6.altervista.org/ProjectWork/php/dettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>" target="_blank"><img src="http://gruppo6.altervista.org/ProjectWork/css/Immagini/details.png" alt="Icona Dettagli" height="25" width="25"></a></td>
