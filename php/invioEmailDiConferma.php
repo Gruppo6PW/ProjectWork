@@ -104,9 +104,6 @@ $conn->close();
                     Puoi chiudere questa pagina.
                 </p>
             </div>
-
-            <div class="form-group">
-            </div>
         </form>
 
     </div>
