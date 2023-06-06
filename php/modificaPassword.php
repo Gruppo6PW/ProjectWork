@@ -16,6 +16,8 @@
         $passwordNuova = $_POST["passwordNuova"];
         $confermaPasswordNuova = $_POST["confermaPasswordNuova"];
 
+        $contoCorrenteID = $_GET["contoCorrenteID"];
+
         // Prendo la mail dalla sessione
     
         // Controllo che non siano vuote e chi siano stringhe
@@ -34,43 +36,11 @@
                         die("Connessione fallita: " . $conn->connect_error);
                     }
 
-                        // Controllo che la passwordCorrente coinccontoCorrenteIDa con quella salvata nel db
-                        $passwordCriptata = hash("sha512", $password);
-
-                    // Creo la query di confronto
-                    $SQL = "SELECT ContoCorrenteID FROM tconticorrenti WHERE Email = ? AND Password = ? LIMIT 1";
-                    if($statement = $conn -> prepare($SQL)){
-                        $statement -> bind_param("ss", $email, $passwordCorrenteCriptata);
-                        $statement -> execute();
-                        
-                        // Prendo il risultato della query
-                        $result = $statement->get_result();
-
-                        if ($result->num_rows == 0) {
-                            // C'è una tupla. Password valcontoCorrenteIDa
-                            echo("<h2>Password attuale errata</h2>");
-                            return;
-                        }
-
-                        // Salvo il contenuto del result
-                        while ($row = $result->fetch_assoc()) {
-                            // Prendo l'contoCorrenteID (è gia int)
-                            $contoCorrenteID = $row["ContoCorrenteID"];
-                        }
-
-                        // Chiudo lo statement
-                        $statement->close();
-                    } else{
-                        // C'è stato un errore, lo stampo
-                        $errore = $mysqli->errno . ' ' . $mysqli->error;
-                        echo $errore;
-                    }
-
                     // Hasho la nuova password
                     $passwordNuovaCriptata = hash("sha512", $password);
 
                     // Procedo alla modifica della password
-                    $SQL = "UPDATE tconticorrenti SET Password = ? WHERE tconticorrenti.ContoCorrenteID = $contoCorrenteID";
+                    $SQL = "UPDATE tconticorrenti SET Password = ? WHERE tconticorrenti.ContoCorrenteID = ?";
                     if($statement = $conn -> prepare($SQL)){
                         $statement -> bind_param("s", $passwordNuovaCriptata);
                         $statement -> execute();
@@ -191,9 +161,9 @@
             <form>
                 <div class="form-icon">
                     <!-- Codice per l'icona SVG  -->
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" height="70" wcontoCorrenteIDth="70" fill="#dee9ff" class="bi bi-key-fill" viewBox="-1 0 17 9 ">
-                            <path d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                            <span>
+                        <svg xmlns='http://www.w3.org/2000/svg' height='70' width='70' fill='#dee9ff' class='bi bi-key-fill' viewBox='-1 0 17 9'>
+                            <path d='M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2zM2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2z'/>
                         </svg>
                     </span>
                 </div>
@@ -207,7 +177,7 @@
                     <input type="password" class="form-control item" contoCorrenteID="confermaPasswordNuovaID" name="confermaPasswordNuova" placeholder="Conferma password" required>
                 </div>
                 <div class="form-group">
-                    <button type="button" class="btn btn-block create-account" name="Modifica" onclick="controllaInput()">Modifica password</button>
+                    <input type="submit" class="btn btn-block create-account" name="Modifica" onclick="controllaInput()" value="Modifica password">
                 </div>
             </form>
 
