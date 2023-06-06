@@ -19,38 +19,40 @@
 
     if(session_status() === PHP_SESSION_ACTIVE){
         if($_SESSION["accessoEseguito"] && $_SESSION["contoCorrenteID"] == $contoCorrenteID){
-            if(isset($_POST["Invia"])){
-                try{
-                    $SQL = "SELECT Saldo FROM tmovimenticontocorrente WHERE ContoCorrenteID = ? ORDER BY Data DESC Limit 1";
-                    if($statement = $conn -> prepare($SQL)){
-                        $statement -> bind_param("i", $contoCorrenteID);
-                        $statement -> execute();
-                        
-                        // Prendo il risultato della query
-                        $result = $statement->get_result();
-    
-                        // C'è una tupla
-                        if ($result->num_rows != 0) {
-                            // Salvo il contenuto del result
-                            while ($row = $result->fetch_assoc()) {
-                                $saldo = $row['Saldo'];
-                            }
-                        } else {
-                            $saldo = "Errore nell'acquisizione del saldo";
+
+            // Prendo il saldo
+            try{
+                $SQL = "SELECT Saldo FROM tmovimenticontocorrente WHERE ContoCorrenteID = ? ORDER BY Data DESC Limit 1";
+                if($statement = $conn -> prepare($SQL)){
+                    $statement -> bind_param("i", $contoCorrenteID);
+                    $statement -> execute();
+                    
+                    // Prendo il risultato della query
+                    $result = $statement->get_result();
+
+                    // C'è una tupla
+                    if ($result->num_rows != 0) {
+                        // Salvo il contenuto del result
+                        while ($row = $result->fetch_assoc()) {
+                            $saldo = $row['Saldo'];
                         }
-                
-                        // Chiudo lo statement
-                        $statement->close();
-                    } else{
-                        // C'è stato un errore, lo stampo
-                        $errore = $mysqli->errno . ' ' . $mysqli->error;
-                        echo $errore;
-                        return;
+                    } else {
+                        $saldo = "Errore nell'acquisizione del saldo";
                     }
-                } catch(Exception $e){
-                    echo "Qualcosa è andato storto nella richiesta del saldo al db.";
-                }
             
+                    // Chiudo lo statement
+                    $statement->close();
+                } else{
+                    // C'è stato un errore, lo stampo
+                    $errore = $mysqli->errno . ' ' . $mysqli->error;
+                    echo $errore;
+                    return;
+                }
+            } catch(Exception $e){
+                echo "Qualcosa è andato storto nella richiesta del saldo al db.";
+            }
+            
+            if(isset($_POST["Invia"])){          
                 // Ricavo le operazione avvenute nel periodo selezionato
                 try{
                     $SQL = "SELECT movimenti.MovimentoID, movimenti.Data, movimenti.Importo, movimenti.Saldo, categorie.NomeCategoria 
@@ -87,7 +89,7 @@
                     echo "Qualcosa è andato storto nella richiesta delle operazioni al db.";
                 }
             }
-            }
+        }
     } else{
         // Controllo nel db se l'accesso valido è true (1) e la data dell'ultimo accesso. In quel caso gli creo la sessione, altrimenti lo mando al login
         $SQL = "SELECT AccessoValido, Data FROM taccessi WHERE ContoCorrenteID = ? ORDER BY Data DESC LIMIT 1";
