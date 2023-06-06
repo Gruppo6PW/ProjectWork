@@ -213,8 +213,8 @@
       <br>
 
       <h1 class="mb-4" id="centrata">Benvenuto, <?php echo $nomeUtente; ?>!</h1>
-      <p id="centrata">Conto creato in data: <?php echo $dataApertura; ?></p>
-      <p id="centrata">Saldo totale: <?php echo $saldo . "€"; ?></p>
+     
+      <h4 id="centrata">Saldo totale: <?php echo $saldo . "€"; ?></h4>
 
       <h4>Ultimi movimenti</h4>
       <table class="table table-bordered mt-4 table-hover">
