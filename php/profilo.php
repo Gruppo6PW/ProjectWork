@@ -188,7 +188,7 @@
                                     <img src="http://gruppo6.altervista.org/ProjectWork/css/Immagini/profileIcon.png" alt="avatar" class="rounded-circle img-fluid" style="width: 171px;">
                                     <h5 class="my-3"><?php echo $nomeUtente ?> <?php echo $cognomeUtente ?></h5>
                         
-                                    <a href="http://gruppo6.altervista.org/ProjectWork/php/modificaPassword.php">Modifica password</a>
+                                    <a href="http://gruppo6.altervista.org/ProjectWork/php/modificaPassword.php?contoCorrenteID=<?php echo $contoCorrenteID; ?>">Modifica password</a>
                                  <br>
                                  <br>
                                  <a href="export_csv.php">Download Lista Movimenti</a>
