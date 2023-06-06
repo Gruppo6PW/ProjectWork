@@ -172,7 +172,7 @@
         
                         if($beneficiario != '' && $iban != '' && $importo != '' && $causale != ''){
                             try{
-                                $data = date("Y-m-d-G-i-s");
+                                $dataCorrenteString = date("Y-m-d") . " " . date("H:i:s");
                                 $descrizione = "Bonifico a favore di $beneficiario. $importo € inviati a $iban. Causale: $causale";
                                 $nuovoSaldo = (float)$saldo - (float)$importo;
                                 if($nuovoSaldo < 0){
@@ -182,7 +182,7 @@
                                 // Inserisco il bonifico nel db
                                 $SQL = "INSERT INTO tmovimenticontocorrente (ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa) VALUES (?, ?, ?, ?, 2, ?)";
                                 if($statement = $conn -> prepare($SQL)){
-                                    $statement -> bind_param("isdss", $contoCorrenteID, $data, $importo, $nuovoSaldo, $descrizione);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
+                                    $statement -> bind_param("isdss", $contoCorrenteID, $dataCorrenteString, $importo, $nuovoSaldo, $descrizione);  // Il primo parametro definisce il tipo di dato inserito. i -> integer | d -> double | s -> string
                                     $statement -> execute();
                                     
                                     // Prendo il risultato della query
