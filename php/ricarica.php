@@ -122,7 +122,7 @@
 
                                         <div class="row">
                                             <div class="col text-center">
-                                                <input style="width: 250px" type="submit" class="btn btn-primary" value="Ricarica" >
+                                                <input type="submit" style="width: 250px" class="btn btn-primary" name="Ricarica" value="Ricarica" >
                                             </div>
                                         </div>
                                         <div class="row">
@@ -197,7 +197,7 @@
         
                                 $SQL = "INSERT INTO tmovimenticontocorrente (ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa) VALUES (?, ?, ?, ?, 5, ?)";
                                 if($statement = $conn -> prepare($SQL)){
-                                    $statement -> bind_param("isdss", $contoCorrenteID, $dataCorrente, $importo, $nuovoSaldo, $descrizione);
+                                    $statement -> bind_param("isdss", $contoCorrenteID, $dataCorrenteString, $importo, $nuovoSaldo, $descrizione);
                                     $statement -> execute();
                                     
                                     // Prendo il risultato della query
