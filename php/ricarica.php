@@ -35,16 +35,16 @@
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <ul class="navbar-nav ">
                     <li class="nav-item active">
-                        <a class="nav-link" href="http://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Home</a>
+                        <a class="nav-link" href="http://gruppo6.altervista.org/ProjectWork/php/index.php?contoCorrenteID=<?php echo $contoCorrenteID ?>">Home</a>
                     </li>
                     <li class="nav-item active">
-                        <a class="nav-link" href="http://gruppo6.altervista.org/ProjectWork/php/profilo.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Profilo <span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="http://gruppo6.altervista.org/ProjectWork/php/profilo.php?contoCorrenteID=<?php echo $contoCorrenteID ?>">Profilo <span class="sr-only">(current)</span></a>
                     </li>
                     <li class="nav-item dropdown active ">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLink" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Operazioni</a>
                         <div class="dropdown-menu rounded bg-light"  aria-labelledby="navbarDropdownLink">
-                            <a class="dropdown-item " href="http://gruppo6.altervista.org/ProjectWork/php/bonifico.php?contoCorrenteID?<?php echo $contoCorrenteID ?>"">Bonifico</a>
-                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricarica.php?contoCorrenteID?<?php echo $contoCorrenteID ?>"">Ricarica telefonica</a>
+                            <a class="dropdown-item " href="http://gruppo6.altervista.org/ProjectWork/php/bonifico.php?contoCorrenteID=<?php echo $contoCorrenteID ?>"">Bonifico</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricarica.php?contoCorrenteID=<?php echo $contoCorrenteID ?>"">Ricarica telefonica</a>
                             <!-- <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#">Something else here</a> -->
                         </div>
@@ -52,9 +52,9 @@
                     <li class="nav-item dropdown active">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownDisabled" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Movimenti</a>
                         <div class="dropdown-menu rounded bg-light " aria-labelledby="navbarDropdownDisabled">
-                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti1.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Ultimi movimenti</a>
-                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti2.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Cerca per categoria</a>
-                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti3.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Cerca per data</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti1.php?contoCorrenteID=<?php echo $contoCorrenteID ?>">Ultimi movimenti</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti2.php?contoCorrenteID=<?php echo $contoCorrenteID ?>">Cerca per categoria</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricercaMovimenti3.php?contoCorrenteID=<?php echo $contoCorrenteID ?>">Cerca per data</a>
                         </div>
                     </li>
                 </ul>
@@ -187,7 +187,8 @@
                         if (preg_match($pattern, $telefono)) {
                             // Il numero di telefono è valido
                             try{
-                                $data = date("Y-m-d-G-i-s");
+                                $dataCorrenteString = date("Y-m-d") . " " . date("h:i:s");
+                                $dataCorrente = date_create($dataCorrenteString);
                                 $descrizione = "Ricarica telefonica $operatore, $importo € al num $telefono";
                                 $nuovoSaldo = (float)$saldo - (float)$importo;
                                 if($nuovoSaldo<0){
