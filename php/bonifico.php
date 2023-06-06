@@ -25,8 +25,11 @@
             body {
             background-color: #f8f9fa;
             }
-            #centrata{
-            text-align:center;
+            #centrata, #esitoBonificoID{
+                text-align: center;
+            }
+            #esitoBonificoID{
+                margin: auto;
             }
         </style>
     </head>
@@ -103,6 +106,7 @@
                                                 <input type="submit" class="btn btn-primary" innerHTML="Effettua bonifico" name="Invia">
                                             </div>
                                         </div>
+                                        <br>
                                         <div class="row">
                                             <p id="esitoBonificoID"></p>
                                         </div>
@@ -114,6 +118,11 @@
                 </div>
             </div> 
         </main>
+
+        <!-- JS che nasconde esito -->
+        <script>
+            document.getElementById("esitoRicaricaID").style.visibility = 'hidden';
+        </script>
 
         <!-- Bootstrap -->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -189,7 +198,7 @@
                                 
                                 echo "
                                 <script> \n
-                                document.getElementById('esitoBonificoID').style.innerHTML = 'Bonifico effettuato correttamente.<br>€ $importo a favore di $beneficiario';
+                                document.getElementById('esitoBonificoID').innerHTML = 'Bonifico effettuato correttamente.<br>€ $importo a favore di $beneficiario';
                                 document.getElementById('esitoBonificoID').style.color = 'green';
                                     document.getElementById('esitoBonificoID').style.visibility = 'visible';
                                 </script> \n
@@ -199,7 +208,7 @@
                                 if($codErrore === 1){
                                     echo "
                                     <script> \n
-                                    document.getElementById('esitoBonificoID').style.innerHTML = 'Qualcosa è andato storto. Controllare il saldo e riprovare.';
+                                    document.getElementById('esitoBonificoID').innerHTML = 'Qualcosa è andato storto. Controllare il saldo e riprovare.';
                                     document.getElementById('esitoBonificoID').style.color = 'red';
                                         document.getElementById('esitoBonificoID').style.visibility = 'visible';
                                     </script> \n
@@ -207,7 +216,7 @@
                                 } else{
                                     echo "
                                     <script> \n
-                                    document.getElementById('esitoBonificoID').style.innerHTML = 'Qualcosa non ha funzionato. Ricaricare la pagina e riprovare.';
+                                    document.getElementById('esitoBonificoID').innerHTML = 'Qualcosa non ha funzionato. Ricaricare la pagina e riprovare.';
                                     document.getElementById('esitoBonificoID').style.color = 'red';
                                     document.getElementById('esitoBonificoID').style.visibility = 'visible';
                                     </script> \n
@@ -220,7 +229,7 @@
                             <script> \n
                                 document.getElementById('esitoBonificoID').style.visibility = 'visible';
                                 document.getElementById('esitoBonificoID').style.color = 'red';
-                                document.getElementById('esitoBonificoID').style.innerHTML = 'Inserisci tutti i dati correttamente e riprova.';
+                                document.getElementById('esitoBonificoID').innerHTML = 'Inserisci tutti i dati correttamente e riprova.';
                             </script> \n
                             ";
                             

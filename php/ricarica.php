@@ -23,10 +23,13 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
             body {
-            background-color: #f8f9fa;
+                background-color: #f8f9fa;
             }
-            #centrata{
-            text-align:center;
+            #centrata, #esitoRicaricaID{
+                text-align:center;
+            }
+            #esitoRicaricaID{
+                margin: auto;
             }
         </style>
     </head>
@@ -125,8 +128,9 @@
                                                 <input type="submit" style="width: 250px" class="btn btn-primary" name="Ricarica" value="Ricarica" >
                                             </div>
                                         </div>
+                                        <br>
                                         <div class="row">
-                                            <p id="esitoRicaricaID"></p>
+                                            <p id="esitoRicaricaID">Esito</p>
                                         </div>
                                     </form>
                                 </div>   
@@ -136,6 +140,11 @@
                 </div>
             </div> 
         </main>
+
+        <!-- JS che nasconde esito -->
+        <script>
+            document.getElementById("esitoRicaricaID").style.visibility = 'hidden';
+        </script>
 
         <!-- Bootstrap -->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
@@ -192,6 +201,7 @@
                                 $descrizione = "Ricarica telefonica $operatore, $importo € al num $telefono";
                                 $nuovoSaldo = (float)$saldo - (float)$importo;
                                 if($nuovoSaldo<0){
+                                    // Ritorna una stringa vuota NON utilizzata, l'1 invece serve a identificare un errore. Di solito saldo troppo piccolo
                                     throw new Exception('', 1);
                                 }
         
@@ -212,29 +222,29 @@
                                 }
 
                                 echo "
-                                <script> \n
-                                    document.getElementById('esitoBonificoID').style.innerHTML = 'Ricarica effettuata correttamente.<br>€ $importo a favore di $telefono';
-                                    document.getElementById('esitoBonificoID').style.color = 'green';
-                                    document.getElementById('esitoBonificoID').style.visibility = 'visible';
+                                <script>
+                                    document.getElementById('esitoRicaricaID').style.visibility = 'visible';
+                                    document.getElementById('esitoRicaricaID').innerHTML = 'Ricarica effettuata correttamente.<br> Sono stati accreditati $importo € a $telefono';
+                                    document.getElementById('esitoRicaricaID').style.color = 'green';
                                 </script> \n
                                 ";
                             } catch(Exception $e){
                                 $codErrore = $e->getCode();
                                 if($codErrore===1){
                                     echo "
-                                    <script> \n
-                                        document.getElementById('esitoBonificoID').style.innerHTML = 'Qualcosa è andato storto. Controllare il saldo e riprovare.';
-                                        document.getElementById('esitoBonificoID').style.color = 'red';
-                                        document.getElementById('esitoBonificoID').style.visibility = 'visible';
-                                    </script> \n
+                                    <script>
+                                        document.getElementById('esitoRicaricaID').style.visibility = 'visible';
+                                        document.getElementById('esitoRicaricaID').innerHTML = 'Qualcosa è andato storto. Controllare il saldo e riprovare.';
+                                        document.getElementById('esitoRicaricaID').style.color = 'red';
+                                    </script>
                                     ";
                                 } else{
                                     echo "
-                                    <script> \n
-                                    document.getElementById('esitoBonificoID').style.innerHTML = 'Qualcosa non ha funzionato. Ricaricare la pagina e riprovare.';
-                                    document.getElementById('esitoBonificoID').style.color = 'red';
-                                    document.getElementById('esitoBonificoID').style.visibility = 'visible';
-                                    </script> \n
+                                    <script>
+                                        document.getElementById('esitoRicaricaID').style.visibility = 'visible';
+                                        document.getElementById('esitoRicaricaID').innerHTML = 'Qualcosa non ha funzionato. Ricaricare la pagina e riprovare.';
+                                        document.getElementById('esitoRicaricaID').style.color = 'red';
+                                    </script>
                                     ";
                                 }
                             }
@@ -243,9 +253,9 @@
                             // Il numero di telefono non è valido
                             echo "
                             <script> \n
-                                document.getElementById('esitoBonificoID').style.visibility = 'visible';
-                                document.getElementById('esitoBonificoID').style.color = 'red';
-                                document.getElementById('esitoBonificoID').style.innerHTML = 'Siamo spiacenti, abbiamo riscontrato un errore. Riprovare ricaricando la pagina e inserendo i dati corretti.';
+                                document.getElementById('esitoRicaricaID').style.visibility = 'visible';
+                                document.getElementById('esitoRicaricaID').style.color = 'red';
+                                document.getElementById('esitoRicaricaID').innerHTML = 'Siamo spiacenti, abbiamo riscontrato un errore. Riprovare ricaricando la pagina e inserendo i dati corretti.';
                             </script> \n
                             ";
                         }
