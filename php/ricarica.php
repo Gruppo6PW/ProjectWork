@@ -187,7 +187,7 @@
                         if (preg_match($pattern, $telefono)) {
                             // Il numero di telefono è valido
                             try{
-                                $dataCorrenteString = date("Y-m-d") . " " . date("h:i:s");
+                                $dataCorrenteString = date("Y-m-d") . " " . date("H:i:s");
                                 $dataCorrente = date_create($dataCorrenteString);
                                 $descrizione = "Ricarica telefonica $operatore, $importo € al num $telefono";
                                 $nuovoSaldo = (float)$saldo - (float)$importo;
@@ -197,7 +197,7 @@
         
                                 $SQL = "INSERT INTO tmovimenticontocorrente (ContoCorrenteID, Data, Importo, Saldo, CategoriaMovimentoID, DescrizioneEstesa) VALUES (?, ?, ?, ?, 5, ?)";
                                 if($statement = $conn -> prepare($SQL)){
-                                    $statement -> bind_param("isdss", $contoCorrenteID, $data, $importo, $nuovoSaldo, $descrizione);
+                                    $statement -> bind_param("isdss", $contoCorrenteID, $dataCorrente, $importo, $nuovoSaldo, $descrizione);
                                     $statement -> execute();
                                     
                                     // Prendo il risultato della query
@@ -277,7 +277,7 @@
               
                       // Controllo se è variato il valore di accessoValido
                       if($accessoValido == 1){
-                        $dataCorrenteString = date("Y-m-d") . " " . date("h:i:s");
+                        $dataCorrenteString = date("Y-m-d") . " " . date("H:i:s");
                         $dataCorrente = date_create($dataCorrenteString);
               
                         // Converto la data letta dal db in oggetto Date di php

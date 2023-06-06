@@ -95,7 +95,7 @@ try{
                 <tbody>
                     <tr>	
                         <td><?php echo $datiMovimento['NomeCategoria'];?></td>
-                        <td><?php echo $datiMovimento['Data']; ?></td>
+                        <td><?php $data = date("H:i:s d/m/Y", strtotime($datiMovimento['Data'])); echo $data; ?></td>
                         <td><?php echo $datiMovimento['Importo']; ?>€</td>
                         <td><?php echo $datiMovimento['DescrizioneEstesa']; ?></td>
                     </tr>

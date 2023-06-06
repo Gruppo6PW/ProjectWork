@@ -131,7 +131,7 @@
                                 $token = uniqid() . '_' . $testoRandom;
         
                                 // Calcolo la data di apertura
-                                $dataApertura = date("Y-m-d") . " " . date("h:i:s"); // Anno-Mese-Giorno Ora-Minuti-Secondi
+                                $dataApertura = date("Y-m-d") . " " . date("H:i:s"); // Anno-Mese-Giorno Ora-Minuti-Secondi
         
                                 $registrazioneConfermata = 0;
                                 

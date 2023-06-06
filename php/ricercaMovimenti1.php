@@ -94,11 +94,10 @@
       
               // Controllo se è variato il valore di accessoValido
               if($accessoValido == 1){
-                $dataCorrenteString = date("Y-m-d") . " " . date("h:i:s");
-                $dataCorrente = date_create($dataCorrenteString);
-      
+                $dataCorrenteString = date("Y-m-d") . " " . date("H:i:s");
+                
                 // Converto la data letta dal db in oggetto Date di php
-                $dataDB = date_create($dataUltimoAccesso);
+                $dataCorrente = date_create($dataCorrenteString);
       
                 // Calcolo la differenza di tempo
                 $differenza = date_diff($dataCorrente, $dataDB);
@@ -216,7 +215,7 @@
                                 <tr>
                                     <td><?php echo $operazione['NomeCategoria']; ?></td>
                                     <td><?php echo $operazione['Importo']; ?>€</td>
-                                    <td><?php echo $operazione['Data']; ?></td>
+                                    <td><?php $data = date("H:i:s d/m/Y", strtotime($operazione['Data'])); echo $data; ?></td>
                                     <td><a href="http://gruppo6.altervista.org/ProjectWork/php/dettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>" target="_blank">
                                     <img src="http://gruppo6.altervista.org/ProjectWork/css/Immagini/details.png" alt="Icona Dettagli" width="25" height="25"></a></td>
                                 </tr>

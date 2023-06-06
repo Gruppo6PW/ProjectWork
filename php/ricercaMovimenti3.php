@@ -115,7 +115,7 @@
   
           // Controllo se è variato il valore di accessoValido
           if($accessoValido == 1){
-            $dataCorrenteString = date("Y-m-d") . " " . date("h:i:s");
+            $dataCorrenteString = date("Y-m-d") . " " . date("H:i:s");
             $dataCorrente = date_create($dataCorrenteString);
   
             // Converto la data letta dal db in oggetto Date di php

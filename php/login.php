@@ -267,7 +267,7 @@
                     // Prendo indirizzo ip
                     $indirizzoIP = $_SERVER["REMOTE_ADDR"];
 
-                    $dataAccesso = date("Y-m-d") . " " . date("h:i:s");
+                    $dataAccesso = date("Y-m-d") . " " . date("H:i:s");
 
                     // Aggiungo una tupla nella taccessi
                     $SQL = "INSERT INTO taccessi(ContoCorrenteID, IndirizzoIP, Data, AccessoValido) VALUES(?, ?, ?, ?)";
