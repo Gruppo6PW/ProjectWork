@@ -45,7 +45,7 @@
                         }
                     } else{
                         // Avviso che non ha dati
-                        $esito = "<h2 id='centrata' style='color: #E00000;'>Nessun dato presente</h2>";
+                        $esito = "<br> <h2 id='centrata' style='color: #E00000;'>Nessun dato presente</h2>";
                     }
             
                     // Chiudo lo statement
