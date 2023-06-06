@@ -391,7 +391,7 @@
                         }
 
                         // Invio il codice nella mail
-                        $msg = "Il tuo codice OTP è <h2>echo $OTP</h2>";
+                        $msg = "Il tuo codice OTP è <h2>$OTP</h2>";
 
                         $conn->close();
 
