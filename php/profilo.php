@@ -199,6 +199,7 @@
                         <div class="col-lg-8">
                             <div class="card mb-4 shadow p-3 mb-5 bg-body rounded">
                                 <div class="card-body">
+                                    <br>
                                     <div class="row">
                                         <div class="col-sm-3">
                                             <p class="mb-0">Nome </p>
@@ -251,6 +252,7 @@
                                             <p class="text-muted mb-0"><?php echo $iban ?></p>
                                         </div>
                                     </div>
+                                    <br>
                                 </div>
                             </div>
                         </div>
