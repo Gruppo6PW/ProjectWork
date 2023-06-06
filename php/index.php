@@ -231,7 +231,7 @@
             <tr>
               <td><?php echo $operazione['NomeCategoria']; ?></td>
               <td><?php echo $operazione['Importo']; ?></td>
-              <td><?php echo $operazione['Data']; ?></td>
+              <td><?php $data = date("H:i:s d/m/Y", strtotime($operazione['Data'])); echo $data; ?></td>
               <td><a href="http://gruppo6.altervista.org/ProjectWork/php/dettaglioMovimento.php?id=<?php echo $operazione['MovimentoID']; ?>" target="_blank"><img src="http://gruppo6.altervista.org/ProjectWork/css/Immagini/details.png" alt="Icona Dettagli" height="25" width="25"></a></td>
             </tr>
           <?php endforeach; ?>
