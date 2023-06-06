@@ -198,8 +198,8 @@
                                 
                                 echo "
                                 <script> \n
-                                document.getElementById('esitoBonificoID').innerHTML = 'Bonifico effettuato correttamente.<br>€ $importo a favore di $beneficiario';
-                                document.getElementById('esitoBonificoID').style.color = 'green';
+                                    document.getElementById('esitoBonificoID').innerHTML = 'Bonifico effettuato correttamente.<br>€ $importo a favore di $beneficiario';
+                                    document.getElementById('esitoBonificoID').style.color = 'green';
                                     document.getElementById('esitoBonificoID').style.visibility = 'visible';
                                 </script> \n
                                 ";
@@ -208,17 +208,17 @@
                                 if($codErrore === 1){
                                     echo "
                                     <script> \n
-                                    document.getElementById('esitoBonificoID').innerHTML = 'Qualcosa è andato storto. Controllare il saldo e riprovare.';
-                                    document.getElementById('esitoBonificoID').style.color = 'red';
+                                        document.getElementById('esitoBonificoID').innerHTML = 'Qualcosa è andato storto. Controllare il saldo e riprovare.';
+                                        document.getElementById('esitoBonificoID').style.color = 'red';
                                         document.getElementById('esitoBonificoID').style.visibility = 'visible';
                                     </script> \n
                                     ";
                                 } else{
                                     echo "
                                     <script> \n
-                                    document.getElementById('esitoBonificoID').innerHTML = 'Qualcosa non ha funzionato. Ricaricare la pagina e riprovare.';
-                                    document.getElementById('esitoBonificoID').style.color = 'red';
-                                    document.getElementById('esitoBonificoID').style.visibility = 'visible';
+                                        document.getElementById('esitoBonificoID').innerHTML = 'Qualcosa non ha funzionato. Ricaricare la pagina e riprovare.';
+                                        document.getElementById('esitoBonificoID').style.color = 'red';
+                                        document.getElementById('esitoBonificoID').style.visibility = 'visible';
                                     </script> \n
                                     ";
                                 }
