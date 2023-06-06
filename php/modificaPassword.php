@@ -87,7 +87,7 @@
                     $conn->close();
 
                     // Reinderizzo alla pagina del profilo
-                    header("Location: https://gruppo6.altervista.org/ProjectWork/php/profilo.php?contoCorrenteID?<?php echo $contoCorrenteID ?>");
+                    header("Location: https://gruppo6.altervista.org/ProjectWork/php/profilo.php?contoCorrenteID=<?php echo $contoCorrenteID ?>");
                     
                 } else {
                     echo ("<h2>La conferma della nuova password non è valcontoCorrenteIDa</h2>");
@@ -212,7 +212,7 @@
             </form>
 
             <div class="social-media">
-                <a href="http://gruppo6.altervista.org/ProjectWork/php/profilo.php?contoCorrenteID?<?php echo $contoCorrenteID ?>">Cliccato per errore? Torna alla pagina del profilo senza fare modifiche</a>
+                <a href="http://gruppo6.altervista.org/ProjectWork/php/profilo.php?contoCorrenteID=<?php echo $contoCorrenteID ?>">Cliccato per errore? Torna alla pagina del profilo senza fare modifiche</a>
             </div>
         </div>
                     
