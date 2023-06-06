@@ -15,6 +15,39 @@
 
     if(session_status() === PHP_SESSION_ACTIVE){
         if($_SESSION["accessoEseguito"] && $_SESSION["contoCorrenteID"] == $contoCorrenteID){
+        
+            // Prendo il saldo
+            try{
+                $SQL = "SELECT Saldo FROM tmovimenticontocorrente WHERE ContoCorrenteID = ? ORDER BY Data DESC Limit 1";
+                if($statement = $conn -> prepare($SQL)){
+                    $statement -> bind_param("i", $contoCorrenteID);
+                    $statement -> execute();
+                    
+                    // Prendo il risultato della query
+                    $result = $statement->get_result();
+
+                    // C'è una tupla
+                    if ($result->num_rows != 0) {
+                        // Salvo il contenuto del result
+                        while ($row = $result->fetch_assoc()) {
+                            $saldo = $row['Saldo'];
+                        }
+                    } else {
+                        $saldo = "Errore nell'acquisizione del saldo";
+                    }
+            
+                    // Chiudo lo statement
+                    $statement->close();
+                } else{
+                    // C'è stato un errore, lo stampo
+                    $errore = $mysqli->errno . ' ' . $mysqli->error;
+                    echo $errore;
+                    return;
+                }
+            } catch(Exception $e){
+                echo "Qualcosa è andato storto nella richiesta del saldo al db.";
+            }
+        
             // Prendo il numero di righe
             if(isset($_POST["numeroRighe"])){
                 $numeroRighe = $_POST["numeroRighe"];
@@ -190,8 +223,10 @@
         <main class="container my-5">
             <br>
             <br>
-            
-            <h1 class="mb-4" id="centrata">Inserisci il numero di righe da visualizzare:</h1>
+            <h2 id="centrata">Saldo: <?php echo $saldo . "€" ?></h2>
+                <br>        
+            <h2 class="mb-4" id="centrata">Inserisci il numero di righe da visualizzare:</h2>
+            <br>
                 
             <form action="" method="POST" class="mb-4" id="centrata">
                 <input type="number" name="numeroRighe" min="0">

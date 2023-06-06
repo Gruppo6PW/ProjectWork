@@ -15,7 +15,10 @@
 
     // Controllo che vengano passati dei valori in post
     $data_inizio = isset($_POST['data_inizio']) ? $_POST['data_inizio'] : '' ;
-    $data_fine = isset($_POST['data_fine']) ? $_POST['data_fine'] : '' ;
+    $data_fineTemp = isset($_POST['data_fine']) ? $_POST['data_fine'] : '' ;
+
+    // Aggiungo 1 giorno alla data_fine
+    $data_fine = date('Y-m-d', strtotime($data_fineTemp . ' +1 day'));
 
     if(session_status() === PHP_SESSION_ACTIVE){
         if($_SESSION["accessoEseguito"] && $_SESSION["contoCorrenteID"] == $contoCorrenteID){
@@ -218,12 +221,12 @@
         <main class="container my-5">
             <br>
             <br>
-            <br>
 
-            <h4 id="centrata">Saldo: <?php echo $saldo . "€" ?></h4>
+            <h2 id="centrata">Saldo: <?php echo $saldo . "€" ?></h2>
+            <br>
             <!-- Selezione del periodo attraverso datepicker (BOOTSTRAP) -->
             <div> 
-                <h1 id="centrata">Seleziona un periodo:</h1>
+                <h2 id="centrata" class="mb-4">Seleziona un periodo:</h2>
                 <br>
                 <form action="" method="POST" id="centrata">
                     <div class="form-group" id="centrata">
