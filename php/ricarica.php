@@ -43,8 +43,8 @@
                     <li class="nav-item dropdown active ">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownLink" role="button" data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">Operazioni</a>
                         <div class="dropdown-menu rounded bg-light"  aria-labelledby="navbarDropdownLink">
-                            <a class="dropdown-item " href="http://gruppo6.altervista.org/ProjectWork/php/bonifico.php?contoCorrenteID=<?php echo $contoCorrenteID ?>"">Bonifico</a>
-                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricarica.php?contoCorrenteID=<?php echo $contoCorrenteID ?>"">Ricarica telefonica</a>
+                            <a class="dropdown-item " href="http://gruppo6.altervista.org/ProjectWork/php/bonifico.php?contoCorrenteID=<?php echo $contoCorrenteID ?>">Bonifico</a>
+                            <a class="dropdown-item" href="http://gruppo6.altervista.org/ProjectWork/php/ricarica.php?contoCorrenteID=<?php echo $contoCorrenteID ?>">Ricarica telefonica</a>
                             <!-- <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#">Something else here</a> -->
                         </div>
